@@ -6,7 +6,7 @@ plugins {
     id("io.ktor.plugin") version "3.3.0"
 }
 
-group = "dev.giuseppedarro"
+group = "dev.giuseppedarro.comanda"
 version = "0.0.1"
 
 application {
@@ -19,6 +19,15 @@ dependencies {
     implementation("io.ktor:ktor-server-netty")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.ktor:ktor-server-config-yaml")
+
+    // Koin BOM
+    implementation(platform("io.insert-koin:koin-bom:3.5.6"))
+
+    // Koin for Ktor
+    implementation("io.insert-koin:koin-ktor")
+    // SLF4J Logger
+    implementation("io.insert-koin:koin-logger-slf4j")
+
     testImplementation("io.ktor:ktor-server-test-host")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }
