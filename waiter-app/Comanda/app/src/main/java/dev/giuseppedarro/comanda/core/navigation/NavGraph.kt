@@ -27,10 +27,7 @@ fun NavGraph() {
                 onTableClick = { 
                     // In the future, you can pass the table number as an argument
                     navController.navigate(Screen.MenuOrder.route)
-                },
-                onSettingsClick = { /* TODO: Navigate to settings */ },
-                onHomeClick = { /* TODO: Navigate to home */ },
-                onProfileClick = { /* TODO: Navigate to profile */ }
+                }
             )
         }
         composable(Screen.MenuOrder.route) {
