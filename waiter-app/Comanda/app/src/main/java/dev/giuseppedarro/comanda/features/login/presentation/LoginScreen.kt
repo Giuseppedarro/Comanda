@@ -90,6 +90,9 @@ fun LoginContent(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface // White
+            ),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 8.dp
             )
         ) {
             Column(
