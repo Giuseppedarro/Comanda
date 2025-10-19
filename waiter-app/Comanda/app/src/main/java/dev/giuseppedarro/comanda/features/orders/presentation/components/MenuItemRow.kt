@@ -36,8 +36,6 @@ fun MenuItemRow(
         modifier = modifier.fillMaxWidth().padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // TODO: Replace with actual image loading
-        Image(painter = painterResource(id = R.drawable.ic_launcher_background), contentDescription = null, modifier = Modifier.size(64.dp))
         Text(text = itemName, modifier = Modifier.padding(start = 8.dp))
         Text(text = itemPrice)
         Spacer(modifier = Modifier.weight(1f))
