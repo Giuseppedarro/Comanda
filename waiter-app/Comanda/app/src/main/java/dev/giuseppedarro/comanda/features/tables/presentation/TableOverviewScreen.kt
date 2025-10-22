@@ -11,6 +11,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,21 +23,43 @@ import dev.giuseppedarro.comanda.R
 import dev.giuseppedarro.comanda.core.presentation.ComandaBottomBar
 import dev.giuseppedarro.comanda.core.presentation.ComandaTopAppBar
 import dev.giuseppedarro.comanda.features.tables.presentation.components.TableCard
+import dev.giuseppedarro.comanda.features.tables.presentation.components.TableDialog
 import dev.giuseppedarro.comanda.ui.theme.ComandaTheme
 
 data class Table(val number: Int, val isOccupied: Boolean)
 
 @Composable
 fun TableOverviewScreen(
-    onTableClick: (Table) -> Unit,
+    onTableClick: (Table) -> Unit, // This will be used for occupied tables
+    onNewOrderClick: (tableNumber: Int, numberOfPeople: Int) -> Unit, // For new tables
     modifier: Modifier = Modifier
 ) {
     // In the future, we will connect this to a ViewModel
     val tables = List(10) { Table(number = it + 1, isOccupied = it % 2 == 0) }
 
+    var showDialog by remember { mutableStateOf(false) }
+    var selectedTable by remember { mutableStateOf<Table?>(null) }
+
+    if (showDialog && selectedTable != null) {
+        TableDialog(
+            onDismissRequest = { showDialog = false },
+            onConfirmClick = { numberOfPeople ->
+                showDialog = false
+                onNewOrderClick(selectedTable!!.number, numberOfPeople)
+            }
+        )
+    }
+
     TableOverviewContent(
         tables = tables,
-        onTableClick = onTableClick,
+        onTableClick = {
+            if (it.isOccupied) {
+                onTableClick(it)
+            } else {
+                selectedTable = it
+                showDialog = true
+            }
+        },
         onSettingsClick = { /* TODO: Handle settings click */ },
         onHomeClick = { /* TODO: Handle home click */ },
         onProfileClick = { /* TODO: Handle profile click */ },
@@ -90,13 +116,9 @@ fun TableOverviewContent(
 @Composable
 fun TableOverviewScreenPreview() {
     ComandaTheme {
-        val tables = List(10) { Table(number = it + 1, isOccupied = it % 2 == 0) }
-        TableOverviewContent(
-            tables = tables,
+        TableOverviewScreen(
             onTableClick = {},
-            onSettingsClick = {},
-            onHomeClick = {},
-            onProfileClick = {}
+            onNewOrderClick = { _, _ -> }
         )
     }
 }

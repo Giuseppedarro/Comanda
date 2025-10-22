@@ -10,10 +10,17 @@ import dev.giuseppedarro.comanda.features.orders.presentation.MenuOrderScreen
 fun NavGraphBuilder.ordersGraph(navController: NavController) {
     navigation(
         startDestination = OrdersRoute.MenuOrder.route,
-        route = FeatureGraph.Orders.route
+        route = FeatureGraph.Orders.route // The route for the whole orders graph
     ) {
-        composable(OrdersRoute.MenuOrder.route) {
+        composable(
+            route = OrdersRoute.MenuOrder.route,
+            arguments = OrdersRoute.MenuOrder.arguments
+        ) {
+            val tableNumber = it.arguments?.getInt("tableNumber") ?: 0
+            val numberOfPeople = it.arguments?.getInt("numberOfPeople") ?: 0
             MenuOrderScreen(
+                tableNumber = tableNumber,
+                numberOfPeople = numberOfPeople,
                 onProceedClick = { /* TODO: Navigate to order summary */ },
                 onBillOverviewClick = { /* TODO: Navigate to bill overview */ }
             )

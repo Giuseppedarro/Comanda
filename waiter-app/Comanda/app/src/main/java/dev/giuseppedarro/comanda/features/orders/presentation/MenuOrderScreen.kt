@@ -26,6 +26,8 @@ data class MenuItem(
 
 @Composable
 fun MenuOrderScreen(
+    tableNumber: Int,
+    numberOfPeople: Int,
     onProceedClick: () -> Unit,
     onBillOverviewClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -41,6 +43,8 @@ fun MenuOrderScreen(
     }
 
     MenuOrderContent(
+        tableNumber = tableNumber,
+        numberOfPeople = numberOfPeople,
         menuItems = menuItems,
         onQuantityChange = { index, newQuantity ->
             menuItems = menuItems.toMutableList().apply {
@@ -60,6 +64,8 @@ fun MenuOrderScreen(
 
 @Composable
 fun MenuOrderContent(
+    tableNumber: Int,
+    numberOfPeople: Int,
     menuItems: List<MenuItem>,
     onQuantityChange: (Int, Int) -> Unit,
     onItemSelected: (Int, Boolean) -> Unit,
@@ -71,7 +77,7 @@ fun MenuOrderContent(
         modifier = modifier,
         topBar = {
             ComandaTopAppBar(
-                title = "QuickOrder POS",
+                title = "Table $tableNumber - $numberOfPeople People",
                 actions = {
                     Button(onClick = onBillOverviewClick) {
                         Text("Bill overview")
@@ -110,6 +116,8 @@ fun MenuOrderScreenPreview() {
             MenuItem("Cappuccino", "$4.75")
         )
         MenuOrderContent(
+            tableNumber = 5,
+            numberOfPeople = 4,
             menuItems = menuItems,
             onQuantityChange = { _, _ -> },
             onItemSelected = { _, _ -> },
