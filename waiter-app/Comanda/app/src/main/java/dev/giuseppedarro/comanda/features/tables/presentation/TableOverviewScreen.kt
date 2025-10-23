@@ -11,10 +11,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,41 +23,42 @@ import dev.giuseppedarro.comanda.core.presentation.ComandaTopAppBar
 import dev.giuseppedarro.comanda.features.tables.presentation.components.TableCard
 import dev.giuseppedarro.comanda.features.tables.presentation.components.TableDialog
 import dev.giuseppedarro.comanda.ui.theme.ComandaTheme
-
-data class Table(val number: Int, val isOccupied: Boolean)
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun TableOverviewScreen(
-    onTableClick: (Table) -> Unit, // This will be used for occupied tables
-    onNewOrderClick: (tableNumber: Int, numberOfPeople: Int) -> Unit, // For new tables
-    modifier: Modifier = Modifier
+    onNavigateToOrder: (tableNumber: Int, numberOfPeople: Int) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: TableOverviewViewModel = koinViewModel()
 ) {
-    // In the future, we will connect this to a ViewModel
-    val tables = List(10) { Table(number = it + 1, isOccupied = it % 2 == 0) }
+    val uiState by viewModel.uiState.collectAsState()
 
-    var showDialog by remember { mutableStateOf(false) }
-    var selectedTable by remember { mutableStateOf<Table?>(null) }
+    // This will replace the simple onTableClick navigation
+    val onTableClick = { table: Table ->
+        if (table.isOccupied) {
+            // For occupied tables, we might pass a different set of arguments
+            // For now, let's assume it still starts a new order for simplicity
+            onNavigateToOrder(table.number, 1) 
+        } else {
+            viewModel.onTableClicked(table)
+        }
+    }
 
-    if (showDialog && selectedTable != null) {
+    if (uiState.isDialogShown) {
         TableDialog(
-            onDismissRequest = { showDialog = false },
+            onDismissRequest = viewModel::onDialogDismiss,
             onConfirmClick = { numberOfPeople ->
-                showDialog = false
-                onNewOrderClick(selectedTable!!.number, numberOfPeople)
+                uiState.selectedTable?.let {
+                    onNavigateToOrder(it.number, numberOfPeople)
+                }
+                viewModel.onDialogDismiss()
             }
         )
     }
 
     TableOverviewContent(
-        tables = tables,
-        onTableClick = {
-            if (it.isOccupied) {
-                onTableClick(it)
-            } else {
-                selectedTable = it
-                showDialog = true
-            }
-        },
+        tables = uiState.tables,
+        onTableClick = onTableClick,
         onSettingsClick = { /* TODO: Handle settings click */ },
         onHomeClick = { /* TODO: Handle home click */ },
         onProfileClick = { /* TODO: Handle profile click */ },
@@ -80,7 +79,7 @@ fun TableOverviewContent(
         modifier = modifier,
         topBar = {
             ComandaTopAppBar(
-                title = stringResource(id = R.string.app_name,),
+                title = stringResource(id = R.string.app_name),
                 actions = {
                     IconButton(onClick = onSettingsClick) {
                         Icon(Icons.Default.Settings, contentDescription = "Settings")
@@ -116,9 +115,12 @@ fun TableOverviewContent(
 @Composable
 fun TableOverviewScreenPreview() {
     ComandaTheme {
-        TableOverviewScreen(
+        TableOverviewContent(
+            tables = List(10) { Table(number = it + 1, isOccupied = it % 2 == 0) },
             onTableClick = {},
-            onNewOrderClick = { _, _ -> }
+            onSettingsClick = {},
+            onHomeClick = {},
+            onProfileClick = {}
         )
     }
 }

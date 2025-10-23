@@ -10,15 +10,8 @@ import dev.giuseppedarro.comanda.features.tables.presentation.TableOverviewScree
 fun NavGraphBuilder.tablesGraph(navController: NavController) {
     composable(FeatureGraph.Tables.route) {
         TableOverviewScreen(
-            onTableClick = {
-                // For occupied tables, we would need to know the order ID to modify it.
-                // For now, let's just navigate to the orders graph.
-                // In the future, this would be something like:
-                // navController.navigate(OrdersRoute.ModifyOrder.createRoute(it.orderId))
-                navController.navigate(FeatureGraph.Orders.route) // This is a placeholder
-            },
-            onNewOrderClick = { tableNumber, numberOfPeople ->
-                // For new tables, we construct the route with the required arguments.
+            onNavigateToOrder = { tableNumber, numberOfPeople ->
+                // This single callback handles navigation for both new and occupied tables.
                 navController.navigate(OrdersRoute.MenuOrder.createRoute(tableNumber, numberOfPeople))
             }
         )

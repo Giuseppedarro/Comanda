@@ -21,10 +21,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -32,29 +30,28 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.giuseppedarro.comanda.ui.theme.ComandaTheme
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun LoginScreen(
     onLoginSuccess: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: LoginViewModel = koinViewModel()
 ) {
-    var employeeId by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    val uiState by viewModel.uiState.collectAsState()
 
     LoginContent(
-        employeeId = employeeId,
-        password = password,
-        onEmployeeIdChange = { employeeId = it },
-        onPasswordChange = { password = it },
-        onLoginClick = onLoginSuccess, // For now, we'll navigate directly
+        uiState = uiState,
+        onEmployeeIdChange = viewModel::onEmployeeIdChange,
+        onPasswordChange = viewModel::onPasswordChange,
+        onLoginClick = { viewModel.onLoginClick(onLoginSuccess) },
         modifier = modifier
     )
 }
 
 @Composable
 fun LoginContent(
-    employeeId: String,
-    password: String,
+    uiState: LoginUiState,
     onEmployeeIdChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onLoginClick: () -> Unit,
@@ -109,7 +106,7 @@ fun LoginContent(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 OutlinedTextField(
-                    value = employeeId,
+                    value = uiState.employeeId,
                     onValueChange = onEmployeeIdChange,
                     label = { Text("Employee ID") },
                     leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
@@ -119,7 +116,7 @@ fun LoginContent(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 OutlinedTextField(
-                    value = password,
+                    value = uiState.password,
                     onValueChange = onPasswordChange,
                     label = { Text("Password") },
                     leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
@@ -150,8 +147,7 @@ fun LoginScreenPreview() {
             color = MaterialTheme.colorScheme.background // Set the background color to Orange
         ) {
             LoginContent(
-                employeeId = "",
-                password = "",
+                uiState = LoginUiState("1234", "password"),
                 onEmployeeIdChange = {},
                 onPasswordChange = {},
                 onLoginClick = {}
