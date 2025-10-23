@@ -1,25 +1,20 @@
 package dev.giuseppedarro.comanda.features.orders.presentation.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.RemoveCircle
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.giuseppedarro.comanda.R
 import dev.giuseppedarro.comanda.ui.theme.ComandaTheme
 
 @Composable
@@ -28,8 +23,6 @@ fun MenuItemRow(
     itemPrice: String,
     quantity: Int,
     onQuantityChange: (Int) -> Unit,
-    onItemSelected: (Boolean) -> Unit,
-    isSelected: Boolean,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -46,7 +39,6 @@ fun MenuItemRow(
         IconButton(onClick = { onQuantityChange(quantity + 1) }) {
             Icon(Icons.Default.AddCircle, contentDescription = "Add")
         }
-        Checkbox(checked = isSelected, onCheckedChange = onItemSelected)
     }
 }
 
@@ -58,9 +50,7 @@ fun MenuItemRowPreview() {
             itemName = "Gourmet Burger",
             itemPrice = "$12.99",
             quantity = 1,
-            onQuantityChange = {},
-            onItemSelected = {},
-            isSelected = false
+            onQuantityChange = {}
         )
     }
 }
