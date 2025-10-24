@@ -1,9 +1,10 @@
 package dev.giuseppedarro.comanda.features.orders.di
 
+import androidx.lifecycle.SavedStateHandle
 import dev.giuseppedarro.comanda.features.orders.presentation.MenuOrderViewModel
-import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val ordersModule = module {
-    viewModelOf(::MenuOrderViewModel)
+    viewModel { (savedStateHandle: SavedStateHandle) -> MenuOrderViewModel(savedStateHandle) }
 }

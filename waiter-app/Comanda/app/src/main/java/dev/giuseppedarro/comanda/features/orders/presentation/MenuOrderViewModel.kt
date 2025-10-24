@@ -1,5 +1,6 @@
 package dev.giuseppedarro.comanda.features.orders.presentation
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuItem
@@ -16,7 +17,7 @@ data class MenuOrderUiState(
     val isSheetVisible: Boolean = false
 )
 
-class MenuOrderViewModel : ViewModel() {
+class MenuOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MenuOrderUiState())
     val uiState: StateFlow<MenuOrderUiState> = _uiState.asStateFlow()
