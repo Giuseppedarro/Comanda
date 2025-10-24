@@ -12,10 +12,14 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -111,15 +115,20 @@ fun MenuOrderContent(
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
             LazyColumn(modifier = Modifier.weight(1f)) {
-                items(uiState.orderItems) { item ->
+                itemsIndexed(uiState.orderItems) { index, item ->
                     MenuItemRow(
                         itemName = item.menuItem.name,
                         itemPrice = item.menuItem.price,
                         quantity = item.quantity,
                         onQuantityChange = { newQuantity -> onQuantityChange(item, newQuantity) }
                     )
+                    if (index < uiState.orderItems.lastIndex) {
+                        Divider(modifier = Modifier.padding(horizontal = 16.dp))
+                    }
                 }
             }
+
+            Divider(modifier = Modifier.padding(horizontal = 16.dp)) // Added padding to this divider
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
@@ -129,12 +138,20 @@ fun MenuOrderContent(
             ) {
                 items(uiState.menuCategories) { category ->
                     Card(
-                        modifier = Modifier.fillMaxWidth().clickable { onCategorySelected(category) }
+                        modifier = Modifier.fillMaxWidth().clickable { onCategorySelected(category) },
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surface
+                        )
                     ) {
                         Box(
                             modifier = Modifier.padding(16.dp).fillMaxWidth(),
                             contentAlignment = Alignment.Center
-                        ) { Text(text = category.name) }
+                        ) { 
+                            Text(
+                                text = category.name,
+                                color = MaterialTheme.colorScheme.onSurface
+                            ) 
+                        }
                     }
                 }
             }
