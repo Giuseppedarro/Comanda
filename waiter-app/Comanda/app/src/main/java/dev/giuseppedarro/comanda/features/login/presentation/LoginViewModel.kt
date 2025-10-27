@@ -2,7 +2,7 @@ package dev.giuseppedarro.comanda.features.login.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
+import dev.giuseppedarro.comanda.features.login.domain.use_case.LoginUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,7 +17,9 @@ data class LoginUiState(
     val errorMessage: String? = null
 )
 
-class LoginViewModel : ViewModel() {
+class LoginViewModel(
+    private val loginUseCase: LoginUseCase
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
@@ -32,19 +34,17 @@ class LoginViewModel : ViewModel() {
 
     fun onLoginClick() {
         viewModelScope.launch {
-            // Start loading
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
 
-            // Simulate network delay
-            delay(2000)
+            val result = loginUseCase(
+                employeeId = _uiState.value.employeeId,
+                password = _uiState.value.password
+            )
 
-            // Simulate success or failure
-            if (_uiState.value.employeeId == "1234" && _uiState.value.password == "password") {
-                // Success
+            result.onSuccess {
                 _uiState.update { it.copy(isLoading = false, isLoginSuccessful = true) }
-            } else {
-                // Failure
-                _uiState.update { it.copy(isLoading = false, errorMessage = "Invalid credentials. Please try again.") }
+            }.onFailure { exception -> // Give the throwable an explicit name
+                _uiState.update { it.copy(isLoading = false, errorMessage = exception.message) }
             }
         }
     }
