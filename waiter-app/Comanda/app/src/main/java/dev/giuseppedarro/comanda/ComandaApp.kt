@@ -1,7 +1,7 @@
 package dev.giuseppedarro.comanda
 
 import android.app.Application
-import dev.giuseppedarro.comanda.core.di.dataModule
+import dev.giuseppedarro.comanda.core.di.coreModule
 import dev.giuseppedarro.comanda.features.login.di.loginModule
 import dev.giuseppedarro.comanda.features.orders.di.ordersModule
 import dev.giuseppedarro.comanda.features.tables.di.tablesModule
@@ -16,7 +16,7 @@ class ComandaApp : Application() {
         startKoin {
             androidLogger()
             androidContext(this@ComandaApp)
-            modules(loginModule, tablesModule, ordersModule, dataModule)
+            modules(loginModule, tablesModule, ordersModule, coreModule)
         }
     }
 }

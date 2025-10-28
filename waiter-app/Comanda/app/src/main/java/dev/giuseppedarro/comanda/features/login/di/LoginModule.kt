@@ -8,7 +8,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val loginModule = module {
-    single<LoginRepository> { LoginRepositoryImpl(get()) } // Pass HttpClient to the repository
+    single<LoginRepository> { LoginRepositoryImpl(get(), get()) } // HttpClient + TokenStorage
     single { LoginUseCase(get()) }
     viewModel { LoginViewModel(get()) }
 }
