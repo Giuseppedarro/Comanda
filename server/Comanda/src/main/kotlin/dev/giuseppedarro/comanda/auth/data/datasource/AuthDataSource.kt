@@ -16,7 +16,7 @@ class AuthDataSource {
     private val jwtSecret = "secret"
 
     suspend fun login(request: LoginRequest): Result<LoginResponse> {
-        if (request.employeeId == "234" && request.password == "password") {
+        if (request.employeeId == "1234" && request.password == "password") {
             val accessToken = generateAccessToken(request.employeeId, "WAITER")
             val refreshToken = generateRefreshToken(request.employeeId)
             return Result.success(LoginResponse(accessToken, refreshToken))
