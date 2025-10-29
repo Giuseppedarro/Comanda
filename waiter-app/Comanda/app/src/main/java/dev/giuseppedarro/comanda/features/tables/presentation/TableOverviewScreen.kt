@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import dev.giuseppedarro.comanda.R
 import dev.giuseppedarro.comanda.core.presentation.ComandaBottomBar
 import dev.giuseppedarro.comanda.core.presentation.ComandaTopAppBar
+import dev.giuseppedarro.comanda.features.tables.domain.model.Table
 import dev.giuseppedarro.comanda.features.tables.presentation.components.TableCard
 import dev.giuseppedarro.comanda.features.tables.presentation.components.TableDialog
 import dev.giuseppedarro.comanda.ui.theme.ComandaTheme

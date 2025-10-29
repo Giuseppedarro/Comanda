@@ -1,19 +1,17 @@
+
 package dev.giuseppedarro.comanda
 
-import dev.giuseppedarro.comanda.di.appModule
+import dev.giuseppedarro.comanda.plugins.configureKoin
 import dev.giuseppedarro.comanda.plugins.configureRouting
 import dev.giuseppedarro.comanda.plugins.configureSecurity
+import dev.giuseppedarro.comanda.plugins.configureSerialization
 import io.ktor.server.application.*
-import org.koin.ktor.plugin.Koin
 
-fun main(args: Array<String>) {
-    io.ktor.server.netty.EngineMain.main(args)
-}
+fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 fun Application.module() {
-    install(Koin) {
-        modules(appModule)
-    }
+    configureKoin()
+    configureSerialization()
     configureSecurity()
     configureRouting()
 }

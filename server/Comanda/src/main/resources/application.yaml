@@ -1,6 +1,13 @@
 ktor:
-  application:
-    modules:
-      - dev.giuseppedarro.ApplicationKt.module
-  deployment:
-    port: 8080
+    deployment:
+        port: 8080
+        host: 0.0.0.0
+    application:
+        modules:
+            - dev.giuseppedarro.comanda.ApplicationKt.module
+
+jwt:
+    secret: "a-very-long-and-secure-secret-key-that-is-at-least-32-bytes-long" # Replace with a secure secret from env variables
+    issuer: "http://0.0.0.0:8080"
+    audience: "comanda-app-users"
+    realm: "Comanda Server"

@@ -1,5 +1,6 @@
 package dev.giuseppedarro.comanda.features.login.presentation
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -15,14 +17,17 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Restaurant
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -43,11 +48,19 @@ fun LoginScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    if (uiState.isLoginSuccessful) {
+        // Perform navigation and notify the ViewModel
+        LaunchedEffect(Unit) {
+            onLoginSuccess()
+            viewModel.onLoginHandled()
+        }
+    }
+
     LoginContent(
         uiState = uiState,
         onEmployeeIdChange = viewModel::onEmployeeIdChange,
         onPasswordChange = viewModel::onPasswordChange,
-        onLoginClick = { viewModel.onLoginClick(onLoginSuccess) },
+        onLoginClick = viewModel::onLoginClick,
         modifier = modifier
     )
 }
@@ -114,6 +127,8 @@ fun LoginContent(
                     label = { Text("Employee ID") },
                     leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    isError = uiState.errorMessage != null,
+                    enabled = !uiState.isLoading,
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -127,26 +142,52 @@ fun LoginContent(
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(
-                        onDone = { onLoginClick() }
+                        onDone = { if (!uiState.isLoading) onLoginClick() }
                     ),
+                    isError = uiState.errorMessage != null,
+                    enabled = !uiState.isLoading,
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(8.dp))
+
+                if (uiState.errorMessage != null) {
+                    Text(
+                        text = uiState.errorMessage,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                    )
+                }
 
                 Button(
                     onClick = onLoginClick,
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp)
+                    shape = RoundedCornerShape(8.dp),
+                    enabled = !uiState.isLoading,
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = 4.dp
+                    )
                 ) {
-                    Text(text = "Sign In", modifier = Modifier.padding(8.dp))
+                    AnimatedContent(targetState = uiState.isLoading, label = "Login Button Content") {
+                        if (it) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                strokeWidth = 2.dp
+                            )
+                        } else {
+                            Text(text = "Sign In", modifier = Modifier.padding(8.dp))
+                        }
+                    }
                 }
             }
         }
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
     ComandaTheme {

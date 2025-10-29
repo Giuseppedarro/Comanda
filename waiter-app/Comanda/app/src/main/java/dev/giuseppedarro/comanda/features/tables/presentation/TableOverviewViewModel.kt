@@ -1,13 +1,15 @@
 package dev.giuseppedarro.comanda.features.tables.presentation
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dev.giuseppedarro.comanda.features.tables.domain.model.Table
+import dev.giuseppedarro.comanda.features.tables.domain.use_case.GetTablesUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
-
-// This will eventually move to the domain layer
-data class Table(val number: Int, val isOccupied: Boolean)
 
 data class TableOverviewUiState(
     val tables: List<Table> = emptyList(),
@@ -15,7 +17,9 @@ data class TableOverviewUiState(
     val selectedTable: Table? = null
 )
 
-class TableOverviewViewModel : ViewModel() {
+class TableOverviewViewModel(
+    private val getTablesUseCase: GetTablesUseCase
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TableOverviewUiState())
     val uiState: StateFlow<TableOverviewUiState> = _uiState.asStateFlow()
@@ -25,9 +29,9 @@ class TableOverviewViewModel : ViewModel() {
     }
 
     private fun loadTables() {
-        // In the future, this will come from a repository
-        val mockTables = List(10) { Table(number = it + 1, isOccupied = it % 2 == 0) }
-        _uiState.update { it.copy(tables = mockTables) }
+        getTablesUseCase().onEach { tables ->
+            _uiState.update { it.copy(tables = tables) }
+        }.launchIn(viewModelScope)
     }
 
     fun onTableClicked(table: Table) {
