@@ -1,5 +1,6 @@
 package dev.giuseppedarro.comanda.features.orders.presentation
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,11 +14,17 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -30,6 +37,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.giuseppedarro.comanda.core.presentation.ComandaTopAppBar
@@ -45,13 +54,13 @@ import org.koin.androidx.compose.koinViewModel
 fun MenuOrderScreen(
     tableNumber: Int,
     numberOfPeople: Int,
-    onProceedClick: () -> Unit,
-    onBillOverviewClick: () -> Unit,
+    onOrderSent: () -> Unit, // Renamed for clarity
     modifier: Modifier = Modifier,
     viewModel: MenuOrderViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val sheetState = rememberModalBottomSheetState()
+    val context = LocalContext.current
 
     LaunchedEffect(uiState.isSheetVisible) {
         if (uiState.isSheetVisible) {
@@ -69,8 +78,11 @@ fun MenuOrderScreen(
         onCategorySelected = viewModel::onCategorySelected,
         onMenuItemAdded = viewModel::onMenuItemAdded,
         onDismissSheet = viewModel::onDismissSheet,
-        onProceedClick = onProceedClick,
-        onBillOverviewClick = onBillOverviewClick,
+        onSendOrderClick = {
+            viewModel.submitOrder()
+            Toast.makeText(context, "Order sent", Toast.LENGTH_SHORT).show()
+            onOrderSent()
+        },
         modifier = modifier,
         sheetState = sheetState
     )
@@ -86,8 +98,7 @@ fun MenuOrderContent(
     onCategorySelected: (MenuCategory) -> Unit,
     onMenuItemAdded: (MenuItem) -> Unit,
     onDismissSheet: () -> Unit,
-    onProceedClick: () -> Unit,
-    onBillOverviewClick: () -> Unit,
+    onSendOrderClick: () -> Unit,
     sheetState: androidx.compose.material3.SheetState,
     modifier: Modifier = Modifier
 ) {
@@ -110,47 +121,104 @@ fun MenuOrderContent(
 
     Scaffold(
         modifier = modifier,
-        topBar = { ComandaTopAppBar(title = "Table $tableNumber - $numberOfPeople People") },
-        bottomBar = { Button(onClick = onProceedClick) { Text("Proceed to Order Summary") } }
-    ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
-            LazyColumn(modifier = Modifier.weight(1f)) {
-                itemsIndexed(uiState.orderItems) { index, item ->
-                    MenuItemRow(
-                        itemName = item.menuItem.name,
-                        itemPrice = item.menuItem.price,
-                        quantity = item.quantity,
-                        onQuantityChange = { newQuantity -> onQuantityChange(item, newQuantity) }
-                    )
-                    if (index < uiState.orderItems.lastIndex) {
-                        Divider(modifier = Modifier.padding(horizontal = 16.dp))
+        topBar = {
+            ComandaTopAppBar(
+                title = "Table $tableNumber - $numberOfPeople People",
+                actions = {
+                    IconButton(onClick = onSendOrderClick) {
+                        Icon(
+                            imageVector = Icons.Default.Send,
+                            contentDescription = "Send Order"
+                        )
                     }
                 }
-            }
-
-            Divider(modifier = Modifier.padding(horizontal = 16.dp)) // Added padding to this divider
-
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                modifier = Modifier.weight(1f).padding(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(uiState.menuCategories) { category ->
-                    Card(
-                        modifier = Modifier.fillMaxWidth().clickable { onCategorySelected(category) },
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surface
+            )
+        }
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            if (uiState.isLoading) {
+                CircularProgressIndicator()
+            } else if (uiState.errorMessage != null) {
+                Text(
+                    text = uiState.errorMessage,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(16.dp)
+                )
+            } else {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    // --- Current Order Section ---
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Current Order",
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                         )
+                        if (uiState.orderItems.isEmpty()) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text("No items added yet. Select a category below to start.")
+                            }
+                        } else {
+                            LazyColumn {
+                                itemsIndexed(uiState.orderItems) { index, item ->
+                                    MenuItemRow(
+                                        itemName = item.menuItem.name,
+                                        itemPrice = item.menuItem.price,
+                                        quantity = item.quantity,
+                                        onQuantityChange = { newQuantity -> onQuantityChange(item, newQuantity) }
+                                    )
+                                    if (index < uiState.orderItems.lastIndex) {
+                                        Divider(modifier = Modifier.padding(horizontal = 16.dp))
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        thickness = DividerDefaults.Thickness,
+                        color = DividerDefaults.color
+                    )
+
+                    // --- Add to Order Section ---
+                    Text(
+                        text = "Add to Order",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Box(
-                            modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                            contentAlignment = Alignment.Center
-                        ) { 
-                            Text(
-                                text = category.name,
-                                color = MaterialTheme.colorScheme.onSurface
-                            ) 
+                        items(uiState.menuCategories) { category ->
+                            Card(
+                                modifier = Modifier.fillMaxWidth().clickable { onCategorySelected(category) },
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.surface
+                                )
+                            ) {
+                                Box(
+                                    modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = category.name,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -186,8 +254,26 @@ fun MenuOrderScreenPreview() {
             onCategorySelected = {},
             onMenuItemAdded = {},
             onDismissSheet = {},
-            onProceedClick = {},
-            onBillOverviewClick = {},
+            onSendOrderClick = {},
+            sheetState = rememberModalBottomSheetState()
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true)
+@Composable
+fun MenuOrderScreenEmptyPreview() {
+    ComandaTheme {
+        MenuOrderContent(
+            tableNumber = 5,
+            numberOfPeople = 4,
+            uiState = MenuOrderUiState(orderItems = emptyList()),
+            onQuantityChange = { _, _ -> },
+            onCategorySelected = {},
+            onMenuItemAdded = {},
+            onDismissSheet = {},
+            onSendOrderClick = {},
             sheetState = rememberModalBottomSheetState()
         )
     }

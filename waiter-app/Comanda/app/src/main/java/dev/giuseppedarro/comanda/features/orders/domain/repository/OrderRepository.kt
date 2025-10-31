@@ -1,0 +1,19 @@
+package dev.giuseppedarro.comanda.features.orders.domain.repository
+
+import dev.giuseppedarro.comanda.core.utils.Result
+import dev.giuseppedarro.comanda.features.orders.domain.model.MenuCategory
+import dev.giuseppedarro.comanda.features.orders.domain.model.OrderItem
+import kotlinx.coroutines.flow.Flow
+
+interface OrderRepository {
+
+    /**
+     * Fetches the full menu (all categories and items) from the data source.
+     */
+    fun getMenu(): Flow<dev.giuseppedarro.comanda.core.utils.Result<List<MenuCategory>>>
+
+    /**
+     * Submits a completed order to the backend.
+     */
+    suspend fun submitOrder(tableNumber: Int, items: List<OrderItem>): Result<Unit>
+}

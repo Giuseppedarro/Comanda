@@ -2,22 +2,35 @@ package dev.giuseppedarro.comanda.features.orders.presentation
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dev.giuseppedarro.comanda.core.utils.Result
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuItem
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderItem
+import dev.giuseppedarro.comanda.features.orders.domain.use_case.GetMenuUseCase
+import dev.giuseppedarro.comanda.features.orders.domain.use_case.SubmitOrderUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 data class MenuOrderUiState(
     val orderItems: List<OrderItem> = emptyList(),
     val menuCategories: List<MenuCategory> = emptyList(),
     val selectedCategory: MenuCategory? = null,
-    val isSheetVisible: Boolean = false
+    val isSheetVisible: Boolean = false,
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null
 )
 
-class MenuOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
+class MenuOrderViewModel(
+    private val getMenuUseCase: GetMenuUseCase,
+    private val submitOrderUseCase: SubmitOrderUseCase,
+    private val savedStateHandle: SavedStateHandle
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MenuOrderUiState())
     val uiState: StateFlow<MenuOrderUiState> = _uiState.asStateFlow()
@@ -27,33 +40,27 @@ class MenuOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     }
 
     private fun loadMenu() {
-        val mockMenu = listOf(
-            MenuCategory("Appetizers", listOf(
-                MenuItem("Bruschetta", "$7.00"),
-                MenuItem("Garlic Bread", "$5.00"),
-                MenuItem("Stuffed Mushrooms", "$8.50"),
-                MenuItem("Spring Rolls", "$6.00"),
-                MenuItem("Onion Rings", "$5.50"),
-                MenuItem("Calamari", "$9.00")
-            )),
-            MenuCategory("Main Courses", listOf(MenuItem("Gourmet Burger", "$12.99"), MenuItem("Caesar Salad", "$8.50"))),
-            MenuCategory("Desserts", listOf(MenuItem("Tiramisu", "$6.50"), MenuItem("Cheesecake", "$7.50"))),
-            MenuCategory("Drinks", listOf(
-                MenuItem("Cola", "$2.50"),
-                MenuItem("Cappuccino", "$4.75"),
-                MenuItem("Iced Tea", "$2.00"),
-                MenuItem("Orange Juice", "$3.00"),
-                MenuItem("Latte", "$4.00"),
-                MenuItem("Water", "$1.00"),
-                MenuItem("Espresso", "$3.00"),
-                MenuItem("Lemonade", "$3.50"),
-                MenuItem("Apple Juice", "$3.00"),
-                MenuItem("Sparkling Water", "$1.50"),
-                MenuItem("Green Tea", "$2.50"),
-                MenuItem("Beer", "$5.00")
-            ))
-        )
-        _uiState.update { it.copy(menuCategories = mockMenu) }
+        getMenuUseCase().onEach { result ->
+            when (result) {
+                is Result.Loading -> {
+                    _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+                }
+                is Result.Success -> {
+                    _uiState.update { it.copy(isLoading = false, menuCategories = result.data ?: emptyList()) }
+                }
+                is Result.Error -> {
+                    _uiState.update { it.copy(isLoading = false, errorMessage = result.message) }
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun submitOrder() {
+        viewModelScope.launch {
+            val tableNumber = savedStateHandle.get<Int>("tableNumber") ?: -1
+            val result = submitOrderUseCase(tableNumber, _uiState.value.orderItems)
+            // Handle result, e.g., show a success/error message
+        }
     }
 
     fun onCategorySelected(category: MenuCategory) {
@@ -71,7 +78,6 @@ class MenuOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         } else {
             _uiState.value.orderItems + OrderItem(menuItem)
         }
-        // Hide sheet after selection
         _uiState.update { it.copy(orderItems = newOrderItems, isSheetVisible = false, selectedCategory = null) }
     }
 

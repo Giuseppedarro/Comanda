@@ -1,15 +1,18 @@
 package dev.giuseppedarro.comanda.features.tables.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -18,7 +21,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.giuseppedarro.comanda.R
-import dev.giuseppedarro.comanda.core.presentation.ComandaBottomBar
 import dev.giuseppedarro.comanda.core.presentation.ComandaTopAppBar
 import dev.giuseppedarro.comanda.features.tables.domain.model.Table
 import dev.giuseppedarro.comanda.features.tables.presentation.components.TableCard
@@ -34,12 +36,9 @@ fun TableOverviewScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    // This will replace the simple onTableClick navigation
     val onTableClick = { table: Table ->
         if (table.isOccupied) {
-            // For occupied tables, we might pass a different set of arguments
-            // For now, let's assume it still starts a new order for simplicity
-            onNavigateToOrder(table.number, 1) 
+            onNavigateToOrder(table.number, 1)
         } else {
             viewModel.onTableClicked(table)
         }
@@ -58,22 +57,21 @@ fun TableOverviewScreen(
     }
 
     TableOverviewContent(
-        tables = uiState.tables,
+        uiState = uiState,
         onTableClick = onTableClick,
         onSettingsClick = { /* TODO: Handle settings click */ },
-        onHomeClick = { /* TODO: Handle home click */ },
-        onProfileClick = { /* TODO: Handle profile click */ },
+        onRefresh = viewModel::refresh,
         modifier = modifier
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TableOverviewContent(
-    tables: List<Table>,
+    uiState: TableOverviewUiState,
     onTableClick: (Table) -> Unit,
     onSettingsClick: () -> Unit,
-    onHomeClick: () -> Unit,
-    onProfileClick: () -> Unit,
+    onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -87,26 +85,28 @@ fun TableOverviewContent(
                     }
                 }
             )
-        },
-        bottomBar = {
-            ComandaBottomBar(
-                onHomeClick = onHomeClick,
-                onProfileClick = onProfileClick
-            )
         }
     ) { innerPadding ->
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            modifier = Modifier.padding(innerPadding).padding(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+        PullToRefreshBox(
+            modifier = Modifier.padding(innerPadding),
+            isRefreshing = uiState.isLoading,
+            onRefresh = onRefresh
         ) {
-            items(tables) { table ->
-                TableCard(
-                    tableNumber = table.number,
-                    isOccupied = table.isOccupied,
-                    onButtonClick = { onTableClick(table) }
-                )
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(uiState.tables) { table ->
+                    TableCard(
+                        tableNumber = table.number,
+                        isOccupied = table.isOccupied,
+                        onButtonClick = { onTableClick(table) }
+                    )
+                }
             }
         }
     }
@@ -117,11 +117,12 @@ fun TableOverviewContent(
 fun TableOverviewScreenPreview() {
     ComandaTheme {
         TableOverviewContent(
-            tables = List(10) { Table(number = it + 1, isOccupied = it % 2 == 0) },
+            uiState = TableOverviewUiState(
+                tables = List(20) { Table(number = it + 1, isOccupied = it % 2 == 0) }
+            ),
             onTableClick = {},
             onSettingsClick = {},
-            onHomeClick = {},
-            onProfileClick = {}
+            onRefresh = {}
         )
     }
 }
