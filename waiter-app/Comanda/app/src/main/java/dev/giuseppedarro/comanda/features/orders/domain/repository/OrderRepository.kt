@@ -10,10 +10,10 @@ interface OrderRepository {
     /**
      * Fetches the full menu (all categories and items) from the data source.
      */
-    fun getMenu(): Flow<dev.giuseppedarro.comanda.core.utils.Result<List<MenuCategory>>>
+    fun getMenu(): Flow<Result<List<MenuCategory>>>
 
     /**
      * Submits a completed order to the backend.
      */
-    suspend fun submitOrder(tableNumber: Int, items: List<OrderItem>): Result<Unit>
+    suspend fun submitOrder(tableNumber: Int, numberOfPeople: Int, items: List<OrderItem>): Result<Unit>
 }

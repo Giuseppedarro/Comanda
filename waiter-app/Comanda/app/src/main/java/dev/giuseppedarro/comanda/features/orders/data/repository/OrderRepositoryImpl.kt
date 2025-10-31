@@ -1,6 +1,10 @@
 package dev.giuseppedarro.comanda.features.orders.data.repository
 
+import dev.giuseppedarro.comanda.core.domain.TokenRepository
 import dev.giuseppedarro.comanda.core.utils.Result
+import dev.giuseppedarro.comanda.features.orders.data.remote.OrderApi
+import dev.giuseppedarro.comanda.features.orders.data.remote.dto.OrderItemRequest
+import dev.giuseppedarro.comanda.features.orders.data.remote.dto.SubmitOrderRequest
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuItem
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderItem
@@ -8,9 +12,11 @@ import dev.giuseppedarro.comanda.features.orders.domain.repository.OrderReposito
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class OrderRepositoryImpl : OrderRepository {
+class OrderRepositoryImpl(
+    private val api: OrderApi,
+    private val tokenRepository: TokenRepository
+) : OrderRepository {
 
-    // The mock menu is now correctly placed in the data layer.
     private val mockMenu = listOf(
         MenuCategory("Appetizers", listOf(
             MenuItem("Bruschetta", "$7.00"),
@@ -40,13 +46,31 @@ class OrderRepositoryImpl : OrderRepository {
 
     override fun getMenu(): Flow<Result<List<MenuCategory>>> = flow {
         emit(Result.Loading())
-        // In the future, this will come from a remote API call.
         emit(Result.Success(mockMenu))
     }
 
-    override suspend fun submitOrder(tableNumber: Int, items: List<OrderItem>): Result<Unit> {
-        // In the future, this will make a POST request to the backend.
-        println("Order submitted for table $tableNumber: $items")
-        return Result.Success(Unit)
+    override suspend fun submitOrder(tableNumber: Int, numberOfPeople: Int, items: List<OrderItem>): Result<Unit> {
+        return try {
+            val token = tokenRepository.getAccessToken() ?: throw Exception("No auth token found")
+
+            val orderItemsRequest = items.map {
+                OrderItemRequest(
+                    menuItemId = it.menuItem.name, // Assuming name is the ID
+                    quantity = it.quantity
+                )
+            }
+
+            val request = SubmitOrderRequest(
+                tableNumber = tableNumber,
+                numberOfPeople = numberOfPeople,
+                items = orderItemsRequest
+            )
+
+            api.submitOrder(token, request)
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.Error(e.message ?: "An unknown error occurred")
+        }
     }
 }

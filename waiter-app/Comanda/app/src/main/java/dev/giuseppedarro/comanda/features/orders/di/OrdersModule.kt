@@ -1,5 +1,6 @@
 package dev.giuseppedarro.comanda.features.orders.di
 
+import dev.giuseppedarro.comanda.features.orders.data.remote.OrderApi
 import dev.giuseppedarro.comanda.features.orders.data.repository.OrderRepositoryImpl
 import dev.giuseppedarro.comanda.features.orders.domain.repository.OrderRepository
 import dev.giuseppedarro.comanda.features.orders.domain.use_case.GetMenuUseCase
@@ -11,9 +12,10 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val ordersModule = module {
+    factoryOf(::OrderApi)
     factoryOf(::GetMenuUseCase)
     factoryOf(::SubmitOrderUseCase)
-    factoryOf(::OrderRepositoryImpl) bind OrderRepository::class
+    factory { OrderRepositoryImpl(get(), get()) } bind OrderRepository::class
 
     viewModelOf(::MenuOrderViewModel)
 }

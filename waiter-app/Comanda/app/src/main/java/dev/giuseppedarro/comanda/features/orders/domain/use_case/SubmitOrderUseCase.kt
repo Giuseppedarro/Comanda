@@ -6,8 +6,7 @@ import dev.giuseppedarro.comanda.features.orders.domain.repository.OrderReposito
 
 class SubmitOrderUseCase(private val repository: OrderRepository) {
 
-    suspend operator fun invoke(tableNumber: Int, items: List<OrderItem>): Result<Unit> {
-        // In the future, you could add validation logic here, e.g., check if the items list is not empty.
-        return repository.submitOrder(tableNumber, items)
+    suspend operator fun invoke(tableNumber: Int, numberOfPeople: Int, items: List<OrderItem>): Result<Unit> {
+        return repository.submitOrder(tableNumber, numberOfPeople, items)
     }
 }

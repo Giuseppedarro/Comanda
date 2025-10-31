@@ -58,8 +58,9 @@ class MenuOrderViewModel(
     fun submitOrder() {
         viewModelScope.launch {
             val tableNumber = savedStateHandle.get<Int>("tableNumber") ?: -1
-            val result = submitOrderUseCase(tableNumber, _uiState.value.orderItems)
-            // Handle result, e.g., show a success/error message
+            val numberOfPeople = savedStateHandle.get<Int>("numberOfPeople") ?: -1
+            val result = submitOrderUseCase(tableNumber, numberOfPeople, _uiState.value.orderItems)
+            // TODO: Handle result, e.g., show a success/error snackbar
         }
     }
 
