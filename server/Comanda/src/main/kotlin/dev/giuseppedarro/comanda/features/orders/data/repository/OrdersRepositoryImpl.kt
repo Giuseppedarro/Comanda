@@ -4,9 +4,20 @@ import dev.giuseppedarro.comanda.features.orders.data.model.SubmitOrderRequest
 import dev.giuseppedarro.comanda.features.orders.domain.repository.OrdersRepository
 
 class OrdersRepositoryImpl : OrdersRepository {
+
+    private val orders = mutableListOf<SubmitOrderRequest>()
+
     override suspend fun submitOrder(request: SubmitOrderRequest): Result<Unit> {
-        // In the future, this will insert the order into the database.
-        println("Received order for table ${request.tableNumber} with ${request.numberOfPeople} people: ${request.items}")
+        orders.add(request)
+        println("Current orders in memory: $orders")
         return Result.success(Unit)
+    }
+
+    override suspend fun getOrders(): List<SubmitOrderRequest> {
+        return orders
+    }
+
+    override suspend fun getOrdersForTable(tableNumber: Int): List<SubmitOrderRequest> {
+        return orders.filter { it.tableNumber == tableNumber }
     }
 }

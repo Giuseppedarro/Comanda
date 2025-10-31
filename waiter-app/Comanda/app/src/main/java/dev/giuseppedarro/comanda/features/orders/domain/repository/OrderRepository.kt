@@ -13,6 +13,11 @@ interface OrderRepository {
     fun getMenu(): Flow<Result<List<MenuCategory>>>
 
     /**
+     * Fetches the existing order for a specific table.
+     */
+    fun getOrdersForTable(tableNumber: Int): Flow<Result<List<OrderItem>>>
+
+    /**
      * Submits a completed order to the backend.
      */
     suspend fun submitOrder(tableNumber: Int, numberOfPeople: Int, items: List<OrderItem>): Result<Unit>

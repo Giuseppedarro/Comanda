@@ -3,6 +3,8 @@ package dev.giuseppedarro.comanda.plugins
 import dev.giuseppedarro.comanda.features.auth.domain.usecase.LoginUseCase
 import dev.giuseppedarro.comanda.features.auth.domain.usecase.RefreshTokenUseCase
 import dev.giuseppedarro.comanda.features.auth.presentation.authRoutes
+import dev.giuseppedarro.comanda.features.orders.domain.usecase.GetOrdersForTableUseCase
+import dev.giuseppedarro.comanda.features.orders.domain.usecase.GetOrdersUseCase
 import dev.giuseppedarro.comanda.features.orders.domain.usecase.SubmitOrderUseCase
 import dev.giuseppedarro.comanda.features.orders.presentation.ordersRoutes
 import dev.giuseppedarro.comanda.features.tables.domain.usecase.GetTablesUseCase
@@ -17,11 +19,13 @@ fun Application.configureRouting() {
     val refreshTokenUseCase by inject<RefreshTokenUseCase>()
     val getTablesUseCase by inject<GetTablesUseCase>()
     val submitOrderUseCase by inject<SubmitOrderUseCase>()
+    val getOrdersUseCase by inject<GetOrdersUseCase>()
+    val getOrdersForTableUseCase by inject<GetOrdersForTableUseCase>()
 
     routing {
         authRoutes(loginUseCase, refreshTokenUseCase)
         tablesRoutes(getTablesUseCase)
-        ordersRoutes(submitOrderUseCase)
+        ordersRoutes(submitOrderUseCase, getOrdersUseCase, getOrdersForTableUseCase)
         get("/") {
             call.respondText("Hello World!")
         }

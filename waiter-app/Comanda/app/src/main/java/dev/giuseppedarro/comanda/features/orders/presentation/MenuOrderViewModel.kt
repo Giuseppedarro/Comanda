@@ -8,6 +8,7 @@ import dev.giuseppedarro.comanda.features.orders.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuItem
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderItem
 import dev.giuseppedarro.comanda.features.orders.domain.use_case.GetMenuUseCase
+import dev.giuseppedarro.comanda.features.orders.domain.use_case.GetOrdersForTableUseCase
 import dev.giuseppedarro.comanda.features.orders.domain.use_case.SubmitOrderUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,6 +29,7 @@ data class MenuOrderUiState(
 
 class MenuOrderViewModel(
     private val getMenuUseCase: GetMenuUseCase,
+    private val getOrdersForTableUseCase: GetOrdersForTableUseCase,
     private val submitOrderUseCase: SubmitOrderUseCase,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -36,17 +38,35 @@ class MenuOrderViewModel(
     val uiState: StateFlow<MenuOrderUiState> = _uiState.asStateFlow()
 
     init {
-        loadMenu()
+        loadMenuCategories()
+        loadInitialOrder()
     }
 
-    private fun loadMenu() {
+    private fun loadMenuCategories() {
         getMenuUseCase().onEach { result ->
             when (result) {
                 is Result.Loading -> {
                     _uiState.update { it.copy(isLoading = true, errorMessage = null) }
                 }
                 is Result.Success -> {
-                    _uiState.update { it.copy(isLoading = false, menuCategories = result.data ?: emptyList()) }
+                    _uiState.update { it.copy(menuCategories = result.data ?: emptyList()) }
+                }
+                is Result.Error -> {
+                    _uiState.update { it.copy(errorMessage = result.message) }
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun loadInitialOrder() {
+        val tableNumber = savedStateHandle.get<Int>("tableNumber") ?: return
+        getOrdersForTableUseCase(tableNumber).onEach { result ->
+            when (result) {
+                is Result.Loading -> {
+                    _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+                }
+                is Result.Success -> {
+                    _uiState.update { it.copy(isLoading = false, orderItems = result.data ?: emptyList()) }
                 }
                 is Result.Error -> {
                     _uiState.update { it.copy(isLoading = false, errorMessage = result.message) }
