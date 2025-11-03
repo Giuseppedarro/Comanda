@@ -21,7 +21,8 @@ fun NavGraphBuilder.ordersGraph(navController: NavController) {
             MenuOrderScreen(
                 tableNumber = tableNumber,
                 numberOfPeople = numberOfPeople,
-                onOrderSent = { navController.popBackStack() } // Navigate back
+                onProceedClick = { /* TODO: Navigate to order summary */ },
+                onBillOverviewClick = { /* TODO: Navigate to bill overview */ }
             )
         }
     }

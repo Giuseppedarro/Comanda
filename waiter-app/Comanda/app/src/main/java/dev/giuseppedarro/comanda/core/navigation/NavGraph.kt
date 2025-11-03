@@ -12,14 +12,7 @@ fun NavGraph() {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = FeatureGraph.Login.route) {
-        loginGraph(
-            navController = navController,
-            onLoginSuccess = {
-                navController.navigate(FeatureGraph.Tables.route) {
-                    popUpTo(FeatureGraph.Login.route) { inclusive = true }
-                }
-            }
-        )
+        loginGraph(navController)
         tablesGraph(navController)
         ordersGraph(navController)
     }

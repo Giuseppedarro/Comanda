@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.update
 
 data class TableOverviewUiState(
     val tables: List<Table> = emptyList(),
-    val isLoading: Boolean = false, // Added for pull-to-refresh
     val isDialogShown: Boolean = false,
     val selectedTable: Table? = null
 )
@@ -29,17 +28,10 @@ class TableOverviewViewModel(
         loadTables()
     }
 
-    // This function is now responsible for showing the loading state.
     private fun loadTables() {
-        _uiState.update { it.copy(isLoading = true) } // Start loading
         getTablesUseCase().onEach { tables ->
-            _uiState.update { it.copy(tables = tables, isLoading = false) } // End loading
+            _uiState.update { it.copy(tables = tables) }
         }.launchIn(viewModelScope)
-    }
-
-    // Public function to be called from the UI
-    fun refresh() {
-        loadTables()
     }
 
     fun onTableClicked(table: Table) {
