@@ -1,6 +1,5 @@
 package dev.giuseppedarro.comanda.core.di
 
-import android.content.Context
 import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -9,6 +8,7 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import dev.giuseppedarro.comanda.core.data.CryptoManager
 import dev.giuseppedarro.comanda.core.data.TokenRepositoryImpl
 import dev.giuseppedarro.comanda.core.domain.TokenRepository
+import dev.giuseppedarro.comanda.core.network.BaseUrlProvider
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -18,18 +18,22 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
 val coreModule = module {
     // Encrypted token storage
     single<CryptoManager> { CryptoManager() }
     single<DataStore<Preferences>> {
-        val context = get<Context>()
+        val context = androidContext()
         PreferenceDataStoreFactory.create(
             produceFile = { context.preferencesDataStoreFile("tokens.preferences_pb") }
         )
     }
     single<TokenRepository> { TokenRepositoryImpl(get(), get()) }
+
+    // Base URL provider for dynamic configuration
+    single { BaseUrlProvider("http://10.0.2.2:8080/") }
 
     // Ktor HttpClient
     single {
@@ -52,8 +56,10 @@ val coreModule = module {
             }
 
             // Default Request
+            val baseUrlProvider: BaseUrlProvider = get()
             defaultRequest {
-                url("http://10.0.2.2:8080/")
+                // Read current base URL dynamically for each request
+                url(baseUrlProvider.getBaseUrl())
             }
         }
     }
