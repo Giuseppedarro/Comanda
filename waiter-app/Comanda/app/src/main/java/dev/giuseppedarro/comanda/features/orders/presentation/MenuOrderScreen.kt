@@ -56,6 +56,7 @@ fun MenuOrderScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val sheetState = rememberModalBottomSheetState()
+    val context = LocalContext.current
 
     LaunchedEffect(uiState.isSheetVisible) {
         if (uiState.isSheetVisible) {
@@ -73,7 +74,19 @@ fun MenuOrderScreen(
         onCategorySelected = viewModel::onCategorySelected,
         onMenuItemAdded = viewModel::onMenuItemAdded,
         onDismissSheet = viewModel::onDismissSheet,
-        onSendClick = onSendClick,
+        onSendClick = {
+            viewModel.onSendOrder(
+                tableNumber = tableNumber,
+                numberOfPeople = numberOfPeople,
+                onSuccess = {
+                    Toast.makeText(context, "Order sent", Toast.LENGTH_SHORT).show()
+                    onSendClick()
+                },
+                onError = { msg ->
+                    Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+                }
+            )
+        },
         modifier = modifier,
         sheetState = sheetState
     )
@@ -118,10 +131,7 @@ fun MenuOrderContent(
             ComandaTopAppBar(
                 title = "Table $tableNumber - $numberOfPeople People",
                 actions = {
-                    IconButton(onClick = {
-                        Toast.makeText(context, "Order sent", Toast.LENGTH_SHORT).show()
-                        onSendClick()
-                    }) {
+                    IconButton(onClick = onSendClick, enabled = !uiState.isLoading) {
                         Icon(Icons.Filled.Send, contentDescription = "Send order")
                     }
                 }

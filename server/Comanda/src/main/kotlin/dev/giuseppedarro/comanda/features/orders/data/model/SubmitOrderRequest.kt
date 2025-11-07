@@ -12,5 +12,6 @@ data class SubmitOrderRequest(
 @Serializable
 data class OrderItemRequest(
     val menuItemId: String,
-    val quantity: Int
+    val quantity: Int,
+    val notes: String? = null
 )

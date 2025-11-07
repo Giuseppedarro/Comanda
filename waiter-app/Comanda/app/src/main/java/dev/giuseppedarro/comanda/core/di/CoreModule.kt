@@ -11,11 +11,14 @@ import dev.giuseppedarro.comanda.core.domain.TokenRepository
 import dev.giuseppedarro.comanda.core.network.BaseUrlProvider
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.koin.android.ext.koin.androidContext
@@ -38,6 +41,9 @@ val coreModule = module {
     // Ktor HttpClient
     single {
         HttpClient(CIO) {
+            // Do not auto-throw on non-2xx; we'll validate to avoid decoding errors
+            expectSuccess = false
+
             // Logging
             install(Logging) {
                 level = LogLevel.ALL
@@ -53,6 +59,16 @@ val coreModule = module {
                 json(Json {
                     ignoreUnknownKeys = true
                 })
+            }
+
+            // Uniform error handling: throw on non-success before deserialization into DTOs
+            HttpResponseValidator {
+                validateResponse { response ->
+                    if (!response.status.isSuccess()) {
+                        val text = response.bodyAsText()
+                        throw Exception("${'$'}{response.status}: ${'$'}text")
+                    }
+                }
             }
 
             // Default Request

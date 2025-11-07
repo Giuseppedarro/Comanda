@@ -59,13 +59,12 @@ class OrderRepositoryImpl(
             val orderResponses = api.getOrdersForTable(token, tableNumber)
 
             // We need the full menu to find the price and other details of the menu items.
-            val menuResult = menuFlow.first()
-            val allMenuItems = when (menuResult) {
-                is Result.Success -> menuResult.data?.flatMap { it.items } ?: emptyList()
-                else -> emptyList()
-            }
+            // Wait until the menu flow emits the first Success instead of grabbing the initial Loading
+            val menuResult = menuFlow.first { it is Result.Success<List<MenuCategory>> } as Result.Success<List<MenuCategory>>
+            val allMenuItems = menuResult.data.orEmpty().flatMap { it.items }
 
-            val orderForTable = orderResponses.firstOrNull()?.items ?: emptyList()
+            // Prefer the latest order if multiple are returned by the backend
+            val orderForTable = orderResponses.lastOrNull()?.items ?: emptyList()
 
             val orderItems = orderForTable.mapNotNull { orderItemDto ->
                 allMenuItems.find { it.name == orderItemDto.menuItemId }?.let {

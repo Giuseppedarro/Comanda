@@ -14,10 +14,11 @@ import io.ktor.http.contentType
 class OrderApi(private val client: HttpClient) {
 
     suspend fun getOrdersForTable(token: String, tableNumber: Int): List<GetOrderResponse> {
-        return client.get("orders/$tableNumber") {
+        return client.get("orders") {
             headers {
                 append("Authorization", "Bearer $token")
             }
+            url { parameters.append("tableNumber", tableNumber.toString()) }
         }.body()
     }
 
