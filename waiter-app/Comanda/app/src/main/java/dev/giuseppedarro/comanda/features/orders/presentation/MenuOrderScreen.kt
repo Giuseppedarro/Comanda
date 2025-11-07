@@ -13,11 +13,14 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -30,8 +33,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import android.widget.Toast
 import dev.giuseppedarro.comanda.core.presentation.ComandaTopAppBar
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuItem
@@ -45,8 +50,7 @@ import org.koin.androidx.compose.koinViewModel
 fun MenuOrderScreen(
     tableNumber: Int,
     numberOfPeople: Int,
-    onProceedClick: () -> Unit,
-    onBillOverviewClick: () -> Unit,
+    onSendClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MenuOrderViewModel = koinViewModel()
 ) {
@@ -69,8 +73,7 @@ fun MenuOrderScreen(
         onCategorySelected = viewModel::onCategorySelected,
         onMenuItemAdded = viewModel::onMenuItemAdded,
         onDismissSheet = viewModel::onDismissSheet,
-        onProceedClick = onProceedClick,
-        onBillOverviewClick = onBillOverviewClick,
+        onSendClick = onSendClick,
         modifier = modifier,
         sheetState = sheetState
     )
@@ -86,8 +89,7 @@ fun MenuOrderContent(
     onCategorySelected: (MenuCategory) -> Unit,
     onMenuItemAdded: (MenuItem) -> Unit,
     onDismissSheet: () -> Unit,
-    onProceedClick: () -> Unit,
-    onBillOverviewClick: () -> Unit,
+    onSendClick: () -> Unit,
     sheetState: androidx.compose.material3.SheetState,
     modifier: Modifier = Modifier
 ) {
@@ -108,10 +110,23 @@ fun MenuOrderContent(
         }
     }
 
+    val context = LocalContext.current
+
     Scaffold(
         modifier = modifier,
-        topBar = { ComandaTopAppBar(title = "Table $tableNumber - $numberOfPeople People") },
-        bottomBar = { Button(onClick = onProceedClick) { Text("Proceed to Order Summary") } }
+        topBar = {
+            ComandaTopAppBar(
+                title = "Table $tableNumber - $numberOfPeople People",
+                actions = {
+                    IconButton(onClick = {
+                        Toast.makeText(context, "Order sent", Toast.LENGTH_SHORT).show()
+                        onSendClick()
+                    }) {
+                        Icon(Icons.Filled.Send, contentDescription = "Send order")
+                    }
+                }
+            )
+        }
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
             LazyColumn(modifier = Modifier.weight(1f)) {
@@ -186,8 +201,7 @@ fun MenuOrderScreenPreview() {
             onCategorySelected = {},
             onMenuItemAdded = {},
             onDismissSheet = {},
-            onProceedClick = {},
-            onBillOverviewClick = {},
+            onSendClick = {},
             sheetState = rememberModalBottomSheetState()
         )
     }

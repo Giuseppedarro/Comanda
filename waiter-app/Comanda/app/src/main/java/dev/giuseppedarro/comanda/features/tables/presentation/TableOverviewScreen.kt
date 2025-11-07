@@ -18,7 +18,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.giuseppedarro.comanda.R
-import dev.giuseppedarro.comanda.core.presentation.ComandaBottomBar
 import dev.giuseppedarro.comanda.core.presentation.ComandaTopAppBar
 import dev.giuseppedarro.comanda.features.tables.domain.model.Table
 import dev.giuseppedarro.comanda.features.tables.presentation.components.TableCard
@@ -61,8 +60,6 @@ fun TableOverviewScreen(
         tables = uiState.tables,
         onTableClick = onTableClick,
         onSettingsClick = { /* TODO: Handle settings click */ },
-        onHomeClick = { /* TODO: Handle home click */ },
-        onProfileClick = { /* TODO: Handle profile click */ },
         modifier = modifier
     )
 }
@@ -72,8 +69,6 @@ fun TableOverviewContent(
     tables: List<Table>,
     onTableClick: (Table) -> Unit,
     onSettingsClick: () -> Unit,
-    onHomeClick: () -> Unit,
-    onProfileClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -86,12 +81,6 @@ fun TableOverviewContent(
                         Icon(Icons.Default.Settings, contentDescription = "Settings")
                     }
                 }
-            )
-        },
-        bottomBar = {
-            ComandaBottomBar(
-                onHomeClick = onHomeClick,
-                onProfileClick = onProfileClick
             )
         }
     ) { innerPadding ->
@@ -119,9 +108,7 @@ fun TableOverviewScreenPreview() {
         TableOverviewContent(
             tables = List(10) { Table(number = it + 1, isOccupied = it % 2 == 0) },
             onTableClick = {},
-            onSettingsClick = {},
-            onHomeClick = {},
-            onProfileClick = {}
+            onSettingsClick = {}
         )
     }
 }
