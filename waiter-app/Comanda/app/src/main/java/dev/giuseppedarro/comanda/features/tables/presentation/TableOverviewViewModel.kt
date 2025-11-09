@@ -14,7 +14,8 @@ import kotlinx.coroutines.flow.update
 data class TableOverviewUiState(
     val tables: List<Table> = emptyList(),
     val isDialogShown: Boolean = false,
-    val selectedTable: Table? = null
+    val selectedTable: Table? = null,
+    val isRefreshing: Boolean = false
 )
 
 class TableOverviewViewModel(
@@ -28,9 +29,10 @@ class TableOverviewViewModel(
         loadTables()
     }
 
-    private fun loadTables() {
+    fun loadTables() {
+        _uiState.update { it.copy(isRefreshing = true) }
         getTablesUseCase().onEach { tables ->
-            _uiState.update { it.copy(tables = tables) }
+            _uiState.update { it.copy(tables = tables, isRefreshing = false) }
         }.launchIn(viewModelScope)
     }
 

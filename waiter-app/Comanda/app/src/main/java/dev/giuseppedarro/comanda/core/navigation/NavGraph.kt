@@ -11,7 +11,7 @@ import dev.giuseppedarro.comanda.features.tables.presentation.navigation.tablesG
 fun NavGraph() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = FeatureGraph.Login.route) {
+    NavHost(navController = navController, startDestination = Login) {
         loginGraph(navController)
         tablesGraph(navController)
         ordersGraph(navController)

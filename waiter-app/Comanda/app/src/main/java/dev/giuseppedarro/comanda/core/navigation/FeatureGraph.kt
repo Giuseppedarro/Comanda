@@ -1,7 +1,12 @@
 package dev.giuseppedarro.comanda.core.navigation
 
-sealed class FeatureGraph(val route: String) {
-    object Login : FeatureGraph("login_graph")
-    object Tables : FeatureGraph("tables_graph")
-    object Orders : FeatureGraph("orders_graph")
-}
+import kotlinx.serialization.Serializable
+
+@Serializable
+object Login
+
+@Serializable
+object Tables
+
+@Serializable
+object Orders

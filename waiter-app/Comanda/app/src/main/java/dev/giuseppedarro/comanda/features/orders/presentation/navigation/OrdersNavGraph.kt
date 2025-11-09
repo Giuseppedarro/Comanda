@@ -3,26 +3,23 @@ package dev.giuseppedarro.comanda.features.orders.presentation.navigation
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.navigation.navigation
-import dev.giuseppedarro.comanda.core.navigation.FeatureGraph
+import androidx.navigation.compose.navigation
+import androidx.navigation.toRoute
+import dev.giuseppedarro.comanda.core.navigation.Orders
+import dev.giuseppedarro.comanda.core.navigation.Tables
 import dev.giuseppedarro.comanda.features.orders.presentation.MenuOrderScreen
 
 fun NavGraphBuilder.ordersGraph(navController: NavController) {
-    navigation(
-        startDestination = OrdersRoute.MenuOrder.route,
-        route = FeatureGraph.Orders.route // The route for the whole orders graph
-    ) {
-        composable(
-            route = OrdersRoute.MenuOrder.route,
-            arguments = OrdersRoute.MenuOrder.arguments
-        ) {
-            val tableNumber = it.arguments?.getInt("tableNumber") ?: 0
-            val numberOfPeople = it.arguments?.getInt("numberOfPeople") ?: 0
+    navigation<Orders>(startDestination = MenuOrder(tableNumber = 0, numberOfPeople = 0)) {
+        composable<MenuOrder> { backStackEntry ->
+            val args = backStackEntry.toRoute<MenuOrder>()
             MenuOrderScreen(
-                tableNumber = tableNumber,
-                numberOfPeople = numberOfPeople,
-                onProceedClick = { /* TODO: Navigate to order summary */ },
-                onBillOverviewClick = { /* TODO: Navigate to bill overview */ }
+                tableNumber = args.tableNumber,
+                numberOfPeople = args.numberOfPeople,
+                onSendClick = {
+                    // For now, after sending navigate back to Table Overview
+                    navController.navigate(Tables)
+                }
             )
         }
     }
