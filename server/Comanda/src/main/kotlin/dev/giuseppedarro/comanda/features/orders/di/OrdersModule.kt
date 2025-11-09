@@ -10,7 +10,7 @@ import org.koin.dsl.module
 
 val ordersModule = module {
     single<OrdersRepository> { OrdersRepositoryImpl() }
-    single { SubmitOrderUseCase(get()) }
+    single { SubmitOrderUseCase(get(), get()) }
     single { GetOrdersUseCase(get()) }
     single { GetOrdersForTableUseCase(get()) }
     single { GetOrderByIdUseCase(get()) }
