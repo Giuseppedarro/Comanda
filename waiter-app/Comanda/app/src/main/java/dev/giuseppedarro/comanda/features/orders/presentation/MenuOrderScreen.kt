@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import android.widget.Toast
+import androidx.compose.material.icons.filled.Newspaper
 import dev.giuseppedarro.comanda.core.presentation.ComandaTopAppBar
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuItem
@@ -131,6 +132,9 @@ fun MenuOrderContent(
             ComandaTopAppBar(
                 title = "Table $tableNumber - $numberOfPeople People",
                 actions = {
+                    IconButton(onSendClick) {
+                        Icon(Icons.Filled.Newspaper, contentDescription = "Send bill")
+                    }
                     IconButton(onClick = onSendClick, enabled = !uiState.isLoading) {
                         Icon(Icons.Filled.Send, contentDescription = "Send order")
                     }
@@ -166,7 +170,8 @@ fun MenuOrderContent(
                         modifier = Modifier.fillMaxWidth().clickable { onCategorySelected(category) },
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.surface
-                        )
+                        ),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
                     ) {
                         Box(
                             modifier = Modifier.padding(16.dp).fillMaxWidth(),
