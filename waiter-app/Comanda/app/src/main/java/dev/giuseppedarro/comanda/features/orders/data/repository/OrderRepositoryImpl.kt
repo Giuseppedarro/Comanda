@@ -9,6 +9,8 @@ import dev.giuseppedarro.comanda.features.orders.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuItem
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderItem
 import dev.giuseppedarro.comanda.features.orders.domain.repository.OrderRepository
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -97,6 +99,10 @@ class OrderRepositoryImpl(
 
             api.submitOrder(token, request)
             Result.Success(Unit)
+        } catch (e: ClientRequestException) {
+            val response = e.response
+            val text = response.bodyAsText()
+            Result.Error("Error ${response.status.value}: $text")
         } catch (e: Exception) {
             e.printStackTrace()
             Result.Error(e.message ?: "An unknown error occurred")
