@@ -9,12 +9,15 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -67,6 +70,7 @@ fun TableOverviewScreen(
         onSettingsClick = { /* TODO: Handle settings click */ },
         isRefreshing = uiState.isRefreshing,
         onRefresh = viewModel::loadTables,
+        onAddTableClick = viewModel::onAddTableClicked,
         modifier = modifier
     )
 }
@@ -79,6 +83,7 @@ fun TableOverviewContent(
     onSettingsClick: () -> Unit,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
+    onAddTableClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val pullRefreshState = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = onRefresh)
@@ -94,6 +99,15 @@ fun TableOverviewContent(
                     }
                 }
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onAddTableClick,
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Add table")
+            }
         }
     ) { innerPadding ->
         Box(
@@ -136,7 +150,8 @@ fun TableOverviewScreenPreview() {
             onTableClick = {},
             onSettingsClick = {},
             isRefreshing = false,
-            onRefresh = {}
+            onRefresh = {},
+            onAddTableClick = {}
         )
     }
 }

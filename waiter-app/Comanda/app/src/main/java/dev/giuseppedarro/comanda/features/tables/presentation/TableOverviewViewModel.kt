@@ -2,7 +2,9 @@ package dev.giuseppedarro.comanda.features.tables.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.giuseppedarro.comanda.core.utils.Result
 import dev.giuseppedarro.comanda.features.tables.domain.model.Table
+import dev.giuseppedarro.comanda.features.tables.domain.use_case.AddTableUseCase
 import dev.giuseppedarro.comanda.features.tables.domain.use_case.GetTablesUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -10,6 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 data class TableOverviewUiState(
     val tables: List<Table> = emptyList(),
@@ -19,7 +22,8 @@ data class TableOverviewUiState(
 )
 
 class TableOverviewViewModel(
-    private val getTablesUseCase: GetTablesUseCase
+    private val getTablesUseCase: GetTablesUseCase,
+    private val addTableUseCase: AddTableUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TableOverviewUiState())
@@ -52,5 +56,17 @@ class TableOverviewViewModel(
         // TODO: Handle navigation with the new order details
         // For now, just dismiss the dialog
         onDialogDismiss()
+    }
+
+    fun onAddTableClicked() {
+        viewModelScope.launch {
+            when (addTableUseCase()) {
+                is Result.Success -> loadTables()
+                is Result.Error -> {
+                    // TODO: Show error message
+                }
+                else -> {}
+            }
+        }
     }
 }
