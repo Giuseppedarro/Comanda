@@ -103,8 +103,8 @@ fun TableOverviewContent(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddTableClick,
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
+                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                contentColor = MaterialTheme.colorScheme.onTertiaryContainer
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add table")
             }
