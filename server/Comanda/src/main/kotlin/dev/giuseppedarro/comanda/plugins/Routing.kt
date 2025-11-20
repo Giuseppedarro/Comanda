@@ -8,6 +8,7 @@ import dev.giuseppedarro.comanda.features.orders.domain.usecase.GetOrdersForTabl
 import dev.giuseppedarro.comanda.features.orders.domain.usecase.GetOrdersUseCase
 import dev.giuseppedarro.comanda.features.orders.domain.usecase.SubmitOrderUseCase
 import dev.giuseppedarro.comanda.features.orders.presentation.ordersRoutes
+import dev.giuseppedarro.comanda.features.tables.domain.usecase.AddTableUseCase
 import dev.giuseppedarro.comanda.features.tables.domain.usecase.GetTablesUseCase
 import dev.giuseppedarro.comanda.features.tables.presentation.tablesRoutes
 import io.ktor.server.application.*
@@ -19,6 +20,7 @@ fun Application.configureRouting() {
     val loginUseCase by inject<LoginUseCase>()
     val refreshTokenUseCase by inject<RefreshTokenUseCase>()
     val getTablesUseCase by inject<GetTablesUseCase>()
+    val addTableUseCase by inject<AddTableUseCase>()
     val submitOrderUseCase by inject<SubmitOrderUseCase>()
     val getOrdersUseCase by inject<GetOrdersUseCase>()
     val getOrdersForTableUseCase by inject<GetOrdersForTableUseCase>()
@@ -26,7 +28,7 @@ fun Application.configureRouting() {
 
     routing {
         authRoutes(loginUseCase, refreshTokenUseCase)
-        tablesRoutes(getTablesUseCase)
+        tablesRoutes(getTablesUseCase, addTableUseCase)
         ordersRoutes(submitOrderUseCase, getOrdersUseCase, getOrdersForTableUseCase, getOrderByIdUseCase)
         get("/") {
             call.respondText("Hello World!")

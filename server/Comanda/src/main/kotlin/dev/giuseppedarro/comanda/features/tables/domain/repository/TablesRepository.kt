@@ -5,4 +5,5 @@ import dev.giuseppedarro.comanda.features.tables.domain.model.Table
 interface TablesRepository {
     suspend fun getTables(): List<Table>
     suspend fun setTableOccupied(tableNumber: Int, occupied: Boolean): Table?
+    suspend fun addTable(): Table
 }

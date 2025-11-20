@@ -20,4 +20,11 @@ class TablesRepositoryImpl : TablesRepository {
         tables[index] = updated
         return updated
     }
+
+    override suspend fun addTable(): Table {
+        val newTableNumber = (tables.maxOfOrNull { it.number } ?: 0) + 1
+        val newTable = Table(number = newTableNumber, isOccupied = false)
+        tables.add(newTable)
+        return newTable
+    }
 }
