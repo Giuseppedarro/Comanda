@@ -7,11 +7,10 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 
 fun Application.configureSecurity() {
-    // These values MUST match the ones in AuthDataSource.kt
-    val jwtAudience = "jwt-audience"
-    val jwtIssuer = "https://jwt-provider-domain/"
-    val jwtRealm = "Comanda Server" // This can be any string
-    val jwtSecret = "secret"
+    val jwtAudience = environment.config.property("jwt.audience").getString()
+    val jwtIssuer = environment.config.property("jwt.issuer").getString()
+    val jwtRealm = environment.config.property("jwt.realm").getString()
+    val jwtSecret = environment.config.property("jwt.secret").getString()
 
     install(Authentication) {
         jwt("auth-jwt") {

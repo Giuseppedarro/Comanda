@@ -1,6 +1,7 @@
 
 val kotlin_version: String by project
 val logback_version: String by project
+val exposed_version: String by project
 
 plugins {
     kotlin("jvm") version "2.2.20"
@@ -36,6 +37,17 @@ dependencies {
     implementation("io.insert-koin:koin-ktor")
     // SLF4J Logger
     implementation("io.insert-koin:koin-logger-slf4j")
+
+    // Exposed
+    implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
+
+    // PostgreSQL Driver
+    implementation("org.postgresql:postgresql:42.5.0")
+
+    // HikariCP
+    implementation("com.zaxxer:HikariCP:5.0.1")
 
     testImplementation("io.ktor:ktor-server-test-host")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")

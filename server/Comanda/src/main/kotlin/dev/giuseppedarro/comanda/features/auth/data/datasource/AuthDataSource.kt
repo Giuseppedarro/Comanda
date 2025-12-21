@@ -6,18 +6,32 @@ import dev.giuseppedarro.comanda.features.auth.data.model.LoginRequest
 import dev.giuseppedarro.comanda.features.auth.data.model.LoginResponse
 import dev.giuseppedarro.comanda.features.auth.data.model.RefreshTokenRequest
 import dev.giuseppedarro.comanda.features.auth.data.model.TokenResponse
+import dev.giuseppedarro.comanda.features.users.data.Users
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
-class AuthDataSource {
-    // Please read the jwt property from the config file.
-    private val jwtAudience = "jwt-audience"
-    private val jwtDomain = "https://jwt-provider-domain/"
-    private val jwtSecret = "secret"
+class AuthDataSource(
+    private val jwtAudience: String,
+    private val jwtDomain: String,
+    private val jwtSecret: String
+) {
 
     suspend fun login(request: LoginRequest): Result<LoginResponse> {
-        if (request.employeeId == "1234" && request.password == "password") {
-            val accessToken = generateAccessToken(request.employeeId, "WAITER")
-            val refreshToken = generateRefreshToken(request.employeeId)
+        val userRow = transaction {
+            Users.select {
+                (Users.employeeId eq request.employeeId) and (Users.password eq request.password)
+            }.singleOrNull()
+        }
+
+        if (userRow != null) {
+            val employeeId = userRow[Users.employeeId]
+            val role = userRow[Users.role]
+            val name = userRow[Users.name]
+            
+            val accessToken = generateAccessToken(employeeId, role, name)
+            val refreshToken = generateRefreshToken(employeeId)
             return Result.success(LoginResponse(accessToken, refreshToken))
         } else {
             return Result.failure(Exception("Invalid credentials"))
@@ -25,27 +39,31 @@ class AuthDataSource {
     }
 
     suspend fun refreshToken(request: RefreshTokenRequest): Result<TokenResponse> {
-        // For now, we'll just generate a new pair of tokens without validating the refresh token.
-        // In a real implementation, we would validate the refresh token first.
         val decodedJWT = JWT.decode(request.refreshToken)
         val employeeId = decodedJWT.getClaim("userId").asString()
 
-        // In a real implementation, we would look up the user's role from the database
-        // For this stub, we'll just hardcode it.
-        val role = "WAITER"
+        val userRow = transaction {
+            Users.select { Users.employeeId eq employeeId }.singleOrNull()
+        }
 
-        val newAccessToken = generateAccessToken(employeeId, role)
-        val newRefreshToken = generateRefreshToken(employeeId)
-
-        return Result.success(TokenResponse(newAccessToken, newRefreshToken))
+        if (userRow != null) {
+            val role = userRow[Users.role]
+            val name = userRow[Users.name]
+            
+            val newAccessToken = generateAccessToken(employeeId, role, name)
+            val newRefreshToken = generateRefreshToken(employeeId)
+            return Result.success(TokenResponse(newAccessToken, newRefreshToken))
+        } else {
+            return Result.failure(Exception("User not found"))
+        }
     }
 
-    private fun generateAccessToken(employeeId: String, role: String): String {
+    private fun generateAccessToken(employeeId: String, role: String, name: String): String {
         return JWT.create()
             .withAudience(jwtAudience)
             .withIssuer(jwtDomain)
             .withClaim("userId", employeeId)
-            .withClaim("name", "Waiter Name") // Placeholder name
+            .withClaim("name", name)
             .withClaim("role", role)
             .withExpiresAt(Date(System.currentTimeMillis() + 600000)) // 10 minutes
             .sign(Algorithm.HMAC256(jwtSecret))

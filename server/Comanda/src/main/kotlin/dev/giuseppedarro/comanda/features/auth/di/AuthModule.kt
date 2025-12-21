@@ -5,11 +5,18 @@ import dev.giuseppedarro.comanda.features.auth.data.repository.AuthRepositoryImp
 import dev.giuseppedarro.comanda.features.auth.domain.repository.AuthRepository
 import dev.giuseppedarro.comanda.features.auth.domain.usecase.LoginUseCase
 import dev.giuseppedarro.comanda.features.auth.domain.usecase.RefreshTokenUseCase
+import io.ktor.server.config.*
 import org.koin.dsl.module
 
-val authModule = module {
+fun authModule(config: ApplicationConfig) = module {
     single<AuthRepository> { AuthRepositoryImpl(get()) }
-    single { AuthDataSource() }
+    single { 
+        AuthDataSource(
+            jwtAudience = config.property("jwt.audience").getString(),
+            jwtDomain = config.property("jwt.issuer").getString(),
+            jwtSecret = config.property("jwt.secret").getString()
+        ) 
+    }
     single { LoginUseCase(get()) }
     single { RefreshTokenUseCase(get()) }
 }
