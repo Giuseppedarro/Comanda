@@ -1,74 +1,65 @@
 # Comanda
 
-Comanda is a Kotlin/Ktor-based backend for managing restaurant orders and tables.
+Comanda is a modern, end-to-end restaurant management system designed to streamline the ordering process. It consists of a mobile app for waiters, a desktop app for cashiers, and a central backend server. This project showcases a complete, multi-platform ecosystem built with the latest Kotlin technologies.
 
-## Latest changes (from last commit)
+##  Project Goals
 
-- Added PostgreSQL support with a Docker Compose service (server/Comanda/docker-compose.yml).
-- Integrated Exposed (JetBrains SQL framework) and HikariCP for database access (Gradle, Exposed modules and HikariCP dependency).
-- Added a database plugin (server/Comanda/src/main/kotlin/dev/giuseppedarro/comanda/plugins/Database.kt) which:
-  - Connects to PostgreSQL via HikariCP
-  - Creates a `users` table (Users schema) and inserts a default user if none exists
-- Updated authentication to read JWT settings from `application.yaml` and to look up users from the database instead of using hardcoded credentials.
-- Added a `Users` schema (server/Comanda/src/main/kotlin/dev/giuseppedarro/comanda/features/users/data/UserSchema.kt).
-- Wired Koin modules to accept `ApplicationConfig` so configuration values can be injected.
-- Updated `application.yaml` formatting and added JWT configuration entries.
-- Brought database initialization into the application startup (configureDatabase called from Application module).
+- **📱 Waiter App (Android):** Allows waiters to manage tables, take orders, and send them to the kitchen in real-time.
+- **💻 Cashier App (Desktop):** Enables cashiers to manage the menu, view incoming orders, and process payments.
+- **🌐 Server (Ktor):** A central backend that handles data synchronization, authentication, and business logic.
 
-## Requirements
+##  Features
 
-- JDK 17+ (or compatible with the Gradle Kotlin/JS plugin and Ktor version used)
-- Docker and Docker Compose (to run PostgreSQL locally)
-- Gradle (recommended to use the Gradle wrapper)
+- **Real-time Synchronization:** Orders and table statuses are updated in real-time across all devices using WebSockets.
+- **User Authentication:** Secure JWT-based authentication for waiters and cashiers.
+- **Offline Support:** The waiter app will support offline order creation and synchronization.
+- **Modern UI:** A clean and intuitive user interface built with Jetpack Compose and Material 3.
 
-## Quick start (development)
+##  Technologies & Libraries
 
-1. Start PostgreSQL using Docker Compose:
+This project is built with a modern technology stack, showcasing the power of Kotlin for end-to-end development.
 
-   cd server/Comanda
-   docker-compose up -d
+### Waiter App (Android)
 
-   This starts PostgreSQL on localhost:5432 with username `postgres`, password `postgres` and database `comanda`.
+| Library | Version |
+|---|---|
+| Kotlin | 2.0.21 |
+| Jetpack Compose BOM | 2024.09.00 |
+| Activity Compose | 1.8.0 |
+| Lifecycle KTX | 2.6.1 |
+| Navigation Compose | 2.7.7 |
+| Core KTX | 1.10.1 |
+| Material 3 | 1.6.0 |
+| Koin | 4.1.1 |
 
-2. Run the application (from repo root):
+### Badges
 
-   ./gradlew :server:Comanda:run
+![Kotlin](https://img.shields.io/badge/Kotlin-2.0.21-blue.svg?style=flat&logo=kotlin)
+![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-2024.09.00-blue.svg?style=flat&logo=jetpack-compose)
+![Navigation](https://img.shields.io/badge/Navigation-2.7.7-blue.svg?style=flat&logo=jetpack-compose)
+![Koin](https://img.shields.io/badge/Koin-4.1.1-blue.svg?style=flat&logo=kotlin)
+![Android](https://img.shields.io/badge/Android-blue.svg?style=flat&logo=android)
+![Material 3](https://img.shields.io/badge/Material%203-1.6.0-lightgrey.svg?style=flat&logo=material-design)
 
-   The application will connect to the local PostgreSQL database using the default JDBC URL `jdbc:postgresql://localhost:5432/comanda`.
 
-3. Default credentials
+##  Architecture
 
-   The database plugin will create a default user if none exists:
-   - employeeId: `1234`
-   - password: `password`
-   - role: `WAITER`
+The system is designed with a client-server architecture. The backend is handled by a **Ktor Server**, which manages data and communication.
 
-   Note: Passwords are stored in plaintext in the database for now; replace this with a proper hashing strategy (bcrypt/argon2) before production use.
+The client applications (**Waiter App** and **Cashier App**) are built following the **MVVM (Model-View-ViewModel)** architecture pattern, implementing a **UDF (Unidirectional Data Flow)** to ensure a predictable and maintainable state management. **Koin** is used for dependency injection to manage the lifecycle of components like ViewModels and Repositories.
 
-## Configuration
+```mermaid
+graph TD
+    A[Waiter App] --> C{Ktor Server};
+    B[Cashier App] --> C;
+    C --> D[Database];
+```
 
-- `server/Comanda/src/main/resources/application.yaml` contains these JWT settings:
-  - `jwt.secret` — secret used to sign tokens
-  - `jwt.issuer` — issuer (e.g. http://0.0.0.0:8080)
-  - `jwt.audience` — expected audience for tokens
-  - `jwt.realm` — authentication realm
+##  Project Structure
 
-- The database plugin currently uses the following hard-coded JDBC parameters inside `configureDatabase()`:
-  - jdbcUrl: `jdbc:postgresql://localhost:5432/comanda`
-  - username: `postgres`
-  - password: `postgres`
+This project is a monorepo containing the following modules:
 
-  If you want to inject these from environment variables or `application.yaml`, modify `configureDatabase()` to read the values from `environment.config`.
+- `waiter-app/`: The Android application for waiters.
+- `cashier-app/`: The desktop application for the cashier.
+- `server/`: The Ktor backend.
 
-## Notes & next steps
-
-- Hash passwords before storing them.
-- Consider moving DB and JWT secrets into environment variables or a secrets manager.
-- Add migrations (Flyway or Liquibase) instead of creating tables directly on startup.
-
----
-
-This README was updated to reflect the changes in the most recent commit (added PostgreSQL, Exposed, HikariCP, Users schema, database initialization, and JWT configuration). For the full commit details see:
-https://github.com/Giuseppedarro/Comanda/commit/57c90394246fb61d02a502348cea1239123c92f8
-
-More commits: https://github.com/Giuseppedarro/Comanda/commits
