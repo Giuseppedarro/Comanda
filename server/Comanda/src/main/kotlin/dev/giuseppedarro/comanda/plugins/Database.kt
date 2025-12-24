@@ -2,6 +2,9 @@ package dev.giuseppedarro.comanda.plugins
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import dev.giuseppedarro.comanda.features.orders.data.OrderItems
+import dev.giuseppedarro.comanda.features.orders.data.Orders
+import dev.giuseppedarro.comanda.features.tables.data.Tables
 import dev.giuseppedarro.comanda.features.users.data.Users
 import io.ktor.server.application.*
 import org.jetbrains.exposed.sql.Database
@@ -25,7 +28,7 @@ fun Application.configureDatabase() {
     Database.connect(dataSource)
 
     transaction {
-        SchemaUtils.create(Users)
+        SchemaUtils.create(Users, Tables, Orders, OrderItems)
 
         // Create a default user if none exists
         if (Users.selectAll().count() == 0L) {
@@ -34,6 +37,16 @@ fun Application.configureDatabase() {
                 it[name] = "Default Waiter"
                 it[password] = "password"
                 it[role] = "WAITER"
+            }
+        }
+
+        // Create default tables if none exist
+        if (Tables.selectAll().count() == 0L) {
+            for (i in 1..20) {
+                Tables.insert {
+                    it[number] = i
+                    it[isOccupied] = false // Default to free
+                }
             }
         }
     }

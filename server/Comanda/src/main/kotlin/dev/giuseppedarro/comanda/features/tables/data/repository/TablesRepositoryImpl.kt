@@ -1,30 +1,51 @@
 package dev.giuseppedarro.comanda.features.tables.data.repository
 
+import dev.giuseppedarro.comanda.features.tables.data.Tables
 import dev.giuseppedarro.comanda.features.tables.domain.model.Table
 import dev.giuseppedarro.comanda.features.tables.domain.repository.TablesRepository
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 
 class TablesRepositoryImpl : TablesRepository {
-    // In-memory state of tables; initialized to match previous behavior (even indexes occupied)
-    private val tables: MutableList<Table> = MutableList(20) { Table(number = it + 1, isOccupied = it % 2 == 0) }
 
     override suspend fun getTables(): List<Table> {
-        return tables.toList()
+        return transaction {
+            Tables.selectAll().orderBy(Tables.number).map {
+                Table(
+                    number = it[Tables.number],
+                    isOccupied = it[Tables.isOccupied]
+                )
+            }
+        }
     }
 
     override suspend fun setTableOccupied(tableNumber: Int, occupied: Boolean): Table? {
-        val index = tables.indexOfFirst { it.number == tableNumber }
-        if (index == -1) return null
-        val current = tables[index]
-        if (current.isOccupied == occupied) return current
-        val updated = current.copy(isOccupied = occupied)
-        tables[index] = updated
-        return updated
+        return transaction {
+            val updatedCount = Tables.update({ Tables.number eq tableNumber }) {
+                it[isOccupied] = occupied
+            }
+            
+            if (updatedCount > 0) {
+                Table(number = tableNumber, isOccupied = occupied)
+            } else {
+                null
+            }
+        }
     }
 
     override suspend fun addTable(): Table {
-        val newTableNumber = (tables.maxOfOrNull { it.number } ?: 0) + 1
-        val newTable = Table(number = newTableNumber, isOccupied = false)
-        tables.add(newTable)
-        return newTable
+        return transaction {
+            val maxNumber = Tables.selectAll().maxOfOrNull { it[Tables.number] } ?: 0
+            val newNumber = maxNumber + 1
+            
+            Tables.insert {
+                it[number] = newNumber
+                it[isOccupied] = false
+            }
+            
+            Table(number = newNumber, isOccupied = false)
+        }
     }
 }
