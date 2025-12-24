@@ -1,4 +1,10 @@
 # Comanda
+![Kotlin](https://img.shields.io/badge/Kotlin-2.0.21-blue.svg?style=flat&logo=kotlin)
+![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-2024.09.00-blue.svg?style=flat&logo=jetpack-compose)
+![Navigation](https://img.shields.io/badge/Navigation-2.7.7-blue.svg?style=flat&logo=jetpack-compose)
+![Koin](https://img.shields.io/badge/Koin-4.1.1-blue.svg?style=flat&logo=kotlin)
+![Android](https://img.shields.io/badge/Android-blue.svg?style=flat&logo=android)
+![Material 3](https://img.shields.io/badge/Material%203-1.6.0-lightgrey.svg?style=flat&logo=material-design)
 
 Comanda is a modern, end-to-end restaurant management system designed to streamline the ordering process. It consists of a mobile app for waiters, a desktop app for cashiers, and a central backend server. This project showcases a complete, multi-platform ecosystem built with the latest Kotlin technologies.
 
@@ -41,15 +47,6 @@ This project is built with a modern technology stack, showcasing the power of Ko
 | PostgreSQL | 14.5 | The relational database running in Docker. |
 | HikariCP | 5.0.1 | High-performance JDBC connection pooling. |
 | Koin | 3.5.6 | Dependency injection for Ktor. |
-
-### Badges
-
-![Kotlin](https://img.shields.io/badge/Kotlin-2.0.21-blue.svg?style=flat&logo=kotlin)
-![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-2024.09.00-blue.svg?style=flat&logo=jetpack-compose)
-![Navigation](https://img.shields.io/badge/Navigation-2.7.7-blue.svg?style=flat&logo=jetpack-compose)
-![Koin](https://img.shields.io/badge/Koin-4.1.1-blue.svg?style=flat&logo=kotlin)
-![Android](https://img.shields.io/badge/Android-blue.svg?style=flat&logo=android)
-![Material 3](https://img.shields.io/badge/Material%203-1.6.0-lightgrey.svg?style=flat&logo=material-design)
 
 
 ##  Architecture
