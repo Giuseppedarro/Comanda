@@ -2,6 +2,8 @@ package dev.giuseppedarro.comanda.plugins
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import dev.giuseppedarro.comanda.features.menu.data.MenuCategories
+import dev.giuseppedarro.comanda.features.menu.data.MenuItems
 import dev.giuseppedarro.comanda.features.orders.data.OrderItems
 import dev.giuseppedarro.comanda.features.orders.data.Orders
 import dev.giuseppedarro.comanda.features.tables.data.Tables
@@ -28,7 +30,7 @@ fun Application.configureDatabase() {
     Database.connect(dataSource)
 
     transaction {
-        SchemaUtils.create(Users, Tables, Orders, OrderItems)
+        SchemaUtils.create(Users, Tables, Orders, OrderItems, MenuCategories, MenuItems)
 
         // Create a default user if none exists
         if (Users.selectAll().count() == 0L) {
@@ -47,6 +49,63 @@ fun Application.configureDatabase() {
                     it[number] = i
                     it[isOccupied] = false // Default to free
                 }
+            }
+        }
+
+        // Create default menu if none exists
+        if (MenuCategories.selectAll().count() == 0L) {
+            // Appetizers
+            MenuCategories.insert {
+                it[id] = "cat_appetizers"
+                it[name] = "Appetizers"
+            }
+            MenuItems.insert {
+                it[id] = "1"
+                it[categoryId] = "cat_appetizers"
+                it[name] = "Bruschetta"
+                it[price] = 7.00
+            }
+            MenuItems.insert {
+                it[id] = "2"
+                it[categoryId] = "cat_appetizers"
+                it[name] = "Garlic Bread"
+                it[price] = 5.00
+            }
+
+            // Main Courses
+            MenuCategories.insert {
+                it[id] = "cat_main"
+                it[name] = "Main Courses"
+            }
+            MenuItems.insert {
+                it[id] = "3"
+                it[categoryId] = "cat_main"
+                it[name] = "Gourmet Burger"
+                it[price] = 12.99
+            }
+            MenuItems.insert {
+                it[id] = "4"
+                it[categoryId] = "cat_main"
+                it[name] = "Caesar Salad"
+                it[price] = 8.50
+            }
+            
+            // Drinks
+            MenuCategories.insert {
+                it[id] = "cat_drinks"
+                it[name] = "Drinks"
+            }
+            MenuItems.insert {
+                it[id] = "5"
+                it[categoryId] = "cat_drinks"
+                it[name] = "Coke"
+                it[price] = 3.00
+            }
+            MenuItems.insert {
+                it[id] = "6"
+                it[categoryId] = "cat_drinks"
+                it[name] = "Beer"
+                it[price] = 5.00
             }
         }
     }

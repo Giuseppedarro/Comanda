@@ -2,6 +2,7 @@ package dev.giuseppedarro.comanda.features.orders.data.remote
 
 import dev.giuseppedarro.comanda.features.orders.data.remote.dto.GetOrderResponse
 import dev.giuseppedarro.comanda.features.orders.data.remote.dto.SubmitOrderRequest
+import dev.giuseppedarro.comanda.features.orders.domain.model.MenuCategory
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -12,6 +13,14 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 
 class OrderApi(private val client: HttpClient) {
+
+    suspend fun getMenu(token: String): List<MenuCategory> {
+        return client.get("menu") {
+            headers {
+                append("Authorization", "Bearer $token")
+            }
+        }.body()
+    }
 
     suspend fun getOrdersForTable(token: String, tableNumber: Int): List<GetOrderResponse> {
         return client.get("orders") {

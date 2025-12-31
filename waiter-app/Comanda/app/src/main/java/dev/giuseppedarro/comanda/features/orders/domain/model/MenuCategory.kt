@@ -1,3 +1,9 @@
 package dev.giuseppedarro.comanda.features.orders.domain.model
 
-data class MenuCategory(val name: String, val items: List<MenuItem>)
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class MenuCategory(
+    val name: String,
+    val items: List<MenuItem>
+)
