@@ -25,33 +25,21 @@ class OrderRepositoryImpl(
 
     override fun getMenu(): Flow<Result<List<MenuCategory>>> = flow {
         emit(Result.Loading())
-        val mockMenu = listOf(
-            MenuCategory("Appetizers", listOf(
-                MenuItem("Bruschetta", "$7.00"),
-                MenuItem("Garlic Bread", "$5.00"),
-                MenuItem("Stuffed Mushrooms", "$8.50"),
-                MenuItem("Spring Rolls", "$6.00"),
-                MenuItem("Onion Rings", "$5.50"),
-                MenuItem("Calamari", "$9.00")
-            )),
-            MenuCategory("Main Courses", listOf(MenuItem("Gourmet Burger", "$12.99"), MenuItem("Caesar Salad", "$8.50"))),
-            MenuCategory("Desserts", listOf(MenuItem("Tiramisu", "$6.50"), MenuItem("Cheesecake", "$7.50"))),
-            MenuCategory("Drinks", listOf(
-                MenuItem("Cola", "$2.50"),
-                MenuItem("Cappuccino", "$4.75"),
-                MenuItem("Iced Tea", "$2.00"),
-                MenuItem("Orange Juice", "$3.00"),
-                MenuItem("Latte", "$4.00"),
-                MenuItem("Water", "$1.00"),
-                MenuItem("Espresso", "$3.00"),
-                MenuItem("Lemonade", "$3.50"),
-                MenuItem("Apple Juice", "$3.00"),
-                MenuItem("Sparkling Water", "$1.50"),
-                MenuItem("Green Tea", "$2.50"),
-                MenuItem("Beer", "$5.00")
-            ))
-        )
-        emit(Result.Success(mockMenu))
+        try {
+            val token = tokenRepository.getAccessToken() ?: throw Exception("No auth token found")
+            val remoteMenu = api.getMenu(token)
+            val mapped = remoteMenu.map { categoryDto ->
+                MenuCategory(
+                    name = categoryDto.name,
+                    items = categoryDto.items.map { itemDto ->
+                        MenuItem(name = itemDto.name, price = itemDto.price)
+                    }
+                )
+            }
+            emit(Result.Success(mapped))
+        } catch (e: Exception) {
+            emit(Result.Error(e.message ?: "An unknown error occurred"))
+        }
     }
 
     override fun getOrdersForTable(tableNumber: Int): Flow<Result<List<OrderItem>>> = flow {

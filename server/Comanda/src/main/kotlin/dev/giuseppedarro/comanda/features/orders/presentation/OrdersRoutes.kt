@@ -17,6 +17,12 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class OrderResponse(val status: String, val message: String)
 
+@Serializable
+data class MenuItemDto(val name: String, val price: String)
+
+@Serializable
+data class MenuCategoryDto(val name: String, val items: List<MenuItemDto>)
+
 fun Route.ordersRoutes(
     submitOrderUseCase: SubmitOrderUseCase,
     getOrdersUseCase: GetOrdersUseCase,
@@ -25,6 +31,55 @@ fun Route.ordersRoutes(
 ) {
     authenticate("auth-jwt") {
         route("/orders") {
+            // GET /orders/menu - returns the restaurant menu (hard-coded for now)
+            get("/menu") {
+                val menu = listOf(
+                    MenuCategoryDto(
+                        name = "Appetizers",
+                        items = listOf(
+                            MenuItemDto("Bruschetta", "$7.00"),
+                            MenuItemDto("Garlic Bread", "$5.00"),
+                            MenuItemDto("Stuffed Mushrooms", "$8.50"),
+                            MenuItemDto("Spring Rolls", "$6.00"),
+                            MenuItemDto("Onion Rings", "$5.50"),
+                            MenuItemDto("Calamari", "$9.00")
+                        )
+                    ),
+                    MenuCategoryDto(
+                        name = "Main Courses",
+                        items = listOf(
+                            MenuItemDto("Gourmet Burger", "$12.99"),
+                            MenuItemDto("Caesar Salad", "$8.50")
+                        )
+                    ),
+                    MenuCategoryDto(
+                        name = "Desserts",
+                        items = listOf(
+                            MenuItemDto("Tiramisu", "$6.50"),
+                            MenuItemDto("Cheesecake", "$7.50")
+                        )
+                    ),
+                    MenuCategoryDto(
+                        name = "Drinks",
+                        items = listOf(
+                            MenuItemDto("Cola", "$2.50"),
+                            MenuItemDto("Cappuccino", "$4.75"),
+                            MenuItemDto("Iced Tea", "$2.00"),
+                            MenuItemDto("Orange Juice", "$3.00"),
+                            MenuItemDto("Latte", "$4.00"),
+                            MenuItemDto("Water", "$1.00"),
+                            MenuItemDto("Espresso", "$3.00"),
+                            MenuItemDto("Lemonade", "$3.50"),
+                            MenuItemDto("Apple Juice", "$3.00"),
+                            MenuItemDto("Sparkling Water", "$1.50"),
+                            MenuItemDto("Green Tea", "$2.50"),
+                            MenuItemDto("Beer", "$5.00")
+                        )
+                    )
+                )
+                call.respond(HttpStatusCode.OK, menu)
+            }
+
             post {
                 val request = call.receive<SubmitOrderRequest>()
                 println(request)
