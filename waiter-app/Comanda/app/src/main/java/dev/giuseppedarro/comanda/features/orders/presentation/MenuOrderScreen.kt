@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
@@ -145,16 +144,13 @@ fun MenuOrderContent(
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
             LazyColumn(modifier = Modifier.weight(1f)) {
-                itemsIndexed(uiState.orderItems) { index, item ->
+                items(uiState.orderItems) { item ->
                     MenuItemRow(
                         itemName = item.menuItem.name,
                         itemPrice = item.menuItem.price,
                         quantity = item.quantity,
                         onQuantityChange = { newQuantity -> onQuantityChange(item, newQuantity) }
                     )
-                    if (index < uiState.orderItems.lastIndex) {
-                        Divider(modifier = Modifier.padding(horizontal = 16.dp))
-                    }
                 }
             }
 

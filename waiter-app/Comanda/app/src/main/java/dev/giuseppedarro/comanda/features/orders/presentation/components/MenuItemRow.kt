@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,28 +27,36 @@ fun MenuItemRow(
     onQuantityChange: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
+    Surface(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(horizontal = 16.dp, vertical = 4.dp),
+        shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
     ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = itemName,
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Text(
-                text = itemPrice,
-                style = MaterialTheme.typography.bodyMedium
-            )
-        }
-        IconButton(onClick = { onQuantityChange(quantity - 1) }) {
-            Icon(Icons.Default.RemoveCircle, contentDescription = "Remove")
-        }
-        Text(text = quantity.toString())
-        IconButton(onClick = { onQuantityChange(quantity + 1) }) {
-            Icon(Icons.Default.AddCircle, contentDescription = "Add")
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = itemName,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Text(
+                    text = itemPrice,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+            IconButton(onClick = { onQuantityChange(quantity - 1) }) {
+                Icon(Icons.Default.RemoveCircle, contentDescription = "Remove")
+            }
+            Text(text = quantity.toString())
+            IconButton(onClick = { onQuantityChange(quantity + 1) }) {
+                Icon(Icons.Default.AddCircle, contentDescription = "Add")
+            }
         }
     }
 }
