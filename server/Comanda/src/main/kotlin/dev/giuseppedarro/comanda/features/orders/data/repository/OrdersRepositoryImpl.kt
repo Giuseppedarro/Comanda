@@ -20,6 +20,41 @@ import java.time.format.DateTimeFormatter
 
 class OrdersRepositoryImpl : OrdersRepository {
 
+    companion object {
+        private val menuItemNames = mapOf(
+            // Appetizers
+            "app_bruschetta" to "Bruschetta",
+            "app_garlic_bread" to "Garlic Bread",
+            "app_mushrooms" to "Stuffed Mushrooms",
+            "app_spring_rolls" to "Spring Rolls",
+            "app_onion_rings" to "Onion Rings",
+            "app_calamari" to "Calamari",
+            // Main Courses
+            "main_burger" to "Gourmet Burger",
+            "main_caesar_salad" to "Caesar Salad",
+            // Desserts
+            "dess_tiramisu" to "Tiramisu",
+            "dess_cheesecake" to "Cheesecake",
+            // Drinks
+            "drink_cola" to "Cola",
+            "drink_cappuccino" to "Cappuccino",
+            "drink_iced_tea" to "Iced Tea",
+            "drink_orange_juice" to "Orange Juice",
+            "drink_latte" to "Latte",
+            "drink_water" to "Water",
+            "drink_espresso" to "Espresso",
+            "drink_lemonade" to "Lemonade",
+            "drink_apple_juice" to "Apple Juice",
+            "drink_sparkling_water" to "Sparkling Water",
+            "drink_green_tea" to "Green Tea",
+            "drink_beer" to "Beer"
+        )
+
+        private fun getMenuItemName(itemId: String): String {
+            return menuItemNames[itemId] ?: itemId
+        }
+    }
+
     override suspend fun submitOrder(request: SubmitOrderRequest): Result<Order> {
         val creationTime = DateTimeFormatter.ISO_INSTANT.format(Instant.now())
 
@@ -55,7 +90,7 @@ class OrdersRepositoryImpl : OrdersRepository {
                     println("Table: ${request.tableNumber}    People: ${request.numberOfPeople}    At: $creationTime")
                     println("----------------------------------------------------")
                     deltas.forEach { (itemId, qty) ->
-                        println(String.format("%2dx  %s", qty, itemId))
+                        println(String.format("%2dx  %s", qty, getMenuItemName(itemId)))
                     }
                     // If there are notes in the current request, list them under their items
                     val notesByItem = request.items.filter { !it.notes.isNullOrBlank() }
@@ -65,7 +100,7 @@ class OrdersRepositoryImpl : OrdersRepository {
                         println("----------------------------------------------------")
                         println("Notes:")
                         notesByItem.forEach { (itemId, notes) ->
-                            notes.forEach { note -> println(" - $itemId: $note") }
+                            notes.forEach { note -> println(" - ${getMenuItemName(itemId)}: $note") }
                         }
                     }
                     println("====================================================\n")
