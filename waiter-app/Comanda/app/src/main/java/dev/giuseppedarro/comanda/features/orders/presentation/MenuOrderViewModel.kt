@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dev.giuseppedarro.comanda.core.utils.Result
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuItem
+import dev.giuseppedarro.comanda.features.orders.domain.model.Order
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderItem
 import dev.giuseppedarro.comanda.features.orders.domain.use_case.GetMenuUseCase
 import dev.giuseppedarro.comanda.features.orders.domain.use_case.GetOrdersForTableUseCase
@@ -25,7 +26,8 @@ data class MenuOrderUiState(
     val selectedCategory: MenuCategory? = null,
     val isSheetVisible: Boolean = false,
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val existingOrder: Order? = null  // Hold the existing order reference
 )
 
 class MenuOrderViewModel(
@@ -53,8 +55,19 @@ class MenuOrderViewModel(
             getMenu().collect { res ->
                 when (res) {
                     is Result.Loading -> _uiState.update { it.copy(isLoading = true) }
-                    is Result.Success -> _uiState.update { it.copy(menuCategories = res.data.orEmpty(), isLoading = false, error = null) }
-                    is Result.Error -> _uiState.update { it.copy(isLoading = false, error = res.message) }
+                    is Result.Success -> _uiState.update {
+                        it.copy(
+                            menuCategories = res.data.orEmpty(),
+                            isLoading = false,
+                            error = null
+                        )
+                    }
+                    is Result.Error -> _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = res.message
+                        )
+                    }
                 }
             }
         }
@@ -65,8 +78,23 @@ class MenuOrderViewModel(
             getOrdersForTable(table).collect { res ->
                 when (res) {
                     is Result.Loading -> _uiState.update { it.copy(isLoading = true) }
-                    is Result.Success -> _uiState.update { it.copy(orderItems = res.data.orEmpty(), isLoading = false, error = null) }
-                    is Result.Error -> _uiState.update { it.copy(isLoading = false, error = res.message) }
+                    is Result.Success -> {
+                        val order = res.data
+                        _uiState.update {
+                            it.copy(
+                                orderItems = order?.items ?: emptyList(),
+                                existingOrder = order,
+                                isLoading = false,
+                                error = null
+                            )
+                        }
+                    }
+                    is Result.Error -> _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = res.message
+                        )
+                    }
                 }
             }
         }
@@ -81,19 +109,25 @@ class MenuOrderViewModel(
     }
 
     fun onMenuItemAdded(menuItem: MenuItem) {
-        val existingItem = _uiState.value.orderItems.find { it.menuItem.name == menuItem.name }
+        val existingItem = _uiState.value.orderItems.find { it.menuItem.id == menuItem.id }
         val newOrderItems = if (existingItem != null) {
-            _uiState.value.orderItems.map { if (it.menuItem.name == menuItem.name) it.copy(quantity = it.quantity + 1) else it }
+            _uiState.value.orderItems.map { if (it.menuItem.id == menuItem.id) it.copy(quantity = it.quantity + 1) else it }
         } else {
             _uiState.value.orderItems + OrderItem(menuItem)
         }
         // Hide sheet after selection
-        _uiState.update { it.copy(orderItems = newOrderItems, isSheetVisible = false, selectedCategory = null) }
+        _uiState.update {
+            it.copy(
+                orderItems = newOrderItems,
+                isSheetVisible = false,
+                selectedCategory = null
+            )
+        }
     }
 
     fun onQuantityChange(itemToChange: OrderItem, newQuantity: Int) {
         val newOrderItems = _uiState.value.orderItems.map {
-            if (it.menuItem.name == itemToChange.menuItem.name) it.copy(quantity = newQuantity.coerceAtLeast(0)) else it
+            if (it.menuItem.id == itemToChange.menuItem.id) it.copy(quantity = newQuantity.coerceAtLeast(0)) else it
         }.filter { it.quantity > 0 }
         _uiState.update { it.copy(orderItems = newOrderItems) }
     }
@@ -113,7 +147,12 @@ class MenuOrderViewModel(
             _uiState.update { it.copy(isLoading = true, error = null) }
             when (val res = submitOrder(tableNumber, numberOfPeople, items)) {
                 is Result.Success -> {
-                    _uiState.update { it.copy(isLoading = false) }
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            existingOrder = null  // Clear existing order after submission
+                        )
+                    }
                     onSuccess()
                 }
                 is Result.Error -> {

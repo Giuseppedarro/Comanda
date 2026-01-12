@@ -7,12 +7,11 @@ import dev.giuseppedarro.comanda.features.orders.data.remote.dto.OrderItemReques
 import dev.giuseppedarro.comanda.features.orders.data.remote.dto.SubmitOrderRequest
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuItem
+import dev.giuseppedarro.comanda.features.orders.domain.model.Order
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderItem
+import dev.giuseppedarro.comanda.features.orders.domain.model.OrderStatus
 import dev.giuseppedarro.comanda.features.orders.domain.repository.OrderRepository
-import io.ktor.client.plugins.ClientRequestException
-import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 
 class OrderRepositoryImpl(
@@ -20,48 +19,81 @@ class OrderRepositoryImpl(
     private val tokenRepository: TokenRepository
 ) : OrderRepository {
 
-    // The full menu is needed to map the incoming order items to their full MenuItem objects.
-    private val menuFlow = getMenu()
-
     override fun getMenu(): Flow<Result<List<MenuCategory>>> = flow {
         emit(Result.Loading())
         try {
             val token = tokenRepository.getAccessToken() ?: throw Exception("No auth token found")
-            val menu = api.getMenu(token)
-            emit(Result.Success(menu))
+            val remoteMenu = api.getMenu(token)
+            val mapped = remoteMenu.map { categoryDto ->
+                MenuCategory(
+                    name = categoryDto.name,
+                    items = categoryDto.items.map { itemDto ->
+                        MenuItem(
+                            id = itemDto.id ?: itemDto.name,  // Use name as id if backend doesn't provide it
+                            name = itemDto.name,
+                            price = itemDto.price
+                        )
+                    }
+                )
+            }
+            emit(Result.Success(mapped))
         } catch (e: Exception) {
-            e.printStackTrace()
-            emit(Result.Error(e.message ?: "An unknown error occurred", null))
+            emit(Result.Error(e.message ?: "An unknown error occurred"))
         }
     }
 
-    override fun getOrdersForTable(tableNumber: Int): Flow<Result<List<OrderItem>>> = flow {
+    override fun getOrdersForTable(tableNumber: Int): Flow<Result<Order?>> = flow {
         emit(Result.Loading())
         try {
             val token = tokenRepository.getAccessToken() ?: throw Exception("No auth token found")
-            
-            // Wait for the menu to be loaded, and handle if it fails
-            val menuResult = menuFlow.first { it !is Result.Loading<*> } // Wait for first non-loading state
-            if (menuResult is Result.Error) {
-                emit(Result.Error("Menu could not be loaded, so order cannot be displayed.", null))
+            val orderResponse = api.getOrdersForTable(token, tableNumber)
+
+            // If orderResponse is null, it means no order exists for this table (404 from backend)
+            if (orderResponse == null) {
+                emit(Result.Success(null))
                 return@flow
             }
-            val allMenuItems = (menuResult as Result.Success).data.orEmpty().flatMap { it.items }
 
-            // Now proceed with getting the orders for the table
-            val orderResponses = api.getOrdersForTable(token, tableNumber)
-            val orderForTable = orderResponses.lastOrNull()?.items ?: emptyList()
-
-            val orderItems = orderForTable.mapNotNull { orderItemDto ->
-                allMenuItems.find { it.name == orderItemDto.menuItemId }?.let {
-                    OrderItem(menuItem = it, quantity = orderItemDto.quantity)
+            // We need the full menu to find the price and other details of the menu items.
+            // Fetch the menu fresh to avoid race conditions with the menu flow.
+            val remoteMenu = api.getMenu(token)
+            val allMenuItems = remoteMenu.flatMap { categoryDto ->
+                categoryDto.items.map { itemDto ->
+                    MenuItem(
+                        id = itemDto.id ?: itemDto.name,
+                        name = itemDto.name,
+                        price = itemDto.price
+                    )
                 }
             }
 
-            emit(Result.Success(orderItems))
+            // Map the DTO items to domain OrderItems
+            val orderItems = orderResponse.items.mapNotNull { orderItemDto ->
+                allMenuItems.find { it.id == orderItemDto.itemId }?.let { menuItem ->
+                    OrderItem(
+                        menuItem = menuItem,
+                        quantity = orderItemDto.quantity,
+                        orderItemId = orderItemDto.orderItemId,
+                        notes = orderItemDto.notes
+                    )
+                }
+            }
+
+            // Map the full order response to domain Order
+            val order = Order(
+                tableNumber = orderResponse.tableNumber,
+                numberOfPeople = orderResponse.numberOfPeople,
+                status = OrderStatus.fromString(orderResponse.status),
+                items = orderItems,
+                createdAt = orderResponse.createdAt,
+                subtotal = orderResponse.subtotal,
+                serviceCharge = orderResponse.serviceCharge,
+                total = orderResponse.total
+            )
+
+            emit(Result.Success(order))
         } catch (e: Exception) {
-            e.printStackTrace()
-            emit(Result.Error(e.message ?: "An unknown error occurred", null))
+            emit(Result.Error(e.message ?: "An unknown error occurred"))
         }
     }
 
@@ -71,8 +103,9 @@ class OrderRepositoryImpl(
 
             val orderItemsRequest = items.map {
                 OrderItemRequest(
-                    menuItemId = it.menuItem.name, // Assuming name is the ID
-                    quantity = it.quantity
+                    menuItemId = it.menuItem.id,
+                    quantity = it.quantity,
+                    notes = it.notes
                 )
             }
 
@@ -84,10 +117,6 @@ class OrderRepositoryImpl(
 
             api.submitOrder(token, request)
             Result.Success(Unit)
-        } catch (e: ClientRequestException) {
-            val response = e.response
-            val text = response.bodyAsText()
-            Result.Error("Error ${response.status.value}: $text")
         } catch (e: Exception) {
             e.printStackTrace()
             Result.Error(e.message ?: "An unknown error occurred")

@@ -3,7 +3,6 @@ package dev.giuseppedarro.comanda.features.orders.data
 import org.jetbrains.exposed.sql.Table
 
 object Orders : Table() {
-    val id = varchar("id", 128)
     val tableNumber = integer("table_number")
     val numberOfPeople = integer("number_of_people")
     val status = varchar("status", 32) // "open", "served", "closed"
@@ -12,12 +11,12 @@ object Orders : Table() {
     val serviceCharge = double("service_charge").nullable()
     val total = double("total").nullable()
 
-    override val primaryKey = PrimaryKey(id)
+    override val primaryKey = PrimaryKey(tableNumber)
 }
 
 object OrderItems : Table() {
     val id = varchar("id", 128)
-    val orderId = varchar("order_id", 128) references Orders.id
+    val tableNumber = integer("table_number")
     val itemId = varchar("item_id", 128)
     val quantity = integer("quantity")
     val notes = varchar("notes", 256).nullable()

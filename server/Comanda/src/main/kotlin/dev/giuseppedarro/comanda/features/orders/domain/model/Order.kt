@@ -15,7 +15,6 @@ data class OrderItem(
 
 @Serializable
 data class Order(
-    val id: String,
     val tableNumber: Int,
     val numberOfPeople: Int,
     val status: OrderStatus = OrderStatus.open,

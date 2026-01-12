@@ -1,10 +1,11 @@
 package dev.giuseppedarro.comanda.features.orders.data.remote.dto
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class OrderResponseItem(
-    @SerialName("itemId") val menuItemId: String,
-    val quantity: Int
+    val orderItemId: String,    // Unique ID for this item row
+    val itemId: String,         // Menu item ID
+    val quantity: Int,
+    val notes: String? = null   // Any notes for the item
 )
