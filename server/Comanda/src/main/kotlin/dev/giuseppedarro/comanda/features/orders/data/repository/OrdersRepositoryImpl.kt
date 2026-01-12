@@ -7,37 +7,37 @@ import dev.giuseppedarro.comanda.features.orders.domain.model.Order
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderItem
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderStatus
 import dev.giuseppedarro.comanda.features.orders.domain.repository.OrdersRepository
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.replace
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.Instant
 import java.time.format.DateTimeFormatter
-import java.util.UUID
 
 class OrdersRepositoryImpl : OrdersRepository {
 
     override suspend fun submitOrder(request: SubmitOrderRequest): Result<Order> {
-        val newOrderId = UUID.randomUUID().toString()
         val creationTime = DateTimeFormatter.ISO_INSTANT.format(Instant.now())
-        
+
         return try {
             transaction {
-                // 1) Find latest previous order for this table (if any)
-                val previousOrderId: String? = Orders
+                // 1) Find previous order for this table (if any)
+                val existingOrder = Orders
                     .select { Orders.tableNumber eq request.tableNumber }
-                    .map { it[Orders.id] to it[Orders.createdAt] }
-                    .maxByOrNull { it.second }?.first
+                    .singleOrNull()
 
-                // 2) Build quantity maps: previous vs current request
-                val previousQtyByItem: Map<String, Int> = if (previousOrderId != null) {
+                val previousQtyByItem: Map<String, Int> = if (existingOrder != null) {
                     OrderItems
-                        .select { OrderItems.orderId eq previousOrderId }
+                        .select { OrderItems.tableNumber eq request.tableNumber }
                         .groupBy { it[OrderItems.itemId] }
                         .mapValues { entry -> entry.value.sumOf { it[OrderItems.quantity] } }
                 } else emptyMap()
 
+                // 2) Build quantity map from current request
                 val currentQtyByItem: Map<String, Int> = request.items
                     .groupBy { it.menuItemId }
                     .mapValues { entry -> entry.value.sumOf { it.quantity } }
@@ -73,9 +73,11 @@ class OrdersRepositoryImpl : OrdersRepository {
                     println("[INFO] Table ${request.tableNumber}: no new items compared to previous order.")
                 }
 
-                // 1. Insert the Order
-                Orders.insert {
-                    it[id] = newOrderId
+                // 5) Delete old order items for this table (if any)
+                OrderItems.deleteWhere { OrderItems.tableNumber eq request.tableNumber }
+
+                // 6) Insert or replace the Order
+                Orders.replace {
                     it[tableNumber] = request.tableNumber
                     it[numberOfPeople] = request.numberOfPeople
                     it[status] = OrderStatus.open.name
@@ -85,20 +87,20 @@ class OrdersRepositoryImpl : OrdersRepository {
                     it[total] = null
                 }
 
-                // 2. Insert the OrderItems
+                // 7) Insert the OrderItems
                 var itemCounter = 0
                 val createdItems = request.items.map { item ->
                     itemCounter++
-                    val newItemId = "oi_${newOrderId}_$itemCounter"
-                    
+                    val newItemId = "oi_${request.tableNumber}_${System.nanoTime()}_$itemCounter"
+
                     OrderItems.insert {
                         it[id] = newItemId
-                        it[orderId] = newOrderId
+                        it[tableNumber] = request.tableNumber
                         it[itemId] = item.menuItemId
                         it[quantity] = item.quantity
                         it[notes] = item.notes
                     }
-                    
+
                     OrderItem(
                         orderItemId = newItemId,
                         itemId = item.menuItemId,
@@ -107,10 +109,9 @@ class OrdersRepositoryImpl : OrdersRepository {
                     )
                 }
 
-                // 3. Return the domain object
+                // 8. Return the domain object
                 Result.success(
                     Order(
-                        id = newOrderId,
                         tableNumber = request.tableNumber,
                         numberOfPeople = request.numberOfPeople,
                         status = OrderStatus.open,
@@ -131,10 +132,10 @@ class OrdersRepositoryImpl : OrdersRepository {
         return transaction {
             // Fetch all orders
             val orders = Orders.selectAll().map { row ->
-                val orderId = row[Orders.id]
-                
+                val tableNum = row[Orders.tableNumber]
+
                 // Fetch items for this order
-                val items = OrderItems.select { OrderItems.orderId eq orderId }.map { itemRow ->
+                val items = OrderItems.select { OrderItems.tableNumber eq tableNum }.map { itemRow ->
                     OrderItem(
                         orderItemId = itemRow[OrderItems.id],
                         itemId = itemRow[OrderItems.itemId],
@@ -144,8 +145,7 @@ class OrdersRepositoryImpl : OrdersRepository {
                 }
 
                 Order(
-                    id = orderId,
-                    tableNumber = row[Orders.tableNumber],
+                    tableNumber = tableNum,
                     numberOfPeople = row[Orders.numberOfPeople],
                     status = OrderStatus.valueOf(row[Orders.status]),
                     items = items,
@@ -163,9 +163,9 @@ class OrdersRepositoryImpl : OrdersRepository {
     override suspend fun getOrdersForTable(tableNumber: Int): List<Order> {
         return transaction {
             val orders = Orders.select { Orders.tableNumber eq tableNumber }.map { row ->
-                val orderId = row[Orders.id]
+                val tableNum = row[Orders.tableNumber]
 
-                val items = OrderItems.select { OrderItems.orderId eq orderId }.map { itemRow ->
+                val items = OrderItems.select { OrderItems.tableNumber eq tableNum }.map { itemRow ->
                     OrderItem(
                         orderItemId = itemRow[OrderItems.id],
                         itemId = itemRow[OrderItems.itemId],
@@ -175,8 +175,7 @@ class OrdersRepositoryImpl : OrdersRepository {
                 }
 
                 Order(
-                    id = orderId,
-                    tableNumber = row[Orders.tableNumber],
+                    tableNumber = tableNum,
                     numberOfPeople = row[Orders.numberOfPeople],
                     status = OrderStatus.valueOf(row[Orders.status]),
                     items = items,
@@ -192,10 +191,13 @@ class OrdersRepositoryImpl : OrdersRepository {
     }
 
     override suspend fun getOrderById(orderId: String): Order? {
-        return transaction {
-            val row = Orders.select { Orders.id eq orderId }.singleOrNull() ?: return@transaction null
+        // Since we now use tableNumber as the primary key, orderId should be interpreted as tableNumber
+        val tableNumber = orderId.toIntOrNull() ?: return null
 
-            val items = OrderItems.select { OrderItems.orderId eq orderId }.map { itemRow ->
+        return transaction {
+            val row = Orders.select { Orders.tableNumber eq tableNumber }.singleOrNull() ?: return@transaction null
+
+            val items = OrderItems.select { OrderItems.tableNumber eq tableNumber }.map { itemRow ->
                 OrderItem(
                     orderItemId = itemRow[OrderItems.id],
                     itemId = itemRow[OrderItems.itemId],
@@ -205,8 +207,7 @@ class OrdersRepositoryImpl : OrdersRepository {
             }
 
             Order(
-                id = row[Orders.id],
-                tableNumber = row[Orders.tableNumber],
+                tableNumber = tableNumber,
                 numberOfPeople = row[Orders.numberOfPeople],
                 status = OrderStatus.valueOf(row[Orders.status]),
                 items = items,

@@ -202,8 +202,8 @@ fun MenuOrderScreenPreview() {
         MenuCategory("Drinks", emptyList())
     )
     val mockOrderItems = listOf(
-        OrderItem(MenuItem("Gourmet Burger", "$12.99"), 1),
-        OrderItem(MenuItem("Cola", "$2.50"), 2)
+        OrderItem(MenuItem("1", "Gourmet Burger", "$12.99"), 1),
+        OrderItem(MenuItem("2", "Cola", "$2.50"), 2)
     )
 
     ComandaTheme {

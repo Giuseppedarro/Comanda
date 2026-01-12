@@ -18,7 +18,7 @@ import kotlinx.serialization.Serializable
 data class OrderResponse(val status: String, val message: String)
 
 @Serializable
-data class MenuItemDto(val name: String, val price: String)
+data class MenuItemDto(val id: String, val name: String, val price: String)
 
 @Serializable
 data class MenuCategoryDto(val name: String, val items: List<MenuItemDto>)
@@ -37,43 +37,43 @@ fun Route.ordersRoutes(
                     MenuCategoryDto(
                         name = "Appetizers",
                         items = listOf(
-                            MenuItemDto("Bruschetta", "$7.00"),
-                            MenuItemDto("Garlic Bread", "$5.00"),
-                            MenuItemDto("Stuffed Mushrooms", "$8.50"),
-                            MenuItemDto("Spring Rolls", "$6.00"),
-                            MenuItemDto("Onion Rings", "$5.50"),
-                            MenuItemDto("Calamari", "$9.00")
+                            MenuItemDto("app_bruschetta", "Bruschetta", "$7.00"),
+                            MenuItemDto("app_garlic_bread", "Garlic Bread", "$5.00"),
+                            MenuItemDto("app_mushrooms", "Stuffed Mushrooms", "$8.50"),
+                            MenuItemDto("app_spring_rolls", "Spring Rolls", "$6.00"),
+                            MenuItemDto("app_onion_rings", "Onion Rings", "$5.50"),
+                            MenuItemDto("app_calamari", "Calamari", "$9.00")
                         )
                     ),
                     MenuCategoryDto(
                         name = "Main Courses",
                         items = listOf(
-                            MenuItemDto("Gourmet Burger", "$12.99"),
-                            MenuItemDto("Caesar Salad", "$8.50")
+                            MenuItemDto("main_burger", "Gourmet Burger", "$12.99"),
+                            MenuItemDto("main_caesar_salad", "Caesar Salad", "$8.50")
                         )
                     ),
                     MenuCategoryDto(
                         name = "Desserts",
                         items = listOf(
-                            MenuItemDto("Tiramisu", "$6.50"),
-                            MenuItemDto("Cheesecake", "$7.50")
+                            MenuItemDto("dess_tiramisu", "Tiramisu", "$6.50"),
+                            MenuItemDto("dess_cheesecake", "Cheesecake", "$7.50")
                         )
                     ),
                     MenuCategoryDto(
                         name = "Drinks",
                         items = listOf(
-                            MenuItemDto("Cola", "$2.50"),
-                            MenuItemDto("Cappuccino", "$4.75"),
-                            MenuItemDto("Iced Tea", "$2.00"),
-                            MenuItemDto("Orange Juice", "$3.00"),
-                            MenuItemDto("Latte", "$4.00"),
-                            MenuItemDto("Water", "$1.00"),
-                            MenuItemDto("Espresso", "$3.00"),
-                            MenuItemDto("Lemonade", "$3.50"),
-                            MenuItemDto("Apple Juice", "$3.00"),
-                            MenuItemDto("Sparkling Water", "$1.50"),
-                            MenuItemDto("Green Tea", "$2.50"),
-                            MenuItemDto("Beer", "$5.00")
+                            MenuItemDto("drink_cola", "Cola", "$2.50"),
+                            MenuItemDto("drink_cappuccino", "Cappuccino", "$4.75"),
+                            MenuItemDto("drink_iced_tea", "Iced Tea", "$2.00"),
+                            MenuItemDto("drink_orange_juice", "Orange Juice", "$3.00"),
+                            MenuItemDto("drink_latte", "Latte", "$4.00"),
+                            MenuItemDto("drink_water", "Water", "$1.00"),
+                            MenuItemDto("drink_espresso", "Espresso", "$3.00"),
+                            MenuItemDto("drink_lemonade", "Lemonade", "$3.50"),
+                            MenuItemDto("drink_apple_juice", "Apple Juice", "$3.00"),
+                            MenuItemDto("drink_sparkling_water", "Sparkling Water", "$1.50"),
+                            MenuItemDto("drink_green_tea", "Green Tea", "$2.50"),
+                            MenuItemDto("drink_beer", "Beer", "$5.00")
                         )
                     )
                 )
@@ -101,7 +101,7 @@ fun Route.ordersRoutes(
                 val result = submitOrderUseCase(request)
                 val created = result.getOrNull()
                 if (created is Order) {
-                    val location = "/orders/" + created.id
+                    val location = "/orders/" + created.tableNumber
                     call.response.headers.append(HttpHeaders.Location, location)
                     call.respond(HttpStatusCode.Created, created)
                 } else {
@@ -128,14 +128,19 @@ fun Route.ordersRoutes(
                 call.respond(HttpStatusCode.OK, orders)
             }
 
-            // GET /orders/{orderId}
-            get("/{orderId}") {
-                val orderId = call.parameters["orderId"]
-                if (orderId.isNullOrBlank()) {
-                    call.respond(HttpStatusCode.BadRequest, OrderResponse("error", "orderId is required"))
+            // GET /orders/{tableNumber}
+            get("/{tableNumber}") {
+                val tableParam = call.parameters["tableNumber"]
+                if (tableParam.isNullOrBlank()) {
+                    call.respond(HttpStatusCode.BadRequest, OrderResponse("error", "tableNumber is required"))
                     return@get
                 }
-                val order = getOrderByIdUseCase(orderId)
+                val tableNumber = tableParam.toIntOrNull()
+                if (tableNumber == null) {
+                    call.respond(HttpStatusCode.BadRequest, OrderResponse("error", "Invalid tableNumber"))
+                    return@get
+                }
+                val order = getOrderByIdUseCase(tableNumber.toString())
                 if (order == null) {
                     call.respond(HttpStatusCode.NotFound, OrderResponse("error", "Order not found"))
                 } else {
