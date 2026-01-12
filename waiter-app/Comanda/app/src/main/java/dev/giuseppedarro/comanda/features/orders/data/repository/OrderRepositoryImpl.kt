@@ -53,8 +53,10 @@ class OrderRepositoryImpl(
             val menuResult = menuFlow.first { it is Result.Success<List<MenuCategory>> } as Result.Success<List<MenuCategory>>
             val allMenuItems = menuResult.data.orEmpty().flatMap { it.items }
 
-            // Prefer the latest order if multiple are returned by the backend
-            val orderForTable = orderResponses.lastOrNull()?.items ?: emptyList()
+            // Pick an order that actually has items (no reliance on backend ordering)
+            val chosenOrder = orderResponses.firstOrNull { it.items.isNotEmpty() }
+                ?: orderResponses.firstOrNull()
+            val orderForTable = chosenOrder?.items ?: emptyList()
 
             val orderItems = orderForTable.mapNotNull { orderItemDto ->
                 allMenuItems.find { it.name == orderItemDto.menuItemId }?.let {

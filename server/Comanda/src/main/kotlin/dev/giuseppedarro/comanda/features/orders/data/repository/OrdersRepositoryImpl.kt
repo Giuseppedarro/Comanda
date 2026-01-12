@@ -10,6 +10,7 @@ import dev.giuseppedarro.comanda.features.orders.domain.repository.OrdersReposit
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.Instant
 import java.time.format.DateTimeFormatter
@@ -23,6 +24,55 @@ class OrdersRepositoryImpl : OrdersRepository {
         
         return try {
             transaction {
+                // 1) Find latest previous order for this table (if any)
+                val previousOrderId: String? = Orders
+                    .select { Orders.tableNumber eq request.tableNumber }
+                    .map { it[Orders.id] to it[Orders.createdAt] }
+                    .maxByOrNull { it.second }?.first
+
+                // 2) Build quantity maps: previous vs current request
+                val previousQtyByItem: Map<String, Int> = if (previousOrderId != null) {
+                    OrderItems
+                        .select { OrderItems.orderId eq previousOrderId }
+                        .groupBy { it[OrderItems.itemId] }
+                        .mapValues { entry -> entry.value.sumOf { it[OrderItems.quantity] } }
+                } else emptyMap()
+
+                val currentQtyByItem: Map<String, Int> = request.items
+                    .groupBy { it.menuItemId }
+                    .mapValues { entry -> entry.value.sumOf { it.quantity } }
+
+                // 3) Compute positive deltas (newly added items compared to previous order)
+                val deltas: List<Pair<String, Int>> = currentQtyByItem.mapNotNull { (itemId, qtyNow) ->
+                    val qtyPrev = previousQtyByItem[itemId] ?: 0
+                    val diff = qtyNow - qtyPrev
+                    if (diff > 0) itemId to diff else null
+                }
+
+                // 4) Print to terminal (simulating kitchen/bar ticket)
+                if (deltas.isNotEmpty()) {
+                    println("\n================== NEW ITEMS TICKET ==================")
+                    println("Table: ${request.tableNumber}    People: ${request.numberOfPeople}    At: $creationTime")
+                    println("----------------------------------------------------")
+                    deltas.forEach { (itemId, qty) ->
+                        println(String.format("%2dx  %s", qty, itemId))
+                    }
+                    // If there are notes in the current request, list them under their items
+                    val notesByItem = request.items.filter { !it.notes.isNullOrBlank() }
+                        .groupBy { it.menuItemId }
+                        .mapValues { (_, list) -> list.mapNotNull { it.notes }.distinct() }
+                    if (notesByItem.isNotEmpty()) {
+                        println("----------------------------------------------------")
+                        println("Notes:")
+                        notesByItem.forEach { (itemId, notes) ->
+                            notes.forEach { note -> println(" - $itemId: $note") }
+                        }
+                    }
+                    println("====================================================\n")
+                } else {
+                    println("[INFO] Table ${request.tableNumber}: no new items compared to previous order.")
+                }
+
                 // 1. Insert the Order
                 Orders.insert {
                     it[id] = newOrderId
@@ -105,7 +155,8 @@ class OrdersRepositoryImpl : OrdersRepository {
                     total = row[Orders.total]
                 )
             }
-            orders
+            // Ensure deterministic ordering for clients: latest first
+            orders.sortedByDescending { it.createdAt }
         }
     }
 
@@ -113,7 +164,7 @@ class OrdersRepositoryImpl : OrdersRepository {
         return transaction {
             val orders = Orders.select { Orders.tableNumber eq tableNumber }.map { row ->
                 val orderId = row[Orders.id]
-                
+
                 val items = OrderItems.select { OrderItems.orderId eq orderId }.map { itemRow ->
                     OrderItem(
                         orderItemId = itemRow[OrderItems.id],
@@ -135,14 +186,15 @@ class OrdersRepositoryImpl : OrdersRepository {
                     total = row[Orders.total]
                 )
             }
-            orders
+            // Latest order first to simplify client selection
+            orders.sortedByDescending { it.createdAt }
         }
     }
 
     override suspend fun getOrderById(orderId: String): Order? {
         return transaction {
             val row = Orders.select { Orders.id eq orderId }.singleOrNull() ?: return@transaction null
-            
+
             val items = OrderItems.select { OrderItems.orderId eq orderId }.map { itemRow ->
                 OrderItem(
                     orderItemId = itemRow[OrderItems.id],

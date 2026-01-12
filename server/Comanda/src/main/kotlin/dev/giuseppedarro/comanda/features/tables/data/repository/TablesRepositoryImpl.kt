@@ -12,12 +12,16 @@ class TablesRepositoryImpl : TablesRepository {
 
     override suspend fun getTables(): List<Table> {
         return transaction {
-            Tables.selectAll().orderBy(Tables.number).map {
-                Table(
-                    number = it[Tables.number],
-                    isOccupied = it[Tables.isOccupied]
-                )
-            }
+            // Some environments may not have the Exposed orderBy extension available.
+            // Fetch all rows and sort in Kotlin to avoid the dependency on orderBy.
+            Tables.selectAll()
+                .map {
+                    Table(
+                        number = it[Tables.number],
+                        isOccupied = it[Tables.isOccupied]
+                    )
+                }
+                .sortedBy { it.number }
         }
     }
 
