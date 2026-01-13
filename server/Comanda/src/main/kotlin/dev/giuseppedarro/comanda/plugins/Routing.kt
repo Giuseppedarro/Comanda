@@ -8,6 +8,11 @@ import dev.giuseppedarro.comanda.features.orders.domain.usecase.GetOrdersForTabl
 import dev.giuseppedarro.comanda.features.orders.domain.usecase.GetOrdersUseCase
 import dev.giuseppedarro.comanda.features.orders.domain.usecase.SubmitOrderUseCase
 import dev.giuseppedarro.comanda.features.orders.presentation.ordersRoutes
+import dev.giuseppedarro.comanda.features.printers.domain.usecase.CreatePrinterUseCase
+import dev.giuseppedarro.comanda.features.printers.domain.usecase.DeletePrinterUseCase
+import dev.giuseppedarro.comanda.features.printers.domain.usecase.GetAllPrintersUseCase
+import dev.giuseppedarro.comanda.features.printers.domain.usecase.UpdatePrinterUseCase
+import dev.giuseppedarro.comanda.features.printers.presentation.printersRoutes
 import dev.giuseppedarro.comanda.features.tables.domain.usecase.AddTableUseCase
 import dev.giuseppedarro.comanda.features.tables.domain.usecase.GetTablesUseCase
 import dev.giuseppedarro.comanda.features.tables.presentation.tablesRoutes
@@ -26,10 +31,21 @@ fun Application.configureRouting() {
     val getOrdersForTableUseCase by inject<GetOrdersForTableUseCase>()
     val getOrderByIdUseCase by inject<GetOrderByIdUseCase>()
 
+    val getAllPrintersUseCase by inject<GetAllPrintersUseCase>()
+    val createPrinterUseCase by inject<CreatePrinterUseCase>()
+    val updatePrinterUseCase by inject<UpdatePrinterUseCase>()
+    val deletePrinterUseCase by inject<DeletePrinterUseCase>()
+
     routing {
         authRoutes(loginUseCase, refreshTokenUseCase)
         tablesRoutes(getTablesUseCase, addTableUseCase)
         ordersRoutes(submitOrderUseCase, getOrdersUseCase, getOrdersForTableUseCase, getOrderByIdUseCase)
+        printersRoutes(
+            getAllPrintersUseCase,
+            createPrinterUseCase,
+            updatePrinterUseCase,
+            deletePrinterUseCase
+        )
         get("/") {
             call.respondText("Hello World!")
         }
