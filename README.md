@@ -1,10 +1,10 @@
 # Comanda
 ![Kotlin](https://img.shields.io/badge/Kotlin-2.0.21-blue.svg?style=flat&logo=kotlin)
 ![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-2024.09.00-blue.svg?style=flat&logo=jetpack-compose)
-![Navigation](https://img.shields.io/badge/Navigation-2.7.7-blue.svg?style=flat&logo=jetpack-compose)
+![Navigation](https://img.shields.io/badge/Navigation-2.8.0-blue.svg?style=flat&logo=jetpack-compose)
 ![Koin](https://img.shields.io/badge/Koin-4.1.1-blue.svg?style=flat&logo=kotlin)
 ![Android](https://img.shields.io/badge/Android-blue.svg?style=flat&logo=android)
-![Material 3](https://img.shields.io/badge/Material%203-1.6.0-lightgrey.svg?style=flat&logo=material-design)
+![Material 3](https://img.shields.io/badge/Material%203-BOM-lightgrey.svg?style=flat&logo=material-design)
 
 Comanda is a modern, end-to-end restaurant management system designed to streamline the ordering process. It consists of a mobile app for waiters, a desktop app for cashiers, and a central backend server. This project showcases a complete, multi-platform ecosystem built with the latest Kotlin technologies.
 
@@ -16,10 +16,10 @@ Comanda is a modern, end-to-end restaurant management system designed to streaml
 
 ##  Features
 
-- **Real-time Synchronization:** Orders and table statuses are updated in real-time across all devices using WebSockets.
-- **User Authentication:** Secure JWT-based authentication for waiters and cashiers.
-- **Offline Support:** The waiter app will support offline order creation and synchronization.
+- **User Authentication:** Secure JWT-based authentication for waiters.
 - **Modern UI:** A clean and intuitive user interface built with Jetpack Compose and Material 3.
+- **Table Management:** View and manage restaurant tables with occupancy status.
+- **Order Submission:** Submit orders directly from the waiter app with a categorized menu.
 
 ##  Technologies & Libraries
 
@@ -33,10 +33,13 @@ This project is built with a modern technology stack, showcasing the power of Ko
 | Jetpack Compose BOM | 2024.09.00 |
 | Activity Compose | 1.8.0 |
 | Lifecycle KTX | 2.6.1 |
-| Navigation Compose | 2.7.7 |
+| Navigation Compose | 2.8.0 |
 | Core KTX | 1.10.1 |
-| Material 3 | 1.6.0 |
+| Material 3 | Managed by BOM |
+| Material Icons Extended | 1.6.0 |
 | Koin | 4.1.1 |
+| Ktor Client | 2.3.12 |
+| AndroidX DataStore | 1.1.1 |
 
 ### Server (Ktor)
 
@@ -44,7 +47,7 @@ This project is built with a modern technology stack, showcasing the power of Ko
 |---|---|---|
 | Ktor | 3.3.0 | Core framework for building the server. |
 | Exposed | 0.41.1 | Kotlin SQL framework for database access. |
-| PostgreSQL | 14.5 | The relational database running in Docker. |
+| PostgreSQL | 14.5 (DB) / 42.5.0 (Driver) | Database running in Docker (v14.5) with JDBC driver (v42.5.0). |
 | HikariCP | 5.0.1 | High-performance JDBC connection pooling. |
 | Koin | 3.5.6 | Dependency injection for Ktor. |
 
