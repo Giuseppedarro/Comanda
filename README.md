@@ -20,6 +20,8 @@ Comanda is a modern, end-to-end restaurant management system designed to streaml
 - **Modern UI:** A clean and intuitive user interface built with Jetpack Compose and Material 3.
 - **Table Management:** View and manage restaurant tables with occupancy status.
 - **Order Submission:** Submit orders directly from the waiter app with a categorized menu.
+- **Printer Management:** Configure and manage printers (Kitchen, Bar, Cashier) for automatic order ticket printing.
+- **Smart Order Diff:** Only prints new/changed items when orders are modified, reducing waste.
 
 ##  Technologies & Libraries
 
@@ -96,6 +98,9 @@ The backend consists of the Ktor server and a PostgreSQL database running in Doc
 2.  **Run the Server:**
     Open the project in IntelliJ IDEA and run the `Application.kt` file located in `server/src/main/kotlin/dev/giuseppedarro/comanda/`. The server will start on `http://localhost:8080`.
 
-    The first time you run the server, it will automatically create the necessary tables and insert a default user with the following credentials:
-    - **Employee ID:** `1234`
-    - **Password:** `password`
+    The first time you run the server, it will automatically create the necessary tables and insert default data:
+    - **Default User:**
+      - Employee ID: `1234`
+      - Password: `password`
+    - **Default Printers:** Kitchen, Bar, Cashier (update IPs in production)
+    - **Default Tables:** 20 tables numbered 1-20
