@@ -7,12 +7,16 @@ import dev.giuseppedarro.comanda.core.navigation.Tables
 import dev.giuseppedarro.comanda.features.orders.presentation.navigation.MenuOrder
 import dev.giuseppedarro.comanda.features.tables.presentation.TableOverviewScreen
 
-fun NavGraphBuilder.tablesGraph(navController: NavController) {
+fun NavGraphBuilder.tablesGraph(
+    navController: NavController,
+    onNavigateToPrinters: () -> Unit
+) {
     composable<Tables> {
         TableOverviewScreen(
             onNavigateToOrder = { tableNumber, numberOfPeople ->
                 navController.navigate(MenuOrder(tableNumber, numberOfPeople))
-            }
+            },
+            onNavigateToPrinters = onNavigateToPrinters
         )
     }
 }

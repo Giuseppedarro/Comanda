@@ -28,6 +28,7 @@ import dev.giuseppedarro.comanda.ui.theme.ComandaTheme
 @Composable
 fun ComandaTopAppBar(
     title: String,
+    navigationIcon: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {}
 ) {
     TopAppBar(
@@ -48,6 +49,7 @@ fun ComandaTopAppBar(
                 )
             }
         },
+        navigationIcon = navigationIcon,
         actions = actions
     )
 }

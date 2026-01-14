@@ -7,6 +7,9 @@ import dev.giuseppedarro.comanda.features.orders.domain.model.Order
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderItem
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderStatus
 import dev.giuseppedarro.comanda.features.orders.domain.repository.OrdersRepository
+import dev.giuseppedarro.comanda.features.printers.domain.model.Printer
+import dev.giuseppedarro.comanda.features.printers.domain.repository.PrintersRepository
+import dev.giuseppedarro.comanda.features.printers.domain.usecase.SendTicketToPrinterUseCase
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
@@ -18,7 +21,10 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 
-class OrdersRepositoryImpl : OrdersRepository {
+class OrdersRepositoryImpl(
+    private val sendTicketToPrinterUseCase: SendTicketToPrinterUseCase,
+    private val printersRepository: PrintersRepository
+) : OrdersRepository {
 
     companion object {
         private val menuItemNames = mapOf(
@@ -59,8 +65,9 @@ class OrdersRepositoryImpl : OrdersRepository {
         val creationTime = DateTimeFormatter.ISO_INSTANT.format(Instant.now())
 
         return try {
-            transaction {
-                // 1) Find previous order for this table (if any)
+            // 1) Compute deltas inside transaction for DB access
+            val deltas = transaction {
+                // Find previous order for this table (if any)
                 val existingOrder = Orders
                     .select { Orders.tableNumber eq request.tableNumber }
                     .singleOrNull()
@@ -72,46 +79,78 @@ class OrdersRepositoryImpl : OrdersRepository {
                         .mapValues { entry -> entry.value.sumOf { it[OrderItems.quantity] } }
                 } else emptyMap()
 
-                // 2) Build quantity map from current request
+                // Build quantity map from current request
                 val currentQtyByItem: Map<String, Int> = request.items
                     .groupBy { it.menuItemId }
                     .mapValues { entry -> entry.value.sumOf { it.quantity } }
 
-                // 3) Compute positive deltas (newly added items compared to previous order)
-                val deltas: List<Pair<String, Int>> = currentQtyByItem.mapNotNull { (itemId, qtyNow) ->
+                // Compute positive deltas (newly added items compared to previous order)
+                currentQtyByItem.mapNotNull { (itemId, qtyNow) ->
                     val qtyPrev = previousQtyByItem[itemId] ?: 0
                     val diff = qtyNow - qtyPrev
                     if (diff > 0) itemId to diff else null
                 }
+            }
 
-                // 4) Print to terminal (simulating kitchen/bar ticket)
-                if (deltas.isNotEmpty()) {
-                    println("\n================== NEW ITEMS TICKET ==================")
-                    println("Table: ${request.tableNumber}    People: ${request.numberOfPeople}    At: $creationTime")
-                    println("----------------------------------------------------")
+            // 2) Process and print tickets (outside transaction for suspend function support)
+            if (deltas.isNotEmpty()) {
+                // Build ticket content
+                val ticketContent = buildString {
+                    append("\n================== NEW ITEMS TICKET ==================\n")
+                    append("Table: ${request.tableNumber}    People: ${request.numberOfPeople}    At: $creationTime\n")
+                    append("----------------------------------------------------\n")
                     deltas.forEach { (itemId, qty) ->
-                        println(String.format("%2dx  %s", qty, getMenuItemName(itemId)))
+                        append(String.format("%2dx  %s\n", qty, getMenuItemName(itemId)))
                     }
                     // If there are notes in the current request, list them under their items
                     val notesByItem = request.items.filter { !it.notes.isNullOrBlank() }
                         .groupBy { it.menuItemId }
                         .mapValues { (_, list) -> list.mapNotNull { it.notes }.distinct() }
                     if (notesByItem.isNotEmpty()) {
-                        println("----------------------------------------------------")
-                        println("Notes:")
+                        append("----------------------------------------------------\n")
+                        append("Notes:\n")
                         notesByItem.forEach { (itemId, notes) ->
-                            notes.forEach { note -> println(" - ${getMenuItemName(itemId)}: $note") }
+                            notes.forEach { note -> append(" - ${getMenuItemName(itemId)}: $note\n") }
                         }
                     }
-                    println("====================================================\n")
-                } else {
-                    println("[INFO] Table ${request.tableNumber}: no new items compared to previous order.")
+                    append("====================================================\n")
                 }
 
-                // 5) Delete old order items for this table (if any)
+                // Print to terminal
+                println(ticketContent)
+
+                // Send to Kitchen printer (id=1) by default
+                // TODO: Later, determine printer based on item categories
+                val kitchenPrinterId = 1
+                val kitchenPrinter = printersRepository.getPrinterById(kitchenPrinterId)
+
+                if (kitchenPrinter != null) {
+                    try {
+                        val sendResult = sendTicketToPrinterUseCase(kitchenPrinterId, ticketContent)
+                        if (sendResult.isFailure) {
+                            println("[ERROR] Printer '${kitchenPrinter.name}' (${kitchenPrinter.address}:${kitchenPrinter.port}) is not connected")
+                            println("[FALLBACK] Ticket printed to terminal above")
+                        } else {
+                            println("[SUCCESS] Ticket sent to '${kitchenPrinter.name}' printer")
+                        }
+                    } catch (e: Exception) {
+                        println("[ERROR] Exception communicating with printer '${kitchenPrinter.name}': ${e.message}")
+                        println("[FALLBACK] Ticket printed to terminal above")
+                    }
+                } else {
+                    println("[WARN] Kitchen printer (id=$kitchenPrinterId) not found in database")
+                    println("[FALLBACK] Ticket printed to terminal above")
+                }
+            } else {
+                println("[INFO] Table ${request.tableNumber}: no new items compared to previous order.")
+            }
+
+            // 3) Save order to database
+            val order = transaction {
+                // Delete old order items for this table (if any)
                 OrderItems.deleteWhere { OrderItems.tableNumber eq request.tableNumber }
 
-                // 6) Insert or replace the Order
+                // Insert or replace the Order
                 Orders.replace {
                     it[tableNumber] = request.tableNumber
                     it[numberOfPeople] = request.numberOfPeople
@@ -122,7 +161,7 @@ class OrdersRepositoryImpl : OrdersRepository {
                     it[total] = null
                 }
 
-                // 7) Insert the OrderItems
+                // Insert the OrderItems
                 var itemCounter = 0
                 val createdItems = request.items.map { item ->
                     itemCounter++
@@ -144,20 +183,20 @@ class OrdersRepositoryImpl : OrdersRepository {
                     )
                 }
 
-                // 8. Return the domain object
-                Result.success(
-                    Order(
-                        tableNumber = request.tableNumber,
-                        numberOfPeople = request.numberOfPeople,
-                        status = OrderStatus.open,
-                        items = createdItems,
-                        createdAt = creationTime,
-                        subtotal = null,
-                        serviceCharge = null,
-                        total = null
-                    )
+                // Return the created order
+                Order(
+                    tableNumber = request.tableNumber,
+                    numberOfPeople = request.numberOfPeople,
+                    status = OrderStatus.open,
+                    items = createdItems,
+                    createdAt = creationTime,
+                    subtotal = null,
+                    serviceCharge = null,
+                    total = null
                 )
             }
+
+            Result.success(order)
         } catch (e: Exception) {
             Result.failure(e)
         }
