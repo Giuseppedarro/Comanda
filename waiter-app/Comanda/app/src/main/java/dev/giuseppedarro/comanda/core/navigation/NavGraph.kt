@@ -14,8 +14,8 @@ fun NavGraph() {
 
     NavHost(navController = navController, startDestination = Login) {
         loginGraph(navController)
-        tablesGraph(navController)
+        tablesGraph(navController) { navController.navigate(Printers) }
         ordersGraph(navController)
-        printersGraph()
+        printersGraph(navController)
     }
 }

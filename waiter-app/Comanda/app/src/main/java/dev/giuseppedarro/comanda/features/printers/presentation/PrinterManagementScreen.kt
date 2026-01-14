@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
@@ -23,6 +24,7 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PrinterManagementScreen(
+    onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PrinterManagementViewModel = koinViewModel()
 ) {
@@ -53,6 +55,7 @@ fun PrinterManagementScreen(
         printers = uiState.printers,
         isLoading = uiState.isLoading,
         error = uiState.error,
+        onNavigateBack = onNavigateBack,
         onRefresh = viewModel::loadPrinters,
         onAddClick = viewModel::openAddDialog,
         onEditClick = viewModel::openEditDialog,
@@ -68,6 +71,7 @@ fun PrinterManagementContent(
     printers: List<Printer>,
     isLoading: Boolean,
     error: String?,
+    onNavigateBack: () -> Unit,
     onRefresh: () -> Unit,
     onAddClick: () -> Unit,
     onEditClick: (Printer) -> Unit,
@@ -79,7 +83,15 @@ fun PrinterManagementContent(
         modifier = modifier,
         topBar = {
             ComandaTopAppBar(
-                title = "Printer Management",
+                title = "Printers",
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Navigate back"
+                        )
+                    }
+                },
                 actions = {
                     IconButton(onClick = onRefresh) {
                         Icon(
@@ -203,6 +215,7 @@ fun PrinterManagementScreenPreview() {
             printers = mockPrinters,
             isLoading = false,
             error = null,
+            onNavigateBack = {},
             onRefresh = {},
             onAddClick = {},
             onEditClick = {},
@@ -221,6 +234,7 @@ fun PrinterManagementScreenEmptyPreview() {
             printers = emptyList(),
             isLoading = false,
             error = null,
+            onNavigateBack = {},
             onRefresh = {},
             onAddClick = {},
             onEditClick = {},
@@ -239,6 +253,7 @@ fun PrinterManagementScreenLoadingPreview() {
             printers = emptyList(),
             isLoading = true,
             error = null,
+            onNavigateBack = {},
             onRefresh = {},
             onAddClick = {},
             onEditClick = {},
@@ -257,6 +272,7 @@ fun PrinterManagementScreenErrorPreview() {
             printers = emptyList(),
             isLoading = false,
             error = "Failed to load printers. Please check your connection.",
+            onNavigateBack = {},
             onRefresh = {},
             onAddClick = {},
             onEditClick = {},
