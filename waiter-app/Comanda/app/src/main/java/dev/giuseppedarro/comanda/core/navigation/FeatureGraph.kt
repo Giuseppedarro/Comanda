@@ -10,3 +10,6 @@ object Tables
 
 @Serializable
 object Orders
+
+@Serializable
+object Printers
