@@ -6,6 +6,7 @@ import dev.giuseppedarro.comanda.features.tables.domain.use_case.AddTableUseCase
 import dev.giuseppedarro.comanda.features.tables.domain.use_case.GetTablesUseCase
 import dev.giuseppedarro.comanda.features.tables.presentation.TableOverviewViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.core.qualifier.named
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -13,7 +14,9 @@ import org.koin.dsl.module
 val tablesModule = module {
     factoryOf(::GetTablesUseCase)
     factoryOf(::AddTableUseCase)
-    factory { TablesRepositoryImpl(get(), get()) } bind TablesRepository::class
+    factory {
+        TablesRepositoryImpl(get(named("authClient")))
+    } bind TablesRepository::class
 
     viewModelOf(::TableOverviewViewModel)
 }

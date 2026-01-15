@@ -8,16 +8,19 @@ import dev.giuseppedarro.comanda.features.orders.domain.use_case.GetMenuUseCase
 import dev.giuseppedarro.comanda.features.orders.domain.use_case.GetOrdersForTableUseCase
 import dev.giuseppedarro.comanda.features.orders.domain.use_case.SubmitOrderUseCase
 import dev.giuseppedarro.comanda.features.orders.presentation.MenuOrderViewModel
+import org.koin.core.qualifier.named
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val ordersModule = module {
     // API
-    single { OrderApi(get()) }
+    single {
+        OrderApi(get(named("authClient")))
+    }
 
     // Repository
-    single<OrderRepository> { OrderRepositoryImpl(get(), get()) }
+    single<OrderRepository> { OrderRepositoryImpl(get()) }
 
     // Use cases
     factoryOf(::GetMenuUseCase)

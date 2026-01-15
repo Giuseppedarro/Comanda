@@ -9,15 +9,18 @@ import dev.giuseppedarro.comanda.features.printers.domain.use_case.GetAllPrinter
 import dev.giuseppedarro.comanda.features.printers.domain.use_case.UpdatePrinterUseCase
 import dev.giuseppedarro.comanda.features.printers.presentation.PrinterManagementViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.core.qualifier.named
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
 
 val printersModule = module {
     // API
-    single { PrinterApi(get()) }
+    single {
+        PrinterApi(get(named("authClient")))
+    }
 
     // Repository
-    single<PrinterRepository> { PrinterRepositoryImpl(get(), get()) }
+    single<PrinterRepository> { PrinterRepositoryImpl(get()) }
 
     // Use cases
     factoryOf(::GetAllPrintersUseCase)

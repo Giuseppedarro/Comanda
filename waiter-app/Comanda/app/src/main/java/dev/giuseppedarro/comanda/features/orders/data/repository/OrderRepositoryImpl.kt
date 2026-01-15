@@ -1,6 +1,5 @@
 package dev.giuseppedarro.comanda.features.orders.data.repository
 
-import dev.giuseppedarro.comanda.core.domain.TokenRepository
 import dev.giuseppedarro.comanda.core.utils.Result
 import dev.giuseppedarro.comanda.features.orders.data.remote.OrderApi
 import dev.giuseppedarro.comanda.features.orders.data.remote.dto.OrderItemRequest
@@ -15,15 +14,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class OrderRepositoryImpl(
-    private val api: OrderApi,
-    private val tokenRepository: TokenRepository
+    private val api: OrderApi
 ) : OrderRepository {
 
     override fun getMenu(): Flow<Result<List<MenuCategory>>> = flow {
         emit(Result.Loading())
         try {
-            val token = tokenRepository.getAccessToken() ?: throw Exception("No auth token found")
-            val remoteMenu = api.getMenu(token)
+            val remoteMenu = api.getMenu()
             val mapped = remoteMenu.map { categoryDto ->
                 MenuCategory(
                     name = categoryDto.name,
@@ -45,8 +42,8 @@ class OrderRepositoryImpl(
     override fun getOrdersForTable(tableNumber: Int): Flow<Result<Order?>> = flow {
         emit(Result.Loading())
         try {
-            val token = tokenRepository.getAccessToken() ?: throw Exception("No auth token found")
-            val orderResponse = api.getOrdersForTable(token, tableNumber)
+            // Token is automatically injected by Ktor Auth plugin
+            val orderResponse = api.getOrdersForTable(tableNumber)
 
             // If orderResponse is null, it means no order exists for this table (404 from backend)
             if (orderResponse == null) {
@@ -56,7 +53,7 @@ class OrderRepositoryImpl(
 
             // We need the full menu to find the price and other details of the menu items.
             // Fetch the menu fresh to avoid race conditions with the menu flow.
-            val remoteMenu = api.getMenu(token)
+            val remoteMenu = api.getMenu()
             val allMenuItems = remoteMenu.flatMap { categoryDto ->
                 categoryDto.items.map { itemDto ->
                     MenuItem(
@@ -99,8 +96,6 @@ class OrderRepositoryImpl(
 
     override suspend fun submitOrder(tableNumber: Int, numberOfPeople: Int, items: List<OrderItem>): Result<Unit> {
         return try {
-            val token = tokenRepository.getAccessToken() ?: throw Exception("No auth token found")
-
             val orderItemsRequest = items.map {
                 OrderItemRequest(
                     menuItemId = it.menuItem.id,
@@ -115,7 +110,7 @@ class OrderRepositoryImpl(
                 items = orderItemsRequest
             )
 
-            api.submitOrder(token, request)
+            api.submitOrder(request)
             Result.Success(Unit)
         } catch (e: Exception) {
             e.printStackTrace()

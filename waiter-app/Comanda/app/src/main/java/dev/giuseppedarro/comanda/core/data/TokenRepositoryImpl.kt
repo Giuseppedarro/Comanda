@@ -42,6 +42,13 @@ class TokenRepositoryImpl(
         dataStore.edit { it.clear() }
     }
 
+    override suspend fun saveAccessToken(token: String) {
+        val enc = cryptoManager.encrypt(token).encode()
+        dataStore.edit { prefs ->
+            prefs[ACCESS_TOKEN] = enc
+        }
+    }
+
     private fun CryptoManager.EncryptedData.encode(): String {
         val ivB64 = Base64.encodeToString(iv, Base64.NO_WRAP)
         val dataB64 = Base64.encodeToString(data, Base64.NO_WRAP)

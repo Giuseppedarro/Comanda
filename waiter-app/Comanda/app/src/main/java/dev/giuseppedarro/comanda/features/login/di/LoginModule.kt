@@ -6,11 +6,18 @@ import dev.giuseppedarro.comanda.features.login.domain.use_case.GetBaseUrlUseCas
 import dev.giuseppedarro.comanda.features.login.domain.use_case.LoginUseCase
 import dev.giuseppedarro.comanda.features.login.domain.use_case.SetBaseUrlUseCase
 import dev.giuseppedarro.comanda.features.login.presentation.LoginViewModel
+import io.ktor.client.HttpClient
 import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val loginModule = module {
-    single<LoginRepository> { LoginRepositoryImpl(get(), get()) } // HttpClient + TokenStorage
+    single<LoginRepository> {
+        LoginRepositoryImpl(
+            client = get(named("basicClient")),
+            tokenStorage = get()
+        )
+    }
     single { LoginUseCase(get()) }
     single { GetBaseUrlUseCase(get()) }
     single { SetBaseUrlUseCase(get()) }
