@@ -16,7 +16,7 @@ import io.ktor.http.contentType
 class OrderApi(private val client: HttpClient) {
 
     suspend fun getMenu(): List<MenuCategoryDto> {
-        return client.get("orders/menu").body()
+        return client.get("menu").body()
     }
 
     suspend fun getOrdersForTable(tableNumber: Int): GetOrderResponse? {

@@ -3,6 +3,8 @@ package dev.giuseppedarro.comanda.plugins
 import dev.giuseppedarro.comanda.features.auth.domain.usecase.LoginUseCase
 import dev.giuseppedarro.comanda.features.auth.domain.usecase.RefreshTokenUseCase
 import dev.giuseppedarro.comanda.features.auth.presentation.authRoutes
+import dev.giuseppedarro.comanda.features.menu.domain.usecase.GetMenuUseCase
+import dev.giuseppedarro.comanda.features.menu.presentation.menuRoutes
 import dev.giuseppedarro.comanda.features.orders.domain.usecase.GetOrderByIdUseCase
 import dev.giuseppedarro.comanda.features.orders.domain.usecase.GetOrdersForTableUseCase
 import dev.giuseppedarro.comanda.features.orders.domain.usecase.GetOrdersUseCase
@@ -26,6 +28,7 @@ fun Application.configureRouting() {
     val refreshTokenUseCase by inject<RefreshTokenUseCase>()
     val getTablesUseCase by inject<GetTablesUseCase>()
     val addTableUseCase by inject<AddTableUseCase>()
+    val getMenuUseCase by inject<GetMenuUseCase>()
     val submitOrderUseCase by inject<SubmitOrderUseCase>()
     val getOrdersUseCase by inject<GetOrdersUseCase>()
     val getOrdersForTableUseCase by inject<GetOrdersForTableUseCase>()
@@ -39,6 +42,7 @@ fun Application.configureRouting() {
     routing {
         authRoutes(loginUseCase, refreshTokenUseCase)
         tablesRoutes(getTablesUseCase, addTableUseCase)
+        menuRoutes(getMenuUseCase)
         ordersRoutes(submitOrderUseCase, getOrdersUseCase, getOrdersForTableUseCase, getOrderByIdUseCase)
         printersRoutes(
             getAllPrintersUseCase,
