@@ -26,7 +26,7 @@ class OrderRepositoryImpl(
                     name = categoryDto.name,
                     items = categoryDto.items.map { itemDto ->
                         MenuItem(
-                            id = itemDto.id ?: itemDto.name,  // Use name as id if backend doesn't provide it
+                            id = itemDto.id ?: itemDto.name,
                             name = itemDto.name,
                             price = itemDto.price
                         )

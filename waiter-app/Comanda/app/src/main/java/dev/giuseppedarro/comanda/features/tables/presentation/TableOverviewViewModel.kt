@@ -3,6 +3,7 @@ package dev.giuseppedarro.comanda.features.tables.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.giuseppedarro.comanda.core.utils.Result
+import dev.giuseppedarro.comanda.features.login.domain.use_case.LogoutUseCase
 import dev.giuseppedarro.comanda.features.tables.domain.model.Table
 import dev.giuseppedarro.comanda.features.tables.domain.use_case.AddTableUseCase
 import dev.giuseppedarro.comanda.features.tables.domain.use_case.GetTablesUseCase
@@ -14,6 +15,10 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+sealed interface TableOverviewEvent {
+    data object LogoutSuccess : TableOverviewEvent
+}
+
 data class TableOverviewUiState(
     val tables: List<Table> = emptyList(),
     val isDialogShown: Boolean = false,
@@ -23,11 +28,15 @@ data class TableOverviewUiState(
 
 class TableOverviewViewModel(
     private val getTablesUseCase: GetTablesUseCase,
-    private val addTableUseCase: AddTableUseCase
+    private val addTableUseCase: AddTableUseCase,
+    private val logoutUseCase: LogoutUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TableOverviewUiState())
     val uiState: StateFlow<TableOverviewUiState> = _uiState.asStateFlow()
+
+    private val _event = MutableStateFlow<TableOverviewEvent?>(null)
+    val event: StateFlow<TableOverviewEvent?> = _event.asStateFlow()
 
     init {
         loadTables()
@@ -42,7 +51,6 @@ class TableOverviewViewModel(
 
     fun onTableClicked(table: Table) {
         if (table.isOccupied) {
-            // TODO: Handle navigation for occupied table
         } else {
             _uiState.update { it.copy(isDialogShown = true, selectedTable = table) }
         }
@@ -53,8 +61,6 @@ class TableOverviewViewModel(
     }
 
     fun onDialogConfirm(numberOfPeople: Int) {
-        // TODO: Handle navigation with the new order details
-        // For now, just dismiss the dialog
         onDialogDismiss()
     }
 
@@ -63,10 +69,27 @@ class TableOverviewViewModel(
             when (addTableUseCase()) {
                 is Result.Success -> loadTables()
                 is Result.Error -> {
-                    // TODO: Show error message
                 }
                 else -> {}
             }
         }
+    }
+
+    fun onLogout() {
+        viewModelScope.launch {
+            when (val result = logoutUseCase()) {
+                is Result.Success -> {
+                    _event.value = TableOverviewEvent.LogoutSuccess
+                }
+                is Result.Error -> {
+                    // Handle error - could show snackbar or toast
+                }
+                else -> {}
+            }
+        }
+    }
+
+    fun onEventConsumed() {
+        _event.value = null
     }
 }

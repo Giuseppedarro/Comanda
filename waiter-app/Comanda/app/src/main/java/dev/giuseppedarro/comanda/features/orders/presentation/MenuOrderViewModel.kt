@@ -27,7 +27,8 @@ data class MenuOrderUiState(
     val isSheetVisible: Boolean = false,
     val isLoading: Boolean = false,
     val error: String? = null,
-    val existingOrder: Order? = null  // Hold the existing order reference
+    val existingOrder: Order? = null,  // Hold the existing order reference
+    val displayNumberOfPeople: Int = 0  // Used for UI display and order submission
 )
 
 class MenuOrderViewModel(
@@ -44,6 +45,9 @@ class MenuOrderViewModel(
     private val numberOfPeople: Int = savedStateHandle[ARG_NUMBER_OF_PEOPLE] ?: 0
 
     init {
+        // Initialize displayNumberOfPeople with the value from navigation
+        _uiState.update { it.copy(displayNumberOfPeople = numberOfPeople) }
+
         loadMenu()
         if (tableNumber > 0) {
             loadExistingOrder(tableNumber)
@@ -84,6 +88,7 @@ class MenuOrderViewModel(
                             it.copy(
                                 orderItems = order?.items ?: emptyList(),
                                 existingOrder = order,
+                                displayNumberOfPeople = order?.numberOfPeople ?: numberOfPeople,
                                 isLoading = false,
                                 error = null
                             )
@@ -139,13 +144,15 @@ class MenuOrderViewModel(
         onError: (String) -> Unit
     ) {
         val items = _uiState.value.orderItems
-        if (tableNumber <= 0 || numberOfPeople <= 0 || items.isEmpty()) {
+        val peopleCount = _uiState.value.displayNumberOfPeople
+
+        if (tableNumber <= 0 || peopleCount <= 0 || items.isEmpty()) {
             onError("Please select at least one item and enter valid table/people")
             return
         }
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
-            when (val res = submitOrder(tableNumber, numberOfPeople, items)) {
+            when (val res = submitOrder(tableNumber, peopleCount, items)) {
                 is Result.Success -> {
                     _uiState.update {
                         it.copy(
