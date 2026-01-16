@@ -4,6 +4,7 @@ import dev.giuseppedarro.comanda.features.login.data.repository.LoginRepositoryI
 import dev.giuseppedarro.comanda.features.login.domain.repository.LoginRepository
 import dev.giuseppedarro.comanda.features.login.domain.use_case.GetBaseUrlUseCase
 import dev.giuseppedarro.comanda.features.login.domain.use_case.LoginUseCase
+import dev.giuseppedarro.comanda.features.login.domain.use_case.LogoutUseCase
 import dev.giuseppedarro.comanda.features.login.domain.use_case.SetBaseUrlUseCase
 import dev.giuseppedarro.comanda.features.login.presentation.LoginViewModel
 import io.ktor.client.HttpClient
@@ -21,5 +22,6 @@ val loginModule = module {
     single { LoginUseCase(get()) }
     single { GetBaseUrlUseCase(get()) }
     single { SetBaseUrlUseCase(get()) }
+    single { LogoutUseCase(get()) }
     viewModel { LoginViewModel(get(), get(), get()) }
 }

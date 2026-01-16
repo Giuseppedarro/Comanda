@@ -6,7 +6,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,6 +19,10 @@ import dev.giuseppedarro.comanda.features.printers.presentation.components.AddPr
 import dev.giuseppedarro.comanda.features.printers.presentation.components.EditPrinterDialog
 import dev.giuseppedarro.comanda.features.printers.presentation.components.PrinterListItem
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material.ExperimentalMaterialApi
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,7 +68,7 @@ fun PrinterManagementScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun PrinterManagementContent(
     printers: List<Printer>,
@@ -79,6 +82,8 @@ fun PrinterManagementContent(
     onClearError: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val pullRefreshState = rememberPullRefreshState(refreshing = isLoading, onRefresh = onRefresh)
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -89,14 +94,6 @@ fun PrinterManagementContent(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Navigate back"
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = onRefresh) {
-                        Icon(
-                            imageVector = Icons.Default.Refresh,
-                            contentDescription = "Refresh"
                         )
                     }
                 }
@@ -117,14 +114,9 @@ fun PrinterManagementContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .pullRefresh(pullRefreshState)
         ) {
             when {
-                isLoading -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-
                 printers.isEmpty() && !isLoading -> {
                     Column(
                         modifier = Modifier
@@ -165,6 +157,13 @@ fun PrinterManagementContent(
                     }
                 }
             }
+
+            // Pull Refresh Indicator
+            PullRefreshIndicator(
+                refreshing = isLoading,
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
 
             // Error Snackbar
             error?.let { errorMessage ->

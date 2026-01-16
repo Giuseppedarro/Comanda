@@ -32,7 +32,7 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun ComandaTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = false, // Force light mode
     dynamicColor: Boolean = false, // Disabled to enforce brand colors
     content: @Composable () -> Unit
 ) {

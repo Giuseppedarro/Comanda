@@ -69,7 +69,7 @@ fun MenuOrderScreen(
 
     MenuOrderContent(
         tableNumber = tableNumber,
-        numberOfPeople = numberOfPeople,
+        numberOfPeople = uiState.displayNumberOfPeople,
         uiState = uiState,
         onQuantityChange = viewModel::onQuantityChange,
         onCategorySelected = viewModel::onCategorySelected,
@@ -78,7 +78,7 @@ fun MenuOrderScreen(
         onSendClick = {
             viewModel.onSendOrder(
                 tableNumber = tableNumber,
-                numberOfPeople = numberOfPeople,
+                numberOfPeople = uiState.displayNumberOfPeople,
                 onSuccess = {
                     Toast.makeText(context, "Order sent", Toast.LENGTH_SHORT).show()
                     onSendClick()

@@ -1,5 +1,7 @@
 package dev.giuseppedarro.comanda.features.tables.di
 
+import dev.giuseppedarro.comanda.features.login.domain.use_case.LogoutUseCase
+import dev.giuseppedarro.comanda.features.tables.data.remote.TableApi
 import dev.giuseppedarro.comanda.features.tables.data.repository.TablesRepositoryImpl
 import dev.giuseppedarro.comanda.features.tables.domain.repository.TablesRepository
 import dev.giuseppedarro.comanda.features.tables.domain.use_case.AddTableUseCase
@@ -12,11 +14,18 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val tablesModule = module {
+    // API
+    single {
+        TableApi(get(named("authClient")))
+    }
+
+    // Repository
+    single<TablesRepository> { TablesRepositoryImpl(get()) }
+
+    // Use cases
     factoryOf(::GetTablesUseCase)
     factoryOf(::AddTableUseCase)
-    factory {
-        TablesRepositoryImpl(get(named("authClient")))
-    } bind TablesRepository::class
 
+    // ViewModel
     viewModelOf(::TableOverviewViewModel)
 }
