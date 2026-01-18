@@ -4,18 +4,13 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.spyk
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -26,83 +21,61 @@ class TokenRepositoryImplTest {
 
     private lateinit var repository: TokenRepositoryImpl
     private lateinit var dataStore: DataStore<Preferences>
-    private val cryptoManager: CryptoManager = mockk()
+    private lateinit var testFile: File
 
     private val testContext = InstrumentationRegistry.getInstrumentation().targetContext
-    private val testFile = File(testContext.cacheDir, "test_datastore.preferences_pb")
 
+    private val cryptoManager = CryptoManager(alias = "test_alias")
     private val accessTokenKey = stringPreferencesKey("access_token")
 
     @Before
     fun setUp() {
+        // Create unique file for each test to avoid DataStore conflicts
+        testFile = File(
+            testContext.cacheDir,
+            "test_datastore_${System.currentTimeMillis()}.preferences_pb"
+        )
+
         // Use a real DataStore for instrumented tests
         dataStore = PreferenceDataStoreFactory.create(produceFile = { testFile })
-        // Spy allows us to verify calls on a real object
-        dataStore = spyk(dataStore)
-
         repository = TokenRepositoryImpl(dataStore, cryptoManager)
+    }
+
+    @After
+    fun tearDown() {
+        // Clean up test file after each test
+        if (::testFile.isInitialized && testFile.exists()) {
+            testFile.delete()
+        }
     }
 
     @Test
     fun getAccessToken_returnsNull_whenDatastoreIsEmpty() = runTest {
-        // Given an empty datastore
-        // When
-        val token = repository.getAccessToken()
-        // Then
-        assertThat(token).isNull()
+        assertThat(repository.getAccessToken()).isNull()
     }
 
     @Test
     fun saveAndGetAccessToken_e2e() = runTest {
-        // This is a more realistic integration test
-        val realCryptoManager = CryptoManager(alias = "test_alias_e2e")
-        val realRepository = TokenRepositoryImpl(dataStore, realCryptoManager)
-
         val originalToken = "my-secret-access-token"
 
-        // When
-        realRepository.saveAccessToken(originalToken)
-        val retrievedToken = realRepository.getAccessToken()
+        repository.saveAccessToken(originalToken)
+        val retrievedToken = repository.getAccessToken()
 
-        // Then
         assertThat(retrievedToken).isEqualTo(originalToken)
     }
-	
+
     @Test
-    fun getAccessToken_decryptsAndReturnsToken_correctly() = runTest {
-        // Given
-        val decryptedToken = "decrypted-access-token"
-        val encryptedData = CryptoManager.EncryptedData("iv".toByteArray(), "data".toByteArray())
-        val encodedString = "aXY=:ZGF0YQ==" // Base64 encoding of "iv" and "data"
+    fun getAccessToken_returnsNull_whenDecryptionFails() = runTest {
+        // Store invalid corrupted data (not from real encryption)
+        dataStore.edit { it[accessTokenKey] = "invalid_corrupted_base64_data" }
 
-        dataStore.edit { it[accessTokenKey] = encodedString }
-        every { cryptoManager.decrypt(any()) } returns decryptedToken
-
-        // When
-        val token = repository.getAccessToken()
-
-        // Then
-        assertThat(token).isEqualTo(decryptedToken)
-        coVerify { cryptoManager.decrypt(encryptedData) }
+        // The repo handles errors gracefully and returns null
+        assertThat(repository.getAccessToken()).isNull()
     }
 
     @Test
-    fun getAccessToken_returnsNull_onDecryptionError() = runTest {
-        // Given
-        val encodedString = "aXY=:ZGF0YQ==" // Corrupted or invalid string
-        dataStore.edit { it[accessTokenKey] = encodedString }
-        every { cryptoManager.decrypt(any()) } throws RuntimeException("Decryption failed")
-
-        // When
-        val token = repository.getAccessToken()
-
-        // Then
-        assertThat(token).isNull()
-    }
-
-    @Test
-    fun clear_callsDatastoreClear() = runTest {
-        // Given - some data
+    fun clear_removesAllData() = runTest {
+        // Given - save some data
         repository.saveAccessToken("some-token")
 
         // When
@@ -111,7 +84,6 @@ class TokenRepositoryImplTest {
         // Then
         val prefs = dataStore.data.first()
         assertThat(prefs.asMap()).isEmpty()
-        // Also verify the interaction if needed (using spyk)
-        coVerify { dataStore.edit(any()) }
+        assertThat(repository.getAccessToken()).isNull()
     }
 }

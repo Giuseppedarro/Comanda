@@ -22,6 +22,9 @@
       <SelectionState runConfigName="CryptoManagerTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
+      <SelectionState runConfigName="Tests in 'dev.giuseppedarro.comanda.core.data'">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
     </selectionStates>
   </component>
 </project>
