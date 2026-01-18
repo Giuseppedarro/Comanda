@@ -40,4 +40,37 @@ class MenuRepositoryImpl : MenuRepository {
             )
         }
     }
+
+    override suspend fun updateMenu(categories: List<MenuCategory>): Result<Unit> = try {
+        transaction {
+            // Delete all existing menu items first (due to foreign key constraint)
+            MenuItems.deleteAll()
+            // Delete all existing categories
+            MenuCategories.deleteAll()
+
+            // Insert new categories and items
+            for (category in categories) {
+                MenuCategories.insert {
+                    it[id] = category.id
+                    it[name] = category.name
+                    it[displayOrder] = 0 // Could be extracted from update DTO if needed
+                }
+
+                for (item in category.items) {
+                    MenuItems.insert {
+                        it[this.id] = item.id
+                        it[categoryId] = item.categoryId
+                        it[name] = item.name
+                        it[price] = item.price
+                        it[description] = item.description
+                        it[isAvailable] = item.isAvailable
+                        it[displayOrder] = 0 // Could be extracted from update DTO if needed
+                    }
+                }
+            }
+        }
+        Result.success(Unit)
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
 }

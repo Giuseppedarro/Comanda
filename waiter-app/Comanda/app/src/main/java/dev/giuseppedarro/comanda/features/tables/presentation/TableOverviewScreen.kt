@@ -186,7 +186,7 @@ fun TableOverviewContent(
                     }
                 )
                 NavigationDrawerItem(
-                    label = { Text("Menu (to be implemented)") },
+                    label = { Text("Menu") },
                     icon = { Icon(Icons.Default.RestaurantMenu, contentDescription = "Menu") },
                     selected = false,
                     onClick = {
