@@ -3,8 +3,7 @@ package dev.giuseppedarro.comanda.plugins
 import dev.giuseppedarro.comanda.features.auth.domain.usecase.LoginUseCase
 import dev.giuseppedarro.comanda.features.auth.domain.usecase.RefreshTokenUseCase
 import dev.giuseppedarro.comanda.features.auth.presentation.authRoutes
-import dev.giuseppedarro.comanda.features.menu.domain.usecase.GetMenuUseCase
-import dev.giuseppedarro.comanda.features.menu.domain.usecase.UpdateMenuUseCase
+import dev.giuseppedarro.comanda.features.menu.domain.usecase.*
 import dev.giuseppedarro.comanda.features.menu.presentation.menuRoutes
 import dev.giuseppedarro.comanda.features.orders.domain.usecase.GetOrderByIdUseCase
 import dev.giuseppedarro.comanda.features.orders.domain.usecase.GetOrdersForTableUseCase
@@ -29,8 +28,19 @@ fun Application.configureRouting() {
     val refreshTokenUseCase by inject<RefreshTokenUseCase>()
     val getTablesUseCase by inject<GetTablesUseCase>()
     val addTableUseCase by inject<AddTableUseCase>()
+    
+    // Menu Use Cases
     val getMenuUseCase by inject<GetMenuUseCase>()
     val updateMenuUseCase by inject<UpdateMenuUseCase>()
+    val addCategoryUseCase by inject<AddCategoryUseCase>()
+    val updateCategoryUseCase by inject<UpdateCategoryUseCase>()
+    val deleteCategoryUseCase by inject<DeleteCategoryUseCase>()
+    val getCategoryUseCase by inject<GetCategoryUseCase>()
+    val addItemUseCase by inject<AddItemUseCase>()
+    val updateItemUseCase by inject<UpdateItemUseCase>()
+    val deleteItemUseCase by inject<DeleteItemUseCase>()
+    val getItemUseCase by inject<GetItemUseCase>()
+
     val submitOrderUseCase by inject<SubmitOrderUseCase>()
     val getOrdersUseCase by inject<GetOrdersUseCase>()
     val getOrdersForTableUseCase by inject<GetOrdersForTableUseCase>()
@@ -44,7 +54,18 @@ fun Application.configureRouting() {
     routing {
         authRoutes(loginUseCase, refreshTokenUseCase)
         tablesRoutes(getTablesUseCase, addTableUseCase)
-        menuRoutes(getMenuUseCase, updateMenuUseCase)
+        menuRoutes(
+            getMenuUseCase, 
+            updateMenuUseCase,
+            addCategoryUseCase,
+            updateCategoryUseCase,
+            deleteCategoryUseCase,
+            getCategoryUseCase,
+            addItemUseCase,
+            updateItemUseCase,
+            deleteItemUseCase,
+            getItemUseCase
+        )
         ordersRoutes(submitOrderUseCase, getOrdersUseCase, getOrdersForTableUseCase, getOrderByIdUseCase)
         printersRoutes(
             getAllPrintersUseCase,
