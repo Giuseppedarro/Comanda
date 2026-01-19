@@ -1,34 +1,46 @@
 package dev.giuseppedarro.comanda.features.menu.data.remote.dto
 
-import dev.giuseppedarro.comanda.features.menu.domain.model.MenuItem as DomainMenuItem
-import dev.giuseppedarro.comanda.features.menu.domain.model.MenuCategory as DomainMenuCategory
+import dev.giuseppedarro.comanda.features.menu.domain.model.MenuCategory
+import dev.giuseppedarro.comanda.features.menu.domain.model.MenuItem
 
-fun MenuCategoryDto.toDomain(): DomainMenuCategory {
-    return DomainMenuCategory(
+fun MenuCategoryDto.toDomain(): MenuCategory {
+    return MenuCategory(
+        id = id ?: "",
         name = name,
+        displayOrder = displayOrder,
         items = items.map { it.toDomain() }
     )
 }
 
-fun DomainMenuCategory.toDto(): MenuCategoryDto {
+fun MenuCategory.toDto(): MenuCategoryDto {
     return MenuCategoryDto(
+        id = if (id.isNotBlank()) id else null,
         name = name,
+        displayOrder = displayOrder,
         items = items.map { it.toDto() }
     )
 }
 
-fun MenuItemDto.toDomain(): DomainMenuItem {
-    return DomainMenuItem(
+fun MenuItemDto.toDomain(): MenuItem {
+    return MenuItem(
         id = id ?: "",
+        categoryId = categoryId ?: "",
         name = name,
-        price = price
+        description = description,
+        price = price,
+        isAvailable = isAvailable,
+        displayOrder = displayOrder
     )
 }
 
-fun DomainMenuItem.toDto(): MenuItemDto {
+fun MenuItem.toDto(): MenuItemDto {
     return MenuItemDto(
         id = if (id.isNotBlank()) id else null,
+        categoryId = if (categoryId.isNotBlank()) categoryId else null,
         name = name,
-        price = price
+        description = description,
+        price = price,
+        isAvailable = isAvailable,
+        displayOrder = displayOrder
     )
 }

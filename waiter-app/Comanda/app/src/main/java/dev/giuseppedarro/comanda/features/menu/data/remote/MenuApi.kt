@@ -1,7 +1,7 @@
 package dev.giuseppedarro.comanda.features.menu.data.remote
 
-import dev.giuseppedarro.comanda.features.menu.data.remote.dto.MenuItemDto
 import dev.giuseppedarro.comanda.features.menu.data.remote.dto.MenuCategoryDto
+import dev.giuseppedarro.comanda.features.menu.data.remote.dto.MenuItemDto
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
@@ -18,21 +18,39 @@ class MenuApi(private val client: HttpClient) {
         return client.get("menu").body()
     }
 
-    suspend fun addMenuItem(categoryName: String, itemDto: MenuItemDto) {
-        client.post("menu/categories/$categoryName/items") {
+    suspend fun createCategory(categoryDto: MenuCategoryDto) {
+        client.post("menu/categories") {
+            contentType(ContentType.Application.Json)
+            setBody(categoryDto)
+        }
+    }
+
+    suspend fun updateCategory(categoryId: String, categoryDto: MenuCategoryDto) {
+        client.put("menu/categories/$categoryId") {
+            contentType(ContentType.Application.Json)
+            setBody(categoryDto)
+        }
+    }
+
+    suspend fun deleteCategory(categoryId: String) {
+        client.delete("menu/categories/$categoryId")
+    }
+
+    suspend fun addMenuItem(categoryId: String, itemDto: MenuItemDto) {
+        client.post("menu/categories/$categoryId/items") {
             contentType(ContentType.Application.Json)
             setBody(itemDto)
         }
     }
 
-    suspend fun updateMenuItem(categoryName: String, itemId: String, itemDto: MenuItemDto) {
-        client.put("menu/categories/$categoryName/items/$itemId") {
+    suspend fun updateMenuItem(itemId: String, itemDto: MenuItemDto) {
+        client.put("menu/items/$itemId") {
             contentType(ContentType.Application.Json)
             setBody(itemDto)
         }
     }
 
-    suspend fun deleteMenuItem(categoryName: String, itemId: String) {
-        client.delete("menu/categories/$categoryName/items/$itemId")
+    suspend fun deleteMenuItem(itemId: String) {
+        client.delete("menu/items/$itemId")
     }
 }
