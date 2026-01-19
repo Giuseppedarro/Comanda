@@ -10,13 +10,15 @@ import dev.giuseppedarro.comanda.features.menu.domain.usecase.DeleteMenuItemUseC
 import dev.giuseppedarro.comanda.features.menu.domain.usecase.GetMenuUseCase
 import dev.giuseppedarro.comanda.features.menu.domain.usecase.UpdateCategoryUseCase
 import dev.giuseppedarro.comanda.features.menu.domain.usecase.UpdateMenuItemUseCase
+import dev.giuseppedarro.comanda.features.menu.presentation.CategoryViewModel
 import dev.giuseppedarro.comanda.features.menu.presentation.MenuViewModel
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val menuModule = module {
-    single { MenuApi(get()) }
+    single { MenuApi(get(named("authClient"))) }
     single<MenuRepository> { MenuRepositoryImpl(get()) }
 
     factoryOf(::GetMenuUseCase)
@@ -27,5 +29,6 @@ val menuModule = module {
     factoryOf(::UpdateMenuItemUseCase)
     factoryOf(::DeleteMenuItemUseCase)
 
-    viewModel { MenuViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    viewModel { MenuViewModel(get()) }
+    viewModel { CategoryViewModel(get(), get(), get(), get(), get()) }
 }

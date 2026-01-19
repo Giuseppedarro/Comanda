@@ -12,10 +12,10 @@ import dev.giuseppedarro.comanda.features.menu.domain.usecase.UpdateMenuItemUseC
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 data class CategoryUiState(
+    val categoryId: String = "",
     val categoryName: String = "",
     val items: List<MenuItem> = emptyList(),
     val isLoading: Boolean = false,
@@ -54,6 +54,7 @@ class CategoryViewModel(
                     is Result.Success -> {
                         val category = result.data?.find { it.name == categoryName }
                         _uiState.value = _uiState.value.copy(
+                            categoryId = category?.id ?: "",
                             items = category?.items ?: emptyList(),
                             isLoading = false,
                             error = null
@@ -91,18 +92,36 @@ class CategoryViewModel(
         )
     }
 
-    fun onSaveItem(id: String, name: String, price: String) {
+    fun onSaveItem(name: String, description: String, price: String, isAvailable: Boolean = true) {
         viewModelScope.launch {
-            val item = MenuItem(
-                id = id,
-                name = name,
-                price = price
-            )
+            val priceDouble = price.toDoubleOrNull() ?: 0.0
+            val categoryId = _uiState.value.categoryId
+
+            val item = if (_uiState.value.selectedItem != null) {
+                // Update existing item
+                _uiState.value.selectedItem!!.copy(
+                    name = name,
+                    description = description,
+                    price = priceDouble,
+                    isAvailable = isAvailable
+                )
+            } else {
+                // Create new item
+                MenuItem(
+                    id = "",
+                    categoryId = categoryId,
+                    name = name,
+                    description = description,
+                    price = priceDouble,
+                    isAvailable = isAvailable,
+                    displayOrder = _uiState.value.items.size
+                )
+            }
 
             val result = if (_uiState.value.selectedItem != null) {
-                updateMenuItemUseCase(categoryName, item)
+                updateMenuItemUseCase(item)
             } else {
-                addMenuItemUseCase(categoryName, item.copy(id = ""))
+                addMenuItemUseCase(categoryId, item)
             }
 
             when (result) {
@@ -126,7 +145,7 @@ class CategoryViewModel(
 
     fun onDeleteItemClick(item: MenuItem) {
         viewModelScope.launch {
-            val result = deleteMenuItemUseCase(categoryName, item.id)
+            val result = deleteMenuItemUseCase(item.id)
             when (result) {
                 is Result.Success -> {
                     loadCategory()
@@ -145,3 +164,4 @@ class CategoryViewModel(
         _uiState.value = _uiState.value.copy(error = null)
     }
 }
+

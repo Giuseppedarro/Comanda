@@ -63,7 +63,7 @@ fun MenuScreen(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun MenuScreenContent(
-    categories: List<dev.giuseppedarro.comanda.features.menu.domain.model.MenuCategory>,
+    categories: List<MenuCategory>,
     isLoading: Boolean,
     error: String?,
     onNavigateToCategory: (String) -> Unit,
@@ -201,9 +201,9 @@ private fun MenuScreenContentPreview() {
     ComandaTheme {
         MenuScreenContent(
             categories = listOf(
-                MenuCategory(name = "Appetizers", items = emptyList()),
-                MenuCategory(name = "Main Courses", items = emptyList()),
-                MenuCategory(name = "Desserts", items = emptyList())
+                MenuCategory(id = "1", name = "Appetizers", displayOrder = 0, items = emptyList()),
+                MenuCategory(id = "2", name = "Main Courses", displayOrder = 1, items = emptyList()),
+                MenuCategory(id = "3", name = "Desserts", displayOrder = 2, items = emptyList())
             ),
             isLoading = false,
             error = null,

@@ -4,8 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MenuCategoryDto(
-    val id: String? = null,
     val name: String,
-    val displayOrder: Int,
-    val items: List<MenuItemDto>
+    val items: List<MenuItemDto>,
+    val id: String? = null,
+    val displayOrder: Int? = null
 )

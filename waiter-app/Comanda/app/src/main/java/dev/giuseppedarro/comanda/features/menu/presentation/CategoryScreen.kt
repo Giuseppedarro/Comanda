@@ -66,11 +66,12 @@ fun CategoryScreen(
         onEditItemClick = viewModel::onEditItemClick,
         onDeleteItemClick = viewModel::onDeleteItemClick,
         onDialogDismiss = viewModel::onDialogDismiss,
-        onSaveItem = { name, price ->
+        onSaveItem = { name, description, price, isAvailable ->
             viewModel.onSaveItem(
-                id = uiState.selectedItem?.id ?: "",
                 name = name,
-                price = price
+                description = description,
+                price = price,
+                isAvailable = isAvailable
             )
         },
         onEventConsumed = viewModel::onEventConsumed,
@@ -92,20 +93,26 @@ fun CategoryScreenContent(
     onEditItemClick: (MenuItem) -> Unit,
     onDeleteItemClick: (MenuItem) -> Unit,
     onDialogDismiss: () -> Unit,
-    onSaveItem: (String, String) -> Unit,
+    onSaveItem: (String, String, String, Boolean) -> Unit,
     onEventConsumed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var itemName by remember { mutableStateOf("") }
+    var itemDescription by remember { mutableStateOf("") }
     var itemPrice by remember { mutableStateOf("") }
+    var itemAvailable by remember { mutableStateOf(true) }
 
     // Reset form when dialog opens/closes
     if (!isDialogShown) {
         itemName = ""
+        itemDescription = ""
         itemPrice = ""
+        itemAvailable = true
     } else {
         itemName = selectedItem?.name ?: itemName
-        itemPrice = selectedItem?.price ?: itemPrice
+        itemDescription = selectedItem?.description ?: itemDescription
+        itemPrice = selectedItem?.price.toString()
+        itemAvailable = selectedItem?.isAvailable ?: true
     }
 
     Scaffold(
@@ -175,19 +182,27 @@ fun CategoryScreenContent(
     if (isDialogShown) {
         MenuItemDialog(
             itemName = itemName,
+            itemDescription = itemDescription,
             itemPrice = itemPrice,
+            itemAvailable = itemAvailable,
             onItemNameChange = { itemName = it },
+            onItemDescriptionChange = { itemDescription = it },
             onItemPriceChange = { itemPrice = it },
+            onItemAvailableChange = { itemAvailable = it },
             onDismiss = {
                 onDialogDismiss()
                 itemName = ""
+                itemDescription = ""
                 itemPrice = ""
+                itemAvailable = true
             },
             onConfirm = {
                 if (itemName.isNotBlank() && itemPrice.isNotBlank()) {
-                    onSaveItem(itemName, itemPrice)
+                    onSaveItem(itemName, itemDescription, itemPrice, itemAvailable)
                     itemName = ""
+                    itemDescription = ""
                     itemPrice = ""
+                    itemAvailable = true
                 }
             },
             isEditing = selectedItem != null
@@ -224,7 +239,7 @@ private fun MenuItemCard(
                     fontWeight = FontWeight.Medium
                 )
                 Text(
-                    text = item.price,
+                    text = "€${String.format("%.2f", item.price)}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                 )
@@ -252,9 +267,13 @@ private fun MenuItemCard(
 @Composable
 private fun MenuItemDialog(
     itemName: String,
+    itemDescription: String,
     itemPrice: String,
+    itemAvailable: Boolean,
     onItemNameChange: (String) -> Unit,
+    onItemDescriptionChange: (String) -> Unit,
     onItemPriceChange: (String) -> Unit,
+    onItemAvailableChange: (Boolean) -> Unit,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
     isEditing: Boolean
@@ -276,12 +295,25 @@ private fun MenuItemDialog(
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
+                    value = itemDescription,
+                    onValueChange = onItemDescriptionChange,
+                    label = { Text("Description") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
                     value = itemPrice,
                     onValueChange = onItemPriceChange,
                     label = { Text("Price") },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Available", modifier = Modifier.weight(1f))
+                    // Toggle or checkbox could be used here
+                }
             }
         },
         confirmButton = {
@@ -307,8 +339,8 @@ private fun CategoryScreenContentPreview() {
         CategoryScreenContent(
             categoryName = "Appetizers",
             items = listOf(
-                MenuItem(id = "1", name = "Bruschetta", price = "€8.00"),
-                MenuItem(id = "2", name = "Calamari", price = "€12.00")
+                MenuItem(id = "1", categoryId = "1", name = "Bruschetta", description = "Fresh bread with tomatoes", price = 8.0, isAvailable = true, displayOrder = 0),
+                MenuItem(id = "2", categoryId = "1", name = "Calamari", description = "Fried squid", price = 12.0, isAvailable = true, displayOrder = 1)
             ),
             isLoading = false,
             isDialogShown = false,
@@ -319,7 +351,7 @@ private fun CategoryScreenContentPreview() {
             onEditItemClick = {},
             onDeleteItemClick = {},
             onDialogDismiss = {},
-            onSaveItem = { _, _ -> },
+            onSaveItem = { _, _, _, _ -> },
             onEventConsumed = {}
         )
     }
