@@ -7,9 +7,9 @@ object Orders : Table() {
     val numberOfPeople = integer("number_of_people")
     val status = varchar("status", 32) // "open", "served", "closed"
     val createdAt = varchar("created_at", 64)
-    val subtotal = double("subtotal").nullable()
-    val serviceCharge = double("service_charge").nullable()
-    val total = double("total").nullable()
+    val subtotal = integer("subtotal").nullable()
+    val serviceCharge = integer("service_charge").nullable()
+    val total = integer("total").nullable()
 
     override val primaryKey = PrimaryKey(tableNumber)
 }

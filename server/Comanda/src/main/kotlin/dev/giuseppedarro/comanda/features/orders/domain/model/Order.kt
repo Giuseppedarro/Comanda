@@ -20,7 +20,7 @@ data class Order(
     val status: OrderStatus = OrderStatus.open,
     val items: List<OrderItem>,
     val createdAt: String,
-    val subtotal: Double? = null,
-    val serviceCharge: Double? = null,
-    val total: Double? = null
+    val subtotal: Int? = null,
+    val serviceCharge: Int? = null,
+    val total: Int? = null
 )

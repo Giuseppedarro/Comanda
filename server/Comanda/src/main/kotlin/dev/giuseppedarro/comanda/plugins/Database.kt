@@ -2,6 +2,8 @@ package dev.giuseppedarro.comanda.plugins
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import dev.giuseppedarro.comanda.features.menu.data.MenuCategories
+import dev.giuseppedarro.comanda.features.menu.data.MenuItems
 import dev.giuseppedarro.comanda.features.orders.data.OrderItems
 import dev.giuseppedarro.comanda.features.orders.data.Orders
 import dev.giuseppedarro.comanda.features.printers.data.Printers
@@ -29,7 +31,7 @@ fun Application.configureDatabase() {
     Database.connect(dataSource)
 
     transaction {
-        SchemaUtils.create(Users, Tables, Orders, OrderItems, Printers)
+        SchemaUtils.create(Users, Tables, Orders, OrderItems, Printers, MenuCategories, MenuItems)
 
         // Create a default user if none exists
         if (Users.selectAll().count() == 0L) {
@@ -67,6 +69,106 @@ fun Application.configureDatabase() {
                 it[name] = "Cashier"
                 it[address] = "192.168.1.102"
                 it[port] = 9100
+            }
+        }
+
+        // Create default menu if none exists
+        if (MenuCategories.selectAll().count() == 0L) {
+            // Create categories
+            val categories = listOf(
+                "appetizers" to "Appetizers",
+                "main_courses" to "Main Courses",
+                "desserts" to "Desserts",
+                "drinks" to "Drinks"
+            )
+
+            categories.forEachIndexed { index, (id, name) ->
+                MenuCategories.insert {
+                    it[MenuCategories.id] = id
+                    it[MenuCategories.name] = name
+                    it[MenuCategories.displayOrder] = index
+                }
+            }
+
+            // Create appetizer items
+            val appetizers = listOf(
+                "app_bruschetta" to 700,
+                "app_garlic_bread" to 500,
+                "app_mushrooms" to 850,
+                "app_spring_rolls" to 600,
+                "app_onion_rings" to 550,
+                "app_calamari" to 900
+            )
+            appetizers.forEachIndexed { index, (id, price) ->
+                MenuItems.insert {
+                    it[MenuItems.id] = id
+                    it[MenuItems.categoryId] = "appetizers"
+                    it[MenuItems.name] = id.removePrefix("app_")
+                        .split("_")
+                        .joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } }
+                    it[MenuItems.price] = price
+                    it[MenuItems.displayOrder] = index
+                }
+            }
+
+            // Create main course items
+            val mainCourses = listOf(
+                "main_burger" to 1299,
+                "main_caesar_salad" to 850
+            )
+            mainCourses.forEachIndexed { index, (id, price) ->
+                MenuItems.insert {
+                    it[MenuItems.id] = id
+                    it[MenuItems.categoryId] = "main_courses"
+                    it[MenuItems.name] = id.removePrefix("main_")
+                        .split("_")
+                        .joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } }
+                    it[MenuItems.price] = price
+                    it[MenuItems.displayOrder] = index
+                }
+            }
+
+            // Create dessert items
+            val desserts = listOf(
+                "dess_tiramisu" to 650,
+                "dess_cheesecake" to 750
+            )
+            desserts.forEachIndexed { index, (id, price) ->
+                MenuItems.insert {
+                    it[MenuItems.id] = id
+                    it[MenuItems.categoryId] = "desserts"
+                    it[MenuItems.name] = id.removePrefix("dess_")
+                        .replaceFirstChar { char -> char.uppercaseChar() }
+                    it[MenuItems.price] = price
+                    it[MenuItems.displayOrder] = index
+                }
+            }
+
+            // Create drink items
+            val drinks = listOf(
+                "drink_cola" to 250,
+                "drink_cappuccino" to 475,
+                "drink_iced_tea" to 200,
+                "drink_orange_juice" to 300,
+                "drink_latte" to 400,
+                "drink_water" to 100,
+                "drink_espresso" to 300,
+                "drink_lemonade" to 350,
+                "drink_apple_juice" to 300,
+                "drink_sparkling_water" to 150,
+                "drink_green_tea" to 250,
+                "drink_beer" to 500
+            )
+            drinks.forEachIndexed { index, (id, price) ->
+                MenuItems.insert {
+                    it[MenuItems.id] = id
+                    it[MenuItems.categoryId] = "drinks"
+                    it[MenuItems.name] = id.removePrefix("drink_")
+                        .split("_")
+                        .joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } }
+                    it[MenuItems.price] = price
+                    it[MenuItems.displayOrder] = index
+                }
             }
         }
     }

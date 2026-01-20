@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import android.widget.Toast
 import androidx.compose.material.icons.filled.Newspaper
 import dev.giuseppedarro.comanda.core.presentation.ComandaTopAppBar
+import dev.giuseppedarro.comanda.core.utils.toPriceStringUSD
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuItem
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderItem
@@ -116,7 +117,7 @@ fun MenuOrderContent(
                 items(uiState.selectedCategory.items) { item ->
                     ListItem(
                         headlineContent = { Text(item.name) },
-                        supportingContent = { Text(item.price) },
+                        supportingContent = { Text(item.price.toPriceStringUSD()) },
                         modifier = Modifier.clickable { onMenuItemAdded(item) }
                     )
                 }
@@ -147,7 +148,7 @@ fun MenuOrderContent(
                 items(uiState.orderItems) { item ->
                     MenuItemRow(
                         itemName = item.menuItem.name,
-                        itemPrice = item.menuItem.price,
+                        itemPrice = item.menuItem.price.toPriceStringUSD(),
                         quantity = item.quantity,
                         onQuantityChange = { newQuantity -> onQuantityChange(item, newQuantity) }
                     )
@@ -198,8 +199,8 @@ fun MenuOrderScreenPreview() {
         MenuCategory("Drinks", emptyList())
     )
     val mockOrderItems = listOf(
-        OrderItem(MenuItem("1", "Gourmet Burger", "$12.99"), 1),
-        OrderItem(MenuItem("2", "Cola", "$2.50"), 2)
+        OrderItem(MenuItem("1", "Gourmet Burger", 1299), 1),
+        OrderItem(MenuItem("2", "Cola", 250), 2)
     )
 
     ComandaTheme {

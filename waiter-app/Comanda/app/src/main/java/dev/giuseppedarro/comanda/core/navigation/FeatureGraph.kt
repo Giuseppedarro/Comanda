@@ -13,3 +13,9 @@ object Orders
 
 @Serializable
 object Printers
+
+@Serializable
+object Menu
+
+@Serializable
+data class Category(val categoryName: String)

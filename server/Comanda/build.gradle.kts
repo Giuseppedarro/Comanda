@@ -9,6 +9,10 @@ plugins {
     kotlin("plugin.serialization") version "2.2.20"
 }
 
+kotlin {
+    jvmToolchain(17)
+}
+
 group = "dev.giuseppedarro.comanda"
 version = "0.0.1"
 
@@ -50,5 +54,15 @@ dependencies {
     implementation("com.zaxxer:HikariCP:5.0.1")
 
     testImplementation("io.ktor:ktor-server-test-host")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testImplementation("io.mockk:mockk:1.13.11")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.10.0")
+    testImplementation("io.ktor:ktor-serialization-kotlinx-json")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
