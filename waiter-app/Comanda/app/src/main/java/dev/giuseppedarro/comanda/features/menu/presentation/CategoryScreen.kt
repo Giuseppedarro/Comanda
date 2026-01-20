@@ -51,6 +51,7 @@ fun CategoryScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     CategoryScreenContent(
+        categoryId = uiState.categoryId,
         categoryName = uiState.categoryName,
         items = uiState.items,
         isLoading = uiState.isLoading,
@@ -78,6 +79,7 @@ fun CategoryScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryScreenContent(
+    categoryId: String,
     categoryName: String,
     items: List<MenuItem>,
     isLoading: Boolean,
@@ -236,6 +238,7 @@ private fun MenuItemCard(
 private fun CategoryScreenContentPreview() {
     ComandaTheme {
         CategoryScreenContent(
+            categoryId = "1",
             categoryName = "Appetizers",
             items = listOf(
                 MenuItem(id = "1", categoryId = "1", name = "Bruschetta", description = "Fresh bread with tomatoes", price = 800, isAvailable = true, displayOrder = 0),

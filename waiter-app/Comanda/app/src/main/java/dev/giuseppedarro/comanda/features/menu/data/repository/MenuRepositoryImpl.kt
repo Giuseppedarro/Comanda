@@ -4,6 +4,7 @@ import dev.giuseppedarro.comanda.core.utils.Result
 import dev.giuseppedarro.comanda.features.menu.data.remote.MenuApi
 import dev.giuseppedarro.comanda.features.menu.data.remote.dto.toDomain
 import dev.giuseppedarro.comanda.features.menu.data.remote.dto.toDto
+import dev.giuseppedarro.comanda.features.menu.data.remote.dto.toUpdateRequest
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuItem
 import dev.giuseppedarro.comanda.features.menu.domain.repository.MenuRepository
@@ -56,7 +57,7 @@ class MenuRepositoryImpl(
     }
 
     override suspend fun updateMenuItem(item: MenuItem): Result<Unit> = try {
-        api.updateMenuItem(item.id, item.toDto())
+        api.updateMenuItem(item.id, item.toUpdateRequest())
         Result.Success(Unit)
     } catch (e: Exception) {
         Result.Error(e.message ?: "Unknown error")

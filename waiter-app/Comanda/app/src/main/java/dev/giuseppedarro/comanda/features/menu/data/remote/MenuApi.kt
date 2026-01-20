@@ -2,6 +2,7 @@ package dev.giuseppedarro.comanda.features.menu.data.remote
 
 import dev.giuseppedarro.comanda.features.menu.data.remote.dto.MenuCategoryDto
 import dev.giuseppedarro.comanda.features.menu.data.remote.dto.MenuItemDto
+import dev.giuseppedarro.comanda.features.menu.data.remote.dto.UpdateMenuItemRequest
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
@@ -43,7 +44,7 @@ class MenuApi(private val client: HttpClient) {
         }
     }
 
-    suspend fun updateMenuItem(itemId: String, itemDto: MenuItemDto) {
+    suspend fun updateMenuItem(itemId: String, itemDto: UpdateMenuItemRequest) {
         client.put("menu/items/$itemId") {
             contentType(ContentType.Application.Json)
             setBody(itemDto)

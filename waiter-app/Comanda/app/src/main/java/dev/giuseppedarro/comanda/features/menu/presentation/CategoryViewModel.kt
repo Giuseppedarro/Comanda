@@ -52,8 +52,13 @@ class CategoryViewModel(
                             error = null
                         )
                     }
+
                     is Result.Success -> {
                         val category = result.data?.find { it.name == categoryName }
+                        System.out.println("DEBUG_CATEGORY_ID: In loadCategory, found category ID: ${category?.id}")
+                        if (category?.items?.isNotEmpty() == true) {
+                            System.out.println("DEBUG_CATEGORY_ID: In loadCategory, first item's categoryId: ${category.items.first().categoryId}")
+                        }
                         _uiState.value = _uiState.value.copy(
                             categoryId = category?.id ?: "",
                             items = category?.items ?: emptyList(),
@@ -61,6 +66,7 @@ class CategoryViewModel(
                             error = null
                         )
                     }
+
                     is Result.Error -> {
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
@@ -80,6 +86,7 @@ class CategoryViewModel(
     }
 
     fun onEditItemClick(item: MenuItem) {
+        System.out.println("DEBUG_CATEGORY_ID: In onEditItemClick, selected item: $item")
         _uiState.value = _uiState.value.copy(
             isDialogShown = true,
             selectedItem = item
@@ -97,6 +104,8 @@ class CategoryViewModel(
         viewModelScope.launch {
             val priceInCents = price.toPriceCents()
             val categoryId = _uiState.value.categoryId
+            System.out.println("DEBUG_CATEGORY_ID: In onSaveItem, categoryId from state: $categoryId")
+            System.out.println("DEBUG_CATEGORY_ID: In onSaveItem, selectedItem from state: ${_uiState.value.selectedItem}")
 
             val item = if (_uiState.value.selectedItem != null) {
                 // Update existing item
@@ -118,6 +127,7 @@ class CategoryViewModel(
                     displayOrder = _uiState.value.items.size
                 )
             }
+            System.out.println("DEBUG_CATEGORY_ID: In onSaveItem, item to be sent: $item")
 
             val result = if (_uiState.value.selectedItem != null) {
                 updateMenuItemUseCase(item)
@@ -134,11 +144,13 @@ class CategoryViewModel(
                     )
                     loadCategory()
                 }
+
                 is Result.Error -> {
                     _uiState.value = _uiState.value.copy(
                         error = result.message
                     )
                 }
+
                 else -> {}
             }
         }
@@ -151,11 +163,13 @@ class CategoryViewModel(
                 is Result.Success -> {
                     loadCategory()
                 }
+
                 is Result.Error -> {
                     _uiState.value = _uiState.value.copy(
                         error = result.message
                     )
                 }
+
                 else -> {}
             }
         }
@@ -165,4 +179,3 @@ class CategoryViewModel(
         _uiState.value = _uiState.value.copy(error = null)
     }
 }
-

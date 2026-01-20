@@ -44,3 +44,14 @@ fun MenuItem.toDto(): MenuItemDto {
         displayOrder = displayOrder
     )
 }
+
+fun MenuItem.toUpdateRequest(): UpdateMenuItemRequest {
+    return UpdateMenuItemRequest(
+        name = name,
+        price = price,
+        categoryId = categoryId,
+        description = description,
+        isAvailable = isAvailable,
+        displayOrder = displayOrder
+    )
+}
