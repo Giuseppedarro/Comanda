@@ -2,6 +2,7 @@ package dev.giuseppedarro.comanda.features.menu.data.repository
 
 import dev.giuseppedarro.comanda.core.utils.Result
 import dev.giuseppedarro.comanda.features.menu.data.remote.MenuApi
+import dev.giuseppedarro.comanda.features.menu.data.remote.dto.toCreateRequest
 import dev.giuseppedarro.comanda.features.menu.data.remote.dto.toDomain
 import dev.giuseppedarro.comanda.features.menu.data.remote.dto.toDto
 import dev.giuseppedarro.comanda.features.menu.data.remote.dto.toUpdateRequest
@@ -50,7 +51,7 @@ class MenuRepositoryImpl(
     }
 
     override suspend fun addMenuItem(categoryId: String, item: MenuItem): Result<Unit> = try {
-        api.addMenuItem(categoryId, item.toDto())
+        api.addMenuItem(categoryId, item.toCreateRequest())
         Result.Success(Unit)
     } catch (e: Exception) {
         Result.Error(e.message ?: "Unknown error")

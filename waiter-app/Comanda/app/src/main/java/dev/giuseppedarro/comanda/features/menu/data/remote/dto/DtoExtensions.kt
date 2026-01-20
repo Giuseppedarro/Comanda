@@ -55,3 +55,13 @@ fun MenuItem.toUpdateRequest(): UpdateMenuItemRequest {
         displayOrder = displayOrder
     )
 }
+
+fun MenuItem.toCreateRequest(): CreateMenuItemRequest {
+    return CreateMenuItemRequest(
+        name = name,
+        price = price,
+        description = description,
+        isAvailable = isAvailable,
+        displayOrder = displayOrder
+    )
+}

@@ -1,5 +1,6 @@
 package dev.giuseppedarro.comanda.features.menu.data.remote
 
+import dev.giuseppedarro.comanda.features.menu.data.remote.dto.CreateMenuItemRequest
 import dev.giuseppedarro.comanda.features.menu.data.remote.dto.MenuCategoryDto
 import dev.giuseppedarro.comanda.features.menu.data.remote.dto.MenuItemDto
 import dev.giuseppedarro.comanda.features.menu.data.remote.dto.UpdateMenuItemRequest
@@ -37,7 +38,7 @@ class MenuApi(private val client: HttpClient) {
         client.delete("menu/categories/$categoryId")
     }
 
-    suspend fun addMenuItem(categoryId: String, itemDto: MenuItemDto) {
+    suspend fun addMenuItem(categoryId: String, itemDto: CreateMenuItemRequest) {
         client.post("menu/categories/$categoryId/items") {
             contentType(ContentType.Application.Json)
             setBody(itemDto)
