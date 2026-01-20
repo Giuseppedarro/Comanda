@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.giuseppedarro.comanda.core.utils.Result
+import dev.giuseppedarro.comanda.core.utils.toPriceCents
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuItem
 import dev.giuseppedarro.comanda.features.menu.domain.usecase.AddMenuItemUseCase
 import dev.giuseppedarro.comanda.features.menu.domain.usecase.DeleteMenuItemUseCase
@@ -94,7 +95,7 @@ class CategoryViewModel(
 
     fun onSaveItem(name: String, description: String, price: String, isAvailable: Boolean = true) {
         viewModelScope.launch {
-            val priceDouble = price.toDoubleOrNull() ?: 0.0
+            val priceInCents = price.toPriceCents()
             val categoryId = _uiState.value.categoryId
 
             val item = if (_uiState.value.selectedItem != null) {
@@ -102,7 +103,7 @@ class CategoryViewModel(
                 _uiState.value.selectedItem!!.copy(
                     name = name,
                     description = description,
-                    price = priceDouble,
+                    price = priceInCents,
                     isAvailable = isAvailable
                 )
             } else {
@@ -112,7 +113,7 @@ class CategoryViewModel(
                     categoryId = categoryId,
                     name = name,
                     description = description,
-                    price = priceDouble,
+                    price = priceInCents,
                     isAvailable = isAvailable,
                     displayOrder = _uiState.value.items.size
                 )

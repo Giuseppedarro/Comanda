@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class MenuItemDto(
     val id: String? = null,  // Optional: backend menu endpoint may not provide it yet
     val name: String,
-    val price: String
+    val price: Int
 )

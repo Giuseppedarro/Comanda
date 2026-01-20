@@ -22,15 +22,12 @@ fun MenuCategory.toDto(): MenuCategoryDto {
 }
 
 fun MenuItemDto.toDomain(categoryId: String = "", displayOrder: Int = 0): MenuItem {
-    // Parse price string: remove currency symbol and convert to Double
-    val priceDouble = price.replace(Regex("[^\\d.,]"), "").replace(",", ".").toDoubleOrNull() ?: 0.0
-
     return MenuItem(
         id = id,
         categoryId = this.categoryId ?: categoryId,
         name = name,
         description = description ?: "",
-        price = priceDouble,
+        price = price,
         isAvailable = isAvailable ?: true,
         displayOrder = this.displayOrder ?: displayOrder
     )
@@ -40,7 +37,7 @@ fun MenuItem.toDto(): MenuItemDto {
     return MenuItemDto(
         id = id,
         name = name,
-        price = String.format("$%.2f", price),
+        price = price,
         categoryId = if (categoryId.isNotBlank()) categoryId else null,
         description = if (description.isNotBlank()) description else null,
         isAvailable = isAvailable,

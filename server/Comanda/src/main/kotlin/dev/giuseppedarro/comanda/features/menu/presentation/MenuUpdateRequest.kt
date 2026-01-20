@@ -7,7 +7,7 @@ data class MenuItemUpdateDto(
     val id: String,
     val categoryId: String,
     val name: String,
-    val price: Double,
+    val price: Int,
     val description: String? = null,
     val isAvailable: Boolean = true,
     val displayOrder: Int = 0

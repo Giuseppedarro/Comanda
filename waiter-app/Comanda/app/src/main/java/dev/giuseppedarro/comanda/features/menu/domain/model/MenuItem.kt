@@ -5,7 +5,7 @@ data class MenuItem(
     val categoryId: String, // Required when moving an item
     val name: String,
     val description: String,
-    val price: Double,
+    val price: Int,
     val isAvailable: Boolean,
     val displayOrder: Int
 )

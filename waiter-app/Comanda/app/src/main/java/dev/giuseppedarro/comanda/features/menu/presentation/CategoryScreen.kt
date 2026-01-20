@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
+import dev.giuseppedarro.comanda.core.utils.toPriceString
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -111,7 +112,7 @@ fun CategoryScreenContent(
     } else {
         itemName = selectedItem?.name ?: itemName
         itemDescription = selectedItem?.description ?: itemDescription
-        itemPrice = selectedItem?.price.toString()
+        itemPrice = selectedItem?.price?.let { "${it / 100}.${(it % 100).toString().padStart(2, '0')}" } ?: ""
         itemAvailable = selectedItem?.isAvailable ?: true
     }
 
@@ -239,7 +240,7 @@ private fun MenuItemCard(
                     fontWeight = FontWeight.Medium
                 )
                 Text(
-                    text = "€${String.format("%.2f", item.price)}",
+                    text = item.price.toPriceString(),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                 )
@@ -339,8 +340,8 @@ private fun CategoryScreenContentPreview() {
         CategoryScreenContent(
             categoryName = "Appetizers",
             items = listOf(
-                MenuItem(id = "1", categoryId = "1", name = "Bruschetta", description = "Fresh bread with tomatoes", price = 8.0, isAvailable = true, displayOrder = 0),
-                MenuItem(id = "2", categoryId = "1", name = "Calamari", description = "Fried squid", price = 12.0, isAvailable = true, displayOrder = 1)
+                MenuItem(id = "1", categoryId = "1", name = "Bruschetta", description = "Fresh bread with tomatoes", price = 800, isAvailable = true, displayOrder = 0),
+                MenuItem(id = "2", categoryId = "1", name = "Calamari", description = "Fried squid", price = 1200, isAvailable = true, displayOrder = 1)
             ),
             isLoading = false,
             isDialogShown = false,

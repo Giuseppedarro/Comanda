@@ -24,7 +24,7 @@ class UpdateMenuUseCaseTest {
                         id = "item-1",
                         categoryId = "cat-1",
                         name = "Bruschetta",
-                        price = 8.99,
+                        price = 899,
                         description = "Toasted bread",
                         isAvailable = true,
                         displayOrder = 1
@@ -166,7 +166,7 @@ class UpdateMenuUseCaseTest {
                         id = "item-1",
                         categoryId = "cat-999", // Wrong category ID
                         name = "Bruschetta",
-                        price = 8.99
+                        price = 899
                     )
                 )
             )
@@ -194,7 +194,7 @@ class UpdateMenuUseCaseTest {
                         id = "",
                         categoryId = "cat-1",
                         name = "Bruschetta",
-                        price = 8.99
+                        price = 899
                     )
                 )
             )
@@ -222,7 +222,7 @@ class UpdateMenuUseCaseTest {
                         id = "item-1",
                         categoryId = "cat-1",
                         name = "  ",
-                        price = 8.99
+                        price = 899
                     )
                 )
             )
@@ -250,7 +250,7 @@ class UpdateMenuUseCaseTest {
                         id = "item-1",
                         categoryId = "cat-1",
                         name = "Bruschetta",
-                        price = -5.99 // Negative price
+                        price = -599 // Negative price
                     )
                 )
             )
@@ -278,13 +278,13 @@ class UpdateMenuUseCaseTest {
                         id = "item-1",
                         categoryId = "cat-1",
                         name = "Bruschetta",
-                        price = 8.99
+                        price = 899
                     ),
                     MenuItemUpdateDto(
                         id = "item-1", // Duplicate ID
                         categoryId = "cat-1",
                         name = "Garlic Bread",
-                        price = 6.99
+                        price = 699
                     )
                 )
             )
@@ -312,7 +312,7 @@ class UpdateMenuUseCaseTest {
                         id = "item-1",
                         categoryId = "cat-1",
                         name = "  Bruschetta  ",
-                        price = 8.99,
+                        price = 899,
                         description = "  Toasted bread  "
                     )
                 )
@@ -347,13 +347,13 @@ class UpdateMenuUseCaseTest {
                         id = "item-1",
                         categoryId = "cat-1",
                         name = "Bruschetta",
-                        price = 8.99
+                        price = 899
                     ),
                     MenuItemUpdateDto(
                         id = "item-2",
                         categoryId = "cat-1",
                         name = "Garlic Bread",
-                        price = 6.99
+                        price = 699
                     )
                 )
             ),
@@ -365,7 +365,7 @@ class UpdateMenuUseCaseTest {
                         id = "item-3",
                         categoryId = "cat-2",
                         name = "Carbonara",
-                        price = 14.99
+                        price = 1499
                     )
                 )
             )
@@ -420,7 +420,7 @@ class UpdateMenuUseCaseTest {
                         id = "item-1",
                         categoryId = "cat-1",
                         name = "Bruschetta",
-                        price = 8.99
+                        price = 899
                     )
                 )
             )

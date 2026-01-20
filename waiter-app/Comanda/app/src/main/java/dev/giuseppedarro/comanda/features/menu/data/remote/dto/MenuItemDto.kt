@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class MenuItemDto(
     val id: String,
     val name: String,
-    val price: String,
+    val price: Int,
     val categoryId: String? = null,
     val description: String? = null,
     val isAvailable: Boolean? = null,

@@ -14,6 +14,6 @@ fun MenuItem.toDto(): MenuItemDto {
     return MenuItemDto(
         id = id,
         name = name,
-        price = "$${String.format("%.2f", price)}"
+        price = price
     )
 }

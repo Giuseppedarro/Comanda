@@ -17,7 +17,7 @@ data class UpdateCategoryRequest(
 @Serializable
 data class CreateItemRequest(
     val name: String,
-    val price: Double,
+    val price: Int,
     val description: String? = null,
     val isAvailable: Boolean = true,
     val displayOrder: Int = 0
@@ -27,7 +27,7 @@ data class CreateItemRequest(
 data class UpdateItemRequest(
     val categoryId: String,
     val name: String,
-    val price: Double,
+    val price: Int,
     val description: String? = null,
     val isAvailable: Boolean = true,
     val displayOrder: Int = 0

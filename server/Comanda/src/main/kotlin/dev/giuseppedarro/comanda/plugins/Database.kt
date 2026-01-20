@@ -92,12 +92,12 @@ fun Application.configureDatabase() {
 
             // Create appetizer items
             val appetizers = listOf(
-                "app_bruschetta" to 7.00,
-                "app_garlic_bread" to 5.00,
-                "app_mushrooms" to 8.50,
-                "app_spring_rolls" to 6.00,
-                "app_onion_rings" to 5.50,
-                "app_calamari" to 9.00
+                "app_bruschetta" to 700,
+                "app_garlic_bread" to 500,
+                "app_mushrooms" to 850,
+                "app_spring_rolls" to 600,
+                "app_onion_rings" to 550,
+                "app_calamari" to 900
             )
             appetizers.forEachIndexed { index, (id, price) ->
                 MenuItems.insert {
@@ -113,8 +113,8 @@ fun Application.configureDatabase() {
 
             // Create main course items
             val mainCourses = listOf(
-                "main_burger" to 12.99,
-                "main_caesar_salad" to 8.50
+                "main_burger" to 1299,
+                "main_caesar_salad" to 850
             )
             mainCourses.forEachIndexed { index, (id, price) ->
                 MenuItems.insert {
@@ -130,8 +130,8 @@ fun Application.configureDatabase() {
 
             // Create dessert items
             val desserts = listOf(
-                "dess_tiramisu" to 6.50,
-                "dess_cheesecake" to 7.50
+                "dess_tiramisu" to 650,
+                "dess_cheesecake" to 750
             )
             desserts.forEachIndexed { index, (id, price) ->
                 MenuItems.insert {
@@ -146,18 +146,18 @@ fun Application.configureDatabase() {
 
             // Create drink items
             val drinks = listOf(
-                "drink_cola" to 2.50,
-                "drink_cappuccino" to 4.75,
-                "drink_iced_tea" to 2.00,
-                "drink_orange_juice" to 3.00,
-                "drink_latte" to 4.00,
-                "drink_water" to 1.00,
-                "drink_espresso" to 3.00,
-                "drink_lemonade" to 3.50,
-                "drink_apple_juice" to 3.00,
-                "drink_sparkling_water" to 1.50,
-                "drink_green_tea" to 2.50,
-                "drink_beer" to 5.00
+                "drink_cola" to 250,
+                "drink_cappuccino" to 475,
+                "drink_iced_tea" to 200,
+                "drink_orange_juice" to 300,
+                "drink_latte" to 400,
+                "drink_water" to 100,
+                "drink_espresso" to 300,
+                "drink_lemonade" to 350,
+                "drink_apple_juice" to 300,
+                "drink_sparkling_water" to 150,
+                "drink_green_tea" to 250,
+                "drink_beer" to 500
             )
             drinks.forEachIndexed { index, (id, price) ->
                 MenuItems.insert {
