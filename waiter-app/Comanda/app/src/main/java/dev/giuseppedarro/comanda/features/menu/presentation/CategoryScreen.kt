@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -16,7 +15,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import dev.giuseppedarro.comanda.core.utils.toPriceString
 import androidx.compose.material3.CardDefaults
@@ -26,16 +24,11 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -44,6 +37,8 @@ import androidx.compose.ui.unit.dp
 import dev.giuseppedarro.comanda.core.presentation.ComandaTopAppBar
 import dev.giuseppedarro.comanda.ui.theme.ComandaTheme
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuItem
+import dev.giuseppedarro.comanda.features.menu.presentation.components.AddMenuItemDialog
+import dev.giuseppedarro.comanda.features.menu.presentation.components.EditMenuItemDialog
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -98,24 +93,6 @@ fun CategoryScreenContent(
     onEventConsumed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var itemName by remember { mutableStateOf("") }
-    var itemDescription by remember { mutableStateOf("") }
-    var itemPrice by remember { mutableStateOf("") }
-    var itemAvailable by remember { mutableStateOf(true) }
-
-    // Reset form when dialog opens/closes
-    if (!isDialogShown) {
-        itemName = ""
-        itemDescription = ""
-        itemPrice = ""
-        itemAvailable = true
-    } else {
-        itemName = selectedItem?.name ?: itemName
-        itemDescription = selectedItem?.description ?: itemDescription
-        itemPrice = selectedItem?.price?.let { "${it / 100}.${(it % 100).toString().padStart(2, '0')}" } ?: ""
-        itemAvailable = selectedItem?.isAvailable ?: true
-    }
-
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -181,33 +158,22 @@ fun CategoryScreenContent(
     }
 
     if (isDialogShown) {
-        MenuItemDialog(
-            itemName = itemName,
-            itemDescription = itemDescription,
-            itemPrice = itemPrice,
-            itemAvailable = itemAvailable,
-            onItemNameChange = { itemName = it },
-            onItemDescriptionChange = { itemDescription = it },
-            onItemPriceChange = { itemPrice = it },
-            onItemAvailableChange = { itemAvailable = it },
-            onDismiss = {
-                onDialogDismiss()
-                itemName = ""
-                itemDescription = ""
-                itemPrice = ""
-                itemAvailable = true
-            },
-            onConfirm = {
-                if (itemName.isNotBlank() && itemPrice.isNotBlank()) {
-                    onSaveItem(itemName, itemDescription, itemPrice, itemAvailable)
-                    itemName = ""
-                    itemDescription = ""
-                    itemPrice = ""
-                    itemAvailable = true
+        if (selectedItem == null) {
+            AddMenuItemDialog(
+                onDismiss = onDialogDismiss,
+                onConfirm = { name, description, price, isAvailable ->
+                    onSaveItem(name, description, price, isAvailable)
                 }
-            },
-            isEditing = selectedItem != null
-        )
+            )
+        } else {
+            EditMenuItemDialog(
+                menuItem = selectedItem,
+                onDismiss = onDialogDismiss,
+                onConfirm = { name, description, price, isAvailable ->
+                    onSaveItem(name, description, price, isAvailable)
+                }
+            )
+        }
     }
 }
 
@@ -263,74 +229,6 @@ private fun MenuItemCard(
             }
         }
     }
-}
-
-@Composable
-private fun MenuItemDialog(
-    itemName: String,
-    itemDescription: String,
-    itemPrice: String,
-    itemAvailable: Boolean,
-    onItemNameChange: (String) -> Unit,
-    onItemDescriptionChange: (String) -> Unit,
-    onItemPriceChange: (String) -> Unit,
-    onItemAvailableChange: (Boolean) -> Unit,
-    onDismiss: () -> Unit,
-    onConfirm: () -> Unit,
-    isEditing: Boolean
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(if (isEditing) "Edit Menu Item" else "Add Menu Item")
-        },
-        text = {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                OutlinedTextField(
-                    value = itemName,
-                    onValueChange = onItemNameChange,
-                    label = { Text("Name") },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                OutlinedTextField(
-                    value = itemDescription,
-                    onValueChange = onItemDescriptionChange,
-                    label = { Text("Description") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                OutlinedTextField(
-                    value = itemPrice,
-                    onValueChange = onItemPriceChange,
-                    label = { Text("Price") },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text("Available", modifier = Modifier.weight(1f))
-                    // Toggle or checkbox could be used here
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = onConfirm,
-                enabled = itemName.isNotBlank() && itemPrice.isNotBlank()
-            ) {
-                Text("Save")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
-        }
-    )
 }
 
 @Preview(showBackground = true)
