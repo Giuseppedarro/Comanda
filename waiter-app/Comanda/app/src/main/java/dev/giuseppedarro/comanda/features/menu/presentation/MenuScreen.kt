@@ -175,8 +175,9 @@ private fun CategoryCard(
             .padding(horizontal = 16.dp),
         onClick = onClick,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        elevation = CardDefaults.elevatedCardElevation(4.dp)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)

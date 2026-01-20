@@ -1,5 +1,8 @@
 package dev.giuseppedarro.comanda.features.tables.presentation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +20,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
@@ -44,7 +48,9 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -139,6 +145,12 @@ fun TableOverviewContent(
     val pullRefreshState = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = onRefresh)
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val gridState = rememberLazyGridState()
+    val fabIsVisible by remember {
+        derivedStateOf {
+            gridState.firstVisibleItemIndex == 0
+        }
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -227,12 +239,18 @@ fun TableOverviewContent(
                 )
             },
             floatingActionButton = {
-                FloatingActionButton(
-                    onClick = onAddTableClick,
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                AnimatedVisibility(
+                    visible = fabIsVisible,
+                    enter = slideInVertically(initialOffsetY = { it * 2 }),
+                    exit = slideOutVertically(targetOffsetY = { it * 2 })
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = "Add table")
+                    FloatingActionButton(
+                        onClick = onAddTableClick,
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = "Add table")
+                    }
                 }
             }
         ) { innerPadding ->
@@ -243,6 +261,7 @@ fun TableOverviewContent(
                     .pullRefresh(pullRefreshState)
             ) {
                 LazyVerticalGrid(
+                    state = gridState,
                     columns = GridCells.Fixed(2),
                     modifier = Modifier.padding(8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),

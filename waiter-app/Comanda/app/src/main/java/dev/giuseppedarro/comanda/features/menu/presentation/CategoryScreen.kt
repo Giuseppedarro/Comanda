@@ -10,11 +10,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
 import dev.giuseppedarro.comanda.core.utils.toPriceString
 import androidx.compose.material3.CardDefaults
@@ -71,12 +75,13 @@ fun CategoryScreen(
                 isAvailable = isAvailable
             )
         },
+        onRefresh = { viewModel.loadCategory() },
         onEventConsumed = viewModel::onEventConsumed,
         modifier = modifier
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun CategoryScreenContent(
     categoryId: String,
@@ -92,9 +97,12 @@ fun CategoryScreenContent(
     onDeleteItemClick: (MenuItem) -> Unit,
     onDialogDismiss: () -> Unit,
     onSaveItem: (String, String, String, Boolean) -> Unit,
+    onRefresh: () -> Unit,
     onEventConsumed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val pullRefreshState = rememberPullRefreshState(isLoading, onRefresh)
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -119,6 +127,7 @@ fun CategoryScreenContent(
         Box(
             modifier = Modifier
                 .padding(innerPadding)
+                .pullRefresh(pullRefreshState)
         ) {
             when {
                 isLoading && items.isEmpty() -> {
@@ -156,6 +165,11 @@ fun CategoryScreenContent(
                     }
                 }
             }
+            PullRefreshIndicator(
+                refreshing = isLoading,
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
         }
     }
 
@@ -192,7 +206,8 @@ private fun MenuItemCard(
             .padding(horizontal = 16.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
-        )
+        ),
+        elevation = CardDefaults.elevatedCardElevation(4.dp)
     ) {
         Row(
             modifier = Modifier
@@ -254,6 +269,7 @@ private fun CategoryScreenContentPreview() {
             onDeleteItemClick = {},
             onDialogDismiss = {},
             onSaveItem = { _, _, _, _ -> },
+            onRefresh = {},
             onEventConsumed = {}
         )
     }
