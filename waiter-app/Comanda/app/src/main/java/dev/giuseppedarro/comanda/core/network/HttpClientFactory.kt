@@ -21,9 +21,6 @@ import kotlinx.serialization.json.Json
 
 /**
  * Creates and configures the shared HttpClient with JWT authentication.
- *
- * Note: RefreshTokenUseCase must use a separate client without Auth configuration
- * to avoid circular dependencies.
  */
 fun createHttpClient(
     baseUrlProvider: BaseUrlProvider,

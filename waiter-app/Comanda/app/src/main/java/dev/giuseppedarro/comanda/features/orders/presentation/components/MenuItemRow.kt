@@ -67,7 +67,7 @@ fun MenuItemRowPreview() {
     ComandaTheme {
         MenuItemRow(
             itemName = "Gourmet Burger",
-            itemPrice = "$12.99",
+            itemPrice = "€12.99",
             quantity = 1,
             onQuantityChange = {}
         )
