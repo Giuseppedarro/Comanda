@@ -44,6 +44,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.giuseppedarro.comanda.ui.theme.BrandedTheme
 import dev.giuseppedarro.comanda.ui.theme.ComandaTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -62,17 +63,24 @@ fun LoginScreen(
             viewModel.onLoginHandled()
         }
     }
+    BrandedTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            LoginContent(
+                uiState = uiState,
+                onEmployeeIdChange = viewModel::onEmployeeIdChange,
+                onPasswordChange = viewModel::onPasswordChange,
+                onLoginClick = viewModel::onLoginClick,
+                baseUrl = uiState.baseUrl,
+                onBaseUrlChange = viewModel::onBaseUrlChange,
+                onSaveBaseUrl = viewModel::saveBaseUrl,
+                modifier = modifier
+            )
+        }
+    }
 
-    LoginContent(
-        uiState = uiState,
-        onEmployeeIdChange = viewModel::onEmployeeIdChange,
-        onPasswordChange = viewModel::onPasswordChange,
-        onLoginClick = viewModel::onLoginClick,
-        baseUrl = uiState.baseUrl,
-        onBaseUrlChange = viewModel::onBaseUrlChange,
-        onSaveBaseUrl = viewModel::saveBaseUrl,
-        modifier = modifier
-    )
 }
 
 @Composable
@@ -258,7 +266,7 @@ fun LoginContent(
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    ComandaTheme {
+    BrandedTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background // Set the background color to Orange
