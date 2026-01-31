@@ -134,7 +134,7 @@ fun MenuOrderContent(
             ComandaTopAppBar(
                 title = "Table $tableNumber - $numberOfPeople People",
                 actions = {
-                    IconButton(onSendClick) {
+                    IconButton(onSendClick, enabled = !uiState.isLoading) {
                         Icon(Icons.Filled.Newspaper, contentDescription = "Send bill")
                     }
                     IconButton(onClick = onSendClick, enabled = !uiState.isLoading) {
