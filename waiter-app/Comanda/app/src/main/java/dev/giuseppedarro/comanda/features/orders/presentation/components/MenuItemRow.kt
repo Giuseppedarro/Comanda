@@ -32,7 +32,7 @@ fun MenuItemRow(
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 4.dp),
         shape = MaterialTheme.shapes.medium,
-        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+        color = MaterialTheme.colorScheme.primary,
     ) {
         Row(
             modifier = Modifier

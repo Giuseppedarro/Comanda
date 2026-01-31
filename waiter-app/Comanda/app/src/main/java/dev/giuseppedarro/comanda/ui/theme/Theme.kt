@@ -16,18 +16,22 @@ private val DarkColorScheme = darkColorScheme(
     primary = Orange,
     background = Orange,
     surface = White,
+    primaryContainer = Orange,
     onPrimary = White,
     onBackground = White,
-    onSurface = Black
+    onSurface = Black,
+    onPrimaryContainer = White
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = Orange,
     background = LightGrey,
     surface = White,
+    primaryContainer = Orange,
     onPrimary = White,
     onBackground = White,
-    onSurface = Black
+    onSurface = Black,
+    onPrimaryContainer = White
 )
 
 private val BrandedColorScheme = lightColorScheme(

@@ -42,9 +42,7 @@ fun createHttpClient(
 
         // JSON Serialization
         install(ContentNegotiation) {
-            json(Json {
-                ignoreUnknownKeys = true
-            })
+            json(Json { ignoreUnknownKeys = true })
         }
 
         // JWT Authentication with automatic token refresh
