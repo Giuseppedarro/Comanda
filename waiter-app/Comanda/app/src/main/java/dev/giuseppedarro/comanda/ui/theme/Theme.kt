@@ -16,12 +16,25 @@ private val DarkColorScheme = darkColorScheme(
     primary = Orange,
     background = Orange,
     surface = White,
+    primaryContainer = Orange,
     onPrimary = White,
     onBackground = White,
-    onSurface = Black
+    onSurface = Black,
+    onPrimaryContainer = White
 )
 
 private val LightColorScheme = lightColorScheme(
+    primary = Orange,
+    background = LightGrey,
+    surface = White,
+    primaryContainer = Orange,
+    onPrimary = White,
+    onBackground = White,
+    onSurface = Black,
+    onPrimaryContainer = White
+)
+
+private val BrandedColorScheme = lightColorScheme(
     primary = Orange,
     background = Orange,
     surface = White,
@@ -39,6 +52,34 @@ fun ComandaTheme(
     val colorScheme = when {
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
+    }
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            // Set status bar to be transparent
+            window.statusBarColor = Color.Transparent.toArgb()
+            // Status bar icons should be dark for a light background
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+        }
+    }
+
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = Typography,
+        content = content
+    )
+}
+
+@Composable
+fun BrandedTheme(
+    darkTheme: Boolean = false, // Force light mode
+    dynamicColor: Boolean = false, // Disabled to enforce brand colors
+    content: @Composable () -> Unit
+) {
+    val colorScheme = when {
+        darkTheme -> DarkColorScheme
+        else -> BrandedColorScheme
     }
     val view = LocalView.current
     if (!view.isInEditMode) {

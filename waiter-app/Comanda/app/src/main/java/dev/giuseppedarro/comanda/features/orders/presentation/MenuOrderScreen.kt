@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import android.widget.Toast
 import androidx.compose.material.icons.filled.Newspaper
 import dev.giuseppedarro.comanda.core.presentation.ComandaTopAppBar
+import dev.giuseppedarro.comanda.core.utils.toPriceString
 import dev.giuseppedarro.comanda.core.utils.toPriceStringUSD
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuItem
@@ -148,7 +149,7 @@ fun MenuOrderContent(
                 items(uiState.orderItems) { item ->
                     MenuItemRow(
                         itemName = item.menuItem.name,
-                        itemPrice = item.menuItem.price.toPriceStringUSD(),
+                        itemPrice = item.menuItem.price.toPriceString(),
                         quantity = item.quantity,
                         onQuantityChange = { newQuantity -> onQuantityChange(item, newQuantity) }
                     )
