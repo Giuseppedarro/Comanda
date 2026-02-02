@@ -1,5 +1,7 @@
 package dev.giuseppedarro.comanda.features.login.presentation
 
+import androidx.compose.material.Surface
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -11,6 +13,7 @@ import androidx.compose.ui.test.performTextInput
 import dev.giuseppedarro.comanda.features.login.domain.use_case.GetBaseUrlUseCase
 import dev.giuseppedarro.comanda.features.login.domain.use_case.LoginUseCase
 import dev.giuseppedarro.comanda.features.login.domain.use_case.SetBaseUrlUseCase
+import dev.giuseppedarro.comanda.ui.theme.BrandedTheme
 import dev.giuseppedarro.comanda.ui.theme.ComandaTheme
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -37,7 +40,7 @@ class LoginScreenTest {
         )
 
         composeTestRule.setContent {
-            ComandaTheme {
+            BrandedTheme {
                 LoginScreen(
                     onLoginSuccess = { },
                     viewModel = loginViewModel
@@ -56,16 +59,21 @@ class LoginScreenTest {
     @Test
     fun whenLoading_thenProgressIndicatorIsShownAndFieldsAreDisabled() {
         composeTestRule.setContent {
-            ComandaTheme {
-                LoginContent(
-                    uiState = LoginUiState(isLoading = true),
-                    onEmployeeIdChange = {},
-                    onPasswordChange = {},
-                    onLoginClick = {},
-                    baseUrl = "",
-                    onBaseUrlChange = {},
-                    onSaveBaseUrl = {}
-                )
+            BrandedTheme {
+                Surface(
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    LoginContent(
+                        uiState = LoginUiState(isLoading = true),
+                        onEmployeeIdChange = {},
+                        onPasswordChange = {},
+                        onLoginClick = {},
+                        baseUrl = "",
+                        onBaseUrlChange = {},
+                        onSaveBaseUrl = {}
+                    )
+                }
+
             }
         }
 
@@ -88,7 +96,7 @@ class LoginScreenTest {
         )
 
         composeTestRule.setContent {
-            ComandaTheme {
+            BrandedTheme {
                 LoginScreen(
                     onLoginSuccess = { loginSuccessCalled = true },
                     viewModel = loginViewModel
@@ -112,16 +120,21 @@ class LoginScreenTest {
         var onSaveBaseUrlCalled = false
 
         composeTestRule.setContent {
-            ComandaTheme {
-                LoginContent(
-                    uiState = LoginUiState(),
-                    onEmployeeIdChange = {},
-                    onPasswordChange = {},
-                    onLoginClick = {},
-                    baseUrl = "",
-                    onBaseUrlChange = {},
-                    onSaveBaseUrl = { onSaveBaseUrlCalled = true }
-                )
+            BrandedTheme {
+                Surface(
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    LoginContent(
+                        uiState = LoginUiState(),
+                        onEmployeeIdChange = {},
+                        onPasswordChange = {},
+                        onLoginClick = {},
+                        baseUrl = "",
+                        onBaseUrlChange = {},
+                        onSaveBaseUrl = { onSaveBaseUrlCalled = true }
+                    )
+                }
+
             }
         }
 

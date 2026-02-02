@@ -82,7 +82,7 @@ class TableOverviewViewModel(
                     _event.value = TableOverviewEvent.LogoutSuccess
                 }
                 is Result.Error -> {
-                    // Handle error - could show snackbar or toast
+                    //TODO
                 }
                 else -> {}
             }
