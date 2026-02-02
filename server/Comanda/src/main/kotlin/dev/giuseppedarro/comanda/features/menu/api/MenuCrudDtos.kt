@@ -1,4 +1,4 @@
-package dev.giuseppedarro.comanda.features.menu.presentation
+package dev.giuseppedarro.comanda.features.menu.api
 
 import kotlinx.serialization.Serializable
 

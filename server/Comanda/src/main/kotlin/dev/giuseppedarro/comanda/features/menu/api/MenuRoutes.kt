@@ -1,4 +1,4 @@
-package dev.giuseppedarro.comanda.features.menu.presentation
+package dev.giuseppedarro.comanda.features.menu.api
 
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuItem

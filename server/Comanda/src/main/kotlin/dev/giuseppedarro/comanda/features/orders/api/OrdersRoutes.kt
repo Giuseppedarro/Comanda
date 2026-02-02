@@ -1,5 +1,6 @@
-package dev.giuseppedarro.comanda.features.orders.presentation
+package dev.giuseppedarro.comanda.features.orders.api
 
+import dev.giuseppedarro.comanda.features.menu.domain.model.MenuItem
 import dev.giuseppedarro.comanda.features.menu.domain.usecase.GetItemUseCase
 import dev.giuseppedarro.comanda.features.orders.data.model.SubmitOrderRequest
 import dev.giuseppedarro.comanda.features.orders.domain.usecase.GetOrderByIdUseCase
@@ -10,7 +11,6 @@ import dev.giuseppedarro.comanda.features.orders.domain.model.Order
 import dev.giuseppedarro.comanda.features.orders.domain.repository.OrdersRepository
 import dev.giuseppedarro.comanda.features.tables.domain.repository.TablesRepository
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -141,27 +141,16 @@ private fun validateOrderRequest(request: SubmitOrderRequest): String? {
 }
 
 private suspend fun printBill(order: Order, getItemUseCase: GetItemUseCase) {
-    val sb = StringBuilder()
-    sb.appendLine("\n--- BILL ---")
-    sb.appendLine("Table: ${order.tableNumber}")
-    sb.appendLine("People: ${order.numberOfPeople}")
-    sb.appendLine("--------------------------------")
-
+    // Fetch all item details
+    val itemsDetails = mutableMapOf<String, MenuItem>()
     order.items.forEach { item ->
-        val menuItemResult = getItemUseCase(item.itemId)
-        val menuItem = menuItemResult.getOrNull()
-        val name = menuItem?.name ?: "Unknown Item (${item.itemId})"
-        val price = menuItem?.price ?: 0
-        val lineTotal = price * item.quantity
-        
-        sb.appendLine("${name.padEnd(20)} x${item.quantity}   $lineTotal")
+        val result = getItemUseCase(item.itemId)
+        result.getOrNull()?.let { menuItem ->
+            itemsDetails[item.itemId] = menuItem
+        }
     }
-    
-    sb.appendLine("--------------------------------")
-    sb.appendLine("Subtotal:       ${order.subtotal ?: 0}")
-    sb.appendLine("Service Charge: ${order.serviceCharge ?: 0}")
-    sb.appendLine("Total:          ${order.total ?: 0}")
-    sb.appendLine("--------------------------------\n")
-    
-    println(sb.toString())
+
+    // Use the formatter
+    val billString = BillFormatter.formatBill(order, itemsDetails)
+    println(billString)
 }

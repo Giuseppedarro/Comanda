@@ -1,11 +1,10 @@
-package dev.giuseppedarro.comanda.features.auth.presentation
+package dev.giuseppedarro.comanda.features.auth.api
 
 import dev.giuseppedarro.comanda.features.auth.data.model.LoginRequest
 import dev.giuseppedarro.comanda.features.auth.data.model.RefreshTokenRequest
 import dev.giuseppedarro.comanda.features.auth.domain.usecase.LoginUseCase
 import dev.giuseppedarro.comanda.features.auth.domain.usecase.RefreshTokenUseCase
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
