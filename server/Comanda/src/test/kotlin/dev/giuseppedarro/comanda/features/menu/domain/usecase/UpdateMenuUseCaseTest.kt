@@ -1,8 +1,8 @@
 package dev.giuseppedarro.comanda.features.menu.domain.usecase
 
 import dev.giuseppedarro.comanda.features.menu.domain.repository.MenuRepository
-import dev.giuseppedarro.comanda.features.menu.presentation.MenuItemUpdateDto
-import dev.giuseppedarro.comanda.features.menu.presentation.MenuCategoryUpdateDto
+import dev.giuseppedarro.comanda.features.menu.api.MenuItemUpdateDto
+import dev.giuseppedarro.comanda.features.menu.api.MenuCategoryUpdateDto
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest

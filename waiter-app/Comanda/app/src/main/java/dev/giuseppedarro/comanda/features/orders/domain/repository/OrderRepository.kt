@@ -23,4 +23,9 @@ interface OrderRepository {
      * Submits a completed order to the backend.
      */
     suspend fun submitOrder(tableNumber: Int, numberOfPeople: Int, items: List<OrderItem>): Result<Unit>
+
+    /**
+     * Submits the order and prints the bill.
+     */
+    suspend fun printBill(tableNumber: Int, numberOfPeople: Int, items: List<OrderItem>): Result<Unit>
 }

@@ -117,4 +117,28 @@ class OrderRepositoryImpl(
             Result.Error(e.message ?: "An unknown error occurred")
         }
     }
+
+    override suspend fun printBill(tableNumber: Int, numberOfPeople: Int, items: List<OrderItem>): Result<Unit> {
+        return try {
+            val orderItemsRequest = items.map {
+                OrderItemRequest(
+                    menuItemId = it.menuItem.id,
+                    quantity = it.quantity,
+                    notes = it.notes
+                )
+            }
+
+            val request = SubmitOrderRequest(
+                tableNumber = tableNumber,
+                numberOfPeople = numberOfPeople,
+                items = orderItemsRequest
+            )
+
+            api.printBill(request)
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.Error(e.message ?: "An unknown error occurred")
+        }
+    }
 }

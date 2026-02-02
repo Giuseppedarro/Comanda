@@ -10,6 +10,7 @@ import dev.giuseppedarro.comanda.features.orders.domain.model.Order
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderItem
 import dev.giuseppedarro.comanda.features.orders.domain.use_case.GetMenuUseCase
 import dev.giuseppedarro.comanda.features.orders.domain.use_case.GetOrdersForTableUseCase
+import dev.giuseppedarro.comanda.features.orders.domain.use_case.PrintBillUseCase
 import dev.giuseppedarro.comanda.features.orders.domain.use_case.SubmitOrderUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,7 +36,8 @@ class MenuOrderViewModel(
     savedStateHandle: SavedStateHandle,
     private val getMenu: GetMenuUseCase,
     private val getOrdersForTable: GetOrdersForTableUseCase,
-    private val submitOrder: SubmitOrderUseCase
+    private val submitOrder: SubmitOrderUseCase,
+    private val printBill: PrintBillUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MenuOrderUiState())
@@ -158,6 +160,42 @@ class MenuOrderViewModel(
                         it.copy(
                             isLoading = false,
                             existingOrder = null  // Clear existing order after submission
+                        )
+                    }
+                    onSuccess()
+                }
+                is Result.Error -> {
+                    _uiState.update { it.copy(isLoading = false, error = res.message) }
+                    onError(res.message ?: "Unknown error")
+                }
+                is Result.Loading -> {
+                    // no-op, already set isLoading above
+                }
+            }
+        }
+    }
+
+    fun onSendAndPrintBill(
+        tableNumber: Int,
+        numberOfPeople: Int,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        val items = _uiState.value.orderItems
+        val peopleCount = _uiState.value.displayNumberOfPeople
+
+        if (tableNumber <= 0 || peopleCount <= 0 || items.isEmpty()) {
+            onError("Please select at least one item and enter valid table/people")
+            return
+        }
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            when (val res = printBill(tableNumber, peopleCount, items)) {
+                is Result.Success -> {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            existingOrder = null
                         )
                     }
                     onSuccess()

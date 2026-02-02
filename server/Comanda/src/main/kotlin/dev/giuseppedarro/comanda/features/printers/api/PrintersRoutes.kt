@@ -1,4 +1,4 @@
-package dev.giuseppedarro.comanda.features.printers.presentation
+package dev.giuseppedarro.comanda.features.printers.api
 
 import dev.giuseppedarro.comanda.features.printers.data.model.CreatePrinterRequest
 import dev.giuseppedarro.comanda.features.printers.data.model.UpdatePrinterRequest
@@ -7,7 +7,6 @@ import dev.giuseppedarro.comanda.features.printers.domain.usecase.DeletePrinterU
 import dev.giuseppedarro.comanda.features.printers.domain.usecase.GetAllPrintersUseCase
 import dev.giuseppedarro.comanda.features.printers.domain.usecase.UpdatePrinterUseCase
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*

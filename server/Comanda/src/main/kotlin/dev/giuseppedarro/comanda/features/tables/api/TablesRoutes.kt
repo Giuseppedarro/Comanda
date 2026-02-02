@@ -1,9 +1,8 @@
-package dev.giuseppedarro.comanda.features.tables.presentation
+package dev.giuseppedarro.comanda.features.tables.api
 
 import dev.giuseppedarro.comanda.features.tables.domain.usecase.AddTableUseCase
 import dev.giuseppedarro.comanda.features.tables.domain.usecase.GetTablesUseCase
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*

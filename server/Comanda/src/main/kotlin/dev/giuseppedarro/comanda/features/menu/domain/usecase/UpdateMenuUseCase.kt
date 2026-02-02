@@ -3,8 +3,7 @@ package dev.giuseppedarro.comanda.features.menu.domain.usecase
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuItem
 import dev.giuseppedarro.comanda.features.menu.domain.repository.MenuRepository
-import dev.giuseppedarro.comanda.features.menu.presentation.MenuItemUpdateDto
-import dev.giuseppedarro.comanda.features.menu.presentation.MenuCategoryUpdateDto
+import dev.giuseppedarro.comanda.features.menu.api.MenuCategoryUpdateDto
 
 class UpdateMenuUseCase(
     private val menuRepository: MenuRepository
