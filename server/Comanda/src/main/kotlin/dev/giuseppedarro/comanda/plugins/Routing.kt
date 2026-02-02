@@ -5,6 +5,7 @@ import dev.giuseppedarro.comanda.features.auth.domain.usecase.RefreshTokenUseCas
 import dev.giuseppedarro.comanda.features.auth.presentation.authRoutes
 import dev.giuseppedarro.comanda.features.menu.domain.usecase.*
 import dev.giuseppedarro.comanda.features.menu.presentation.menuRoutes
+import dev.giuseppedarro.comanda.features.orders.domain.repository.OrdersRepository
 import dev.giuseppedarro.comanda.features.orders.domain.usecase.GetOrderByIdUseCase
 import dev.giuseppedarro.comanda.features.orders.domain.usecase.GetOrdersForTableUseCase
 import dev.giuseppedarro.comanda.features.orders.domain.usecase.GetOrdersUseCase
@@ -15,6 +16,7 @@ import dev.giuseppedarro.comanda.features.printers.domain.usecase.DeletePrinterU
 import dev.giuseppedarro.comanda.features.printers.domain.usecase.GetAllPrintersUseCase
 import dev.giuseppedarro.comanda.features.printers.domain.usecase.UpdatePrinterUseCase
 import dev.giuseppedarro.comanda.features.printers.presentation.printersRoutes
+import dev.giuseppedarro.comanda.features.tables.domain.repository.TablesRepository
 import dev.giuseppedarro.comanda.features.tables.domain.usecase.AddTableUseCase
 import dev.giuseppedarro.comanda.features.tables.domain.usecase.GetTablesUseCase
 import dev.giuseppedarro.comanda.features.tables.presentation.tablesRoutes
@@ -28,6 +30,7 @@ fun Application.configureRouting() {
     val refreshTokenUseCase by inject<RefreshTokenUseCase>()
     val getTablesUseCase by inject<GetTablesUseCase>()
     val addTableUseCase by inject<AddTableUseCase>()
+    val tablesRepository by inject<TablesRepository>()
     
     // Menu Use Cases
     val getMenuUseCase by inject<GetMenuUseCase>()
@@ -45,6 +48,7 @@ fun Application.configureRouting() {
     val getOrdersUseCase by inject<GetOrdersUseCase>()
     val getOrdersForTableUseCase by inject<GetOrdersForTableUseCase>()
     val getOrderByIdUseCase by inject<GetOrderByIdUseCase>()
+    val ordersRepository by inject<OrdersRepository>()
 
     val getAllPrintersUseCase by inject<GetAllPrintersUseCase>()
     val createPrinterUseCase by inject<CreatePrinterUseCase>()
@@ -66,7 +70,15 @@ fun Application.configureRouting() {
             deleteItemUseCase,
             getItemUseCase
         )
-        ordersRoutes(submitOrderUseCase, getOrdersUseCase, getOrdersForTableUseCase, getOrderByIdUseCase)
+        ordersRoutes(
+            submitOrderUseCase, 
+            getOrdersUseCase, 
+            getOrdersForTableUseCase, 
+            getOrderByIdUseCase,
+            getItemUseCase,
+            tablesRepository,
+            ordersRepository
+        )
         printersRoutes(
             getAllPrintersUseCase,
             createPrinterUseCase,

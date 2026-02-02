@@ -38,4 +38,11 @@ class OrderApi(private val client: HttpClient) {
             setBody(request)
         }
     }
+
+    suspend fun printBill(request: SubmitOrderRequest) {
+        client.post("orders/print") {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }
+    }
 }

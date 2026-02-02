@@ -8,4 +8,5 @@ interface OrdersRepository {
     suspend fun getOrders(): List<Order>
     suspend fun getOrdersForTable(tableNumber: Int): List<Order>
     suspend fun getOrderById(orderId: String): Order?
+    suspend fun deleteOrder(tableNumber: Int)
 }

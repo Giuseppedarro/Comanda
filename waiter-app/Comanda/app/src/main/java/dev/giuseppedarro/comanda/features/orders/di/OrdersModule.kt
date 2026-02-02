@@ -6,11 +6,12 @@ import dev.giuseppedarro.comanda.features.orders.data.repository.OrderRepository
 import dev.giuseppedarro.comanda.features.orders.domain.repository.OrderRepository
 import dev.giuseppedarro.comanda.features.orders.domain.use_case.GetMenuUseCase
 import dev.giuseppedarro.comanda.features.orders.domain.use_case.GetOrdersForTableUseCase
+import dev.giuseppedarro.comanda.features.orders.domain.use_case.PrintBillUseCase
 import dev.giuseppedarro.comanda.features.orders.domain.use_case.SubmitOrderUseCase
 import dev.giuseppedarro.comanda.features.orders.presentation.MenuOrderViewModel
-import org.koin.core.qualifier.named
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val ordersModule = module {
@@ -26,6 +27,7 @@ val ordersModule = module {
     factoryOf(::GetMenuUseCase)
     factoryOf(::GetOrdersForTableUseCase)
     factoryOf(::SubmitOrderUseCase)
+    factoryOf(::PrintBillUseCase)
 
     // ViewModel
     viewModel { (savedStateHandle: SavedStateHandle) ->
@@ -33,7 +35,8 @@ val ordersModule = module {
             savedStateHandle,
             get<GetMenuUseCase>(),
             get<GetOrdersForTableUseCase>(),
-            get<SubmitOrderUseCase>()
+            get<SubmitOrderUseCase>(),
+            get<PrintBillUseCase>()
         )
     }
 }

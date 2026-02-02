@@ -292,4 +292,11 @@ class OrdersRepositoryImpl(
             )
         }
     }
+
+    override suspend fun deleteOrder(tableNumber: Int) {
+        transaction {
+            OrderItems.deleteWhere { OrderItems.tableNumber eq tableNumber }
+            Orders.deleteWhere { Orders.tableNumber eq tableNumber }
+        }
+    }
 }

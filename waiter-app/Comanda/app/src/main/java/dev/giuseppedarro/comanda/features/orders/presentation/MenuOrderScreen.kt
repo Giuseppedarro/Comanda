@@ -90,6 +90,19 @@ fun MenuOrderScreen(
                 }
             )
         },
+        onPrintBillClick = {
+            viewModel.onSendAndPrintBill(
+                tableNumber = tableNumber,
+                numberOfPeople = uiState.displayNumberOfPeople,
+                onSuccess = {
+                    Toast.makeText(context, "Bill printed", Toast.LENGTH_SHORT).show()
+                    onSendClick()
+                },
+                onError = { msg ->
+                    Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+                }
+            )
+        },
         modifier = modifier,
         sheetState = sheetState
     )
@@ -106,6 +119,7 @@ fun MenuOrderContent(
     onMenuItemAdded: (MenuItem) -> Unit,
     onDismissSheet: () -> Unit,
     onSendClick: () -> Unit,
+    onPrintBillClick: () -> Unit,
     sheetState: androidx.compose.material3.SheetState,
     modifier: Modifier = Modifier
 ) {
@@ -134,7 +148,7 @@ fun MenuOrderContent(
             ComandaTopAppBar(
                 title = "Table $tableNumber - $numberOfPeople People",
                 actions = {
-                    IconButton(onSendClick, enabled = !uiState.isLoading) {
+                    IconButton(onClick = onPrintBillClick, enabled = !uiState.isLoading) {
                         Icon(Icons.Filled.Newspaper, contentDescription = "Send bill")
                     }
                     IconButton(onClick = onSendClick, enabled = !uiState.isLoading) {
@@ -217,6 +231,7 @@ fun MenuOrderScreenPreview() {
             onMenuItemAdded = {},
             onDismissSheet = {},
             onSendClick = {},
+            onPrintBillClick = {},
             sheetState = rememberModalBottomSheetState()
         )
     }
