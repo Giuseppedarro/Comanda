@@ -156,7 +156,7 @@ fun TableOverviewContent(
                     title = stringResource(id = R.string.app_name),
                     navigationIcon = {
                         IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                            Icon(Icons.Default.Menu, contentDescription = "Menu")
+                            Icon(Icons.Default.Menu, contentDescription = stringResource(R.string.menu))
                         }
                     }
                 )
@@ -172,7 +172,7 @@ fun TableOverviewContent(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                     ) {
-                        Icon(Icons.Default.Add, contentDescription = "Add table")
+                        Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_table))
                     }
                 }
             }
@@ -235,7 +235,7 @@ fun FilterOptions(
         FilterChip(
             selected = selectedFilter == TableFilter.OCCUPIED,
             onClick = { onFilterChanged(TableFilter.OCCUPIED) },
-            label = { Text("Occupied") },
+            label = { Text(stringResource(R.string.occupied)) },
             colors = FilterChipDefaults.filterChipColors(
                 selectedContainerColor = MaterialTheme.colorScheme.primary,
                 selectedLabelColor = MaterialTheme.colorScheme.onPrimary
@@ -244,7 +244,7 @@ fun FilterOptions(
         FilterChip(
             selected = selectedFilter == TableFilter.AVAILABLE,
             onClick = { onFilterChanged(TableFilter.AVAILABLE) },
-            label = { Text("Available") },
+            label = { Text(stringResource(R.string.available)) },
             colors = FilterChipDefaults.filterChipColors(
                 selectedContainerColor = MaterialTheme.colorScheme.primary,
                 selectedLabelColor = MaterialTheme.colorScheme.onPrimary
@@ -253,7 +253,7 @@ fun FilterOptions(
         FilterChip(
             selected = selectedFilter == TableFilter.ALL,
             onClick = { onFilterChanged(TableFilter.ALL) },
-            label = { Text("All") },
+            label = { Text(stringResource(R.string.all)) },
             colors = FilterChipDefaults.filterChipColors(
                 selectedContainerColor = MaterialTheme.colorScheme.primary,
                 selectedLabelColor = MaterialTheme.colorScheme.onPrimary

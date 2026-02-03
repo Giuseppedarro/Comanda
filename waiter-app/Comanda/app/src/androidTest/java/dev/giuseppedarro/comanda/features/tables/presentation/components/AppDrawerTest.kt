@@ -1,10 +1,13 @@
 package dev.giuseppedarro.comanda.features.tables.presentation.components
 
+import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import dev.giuseppedarro.comanda.R
 import dev.giuseppedarro.comanda.ui.theme.ComandaTheme
 import org.junit.Rule
 import org.junit.Test
@@ -13,6 +16,8 @@ class AppDrawerTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
+
+    private val context: Context = ApplicationProvider.getApplicationContext()
 
     @Test
     fun whenDrawerIsOpened_displaysAllMenuItems() {
@@ -28,10 +33,10 @@ class AppDrawerTest {
             }
         }
 
-        composeTestRule.onNodeWithText("Printers").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Menu").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Settings (to be implemented)").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Logout").assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.printers)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.menu)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.settings_to_be_implemented)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.logout)).assertIsDisplayed()
     }
 
     @Test
@@ -54,7 +59,7 @@ class AppDrawerTest {
             }
         }
 
-        composeTestRule.onNodeWithText("Printers").performClick()
+        composeTestRule.onNodeWithText(context.getString(R.string.printers)).performClick()
 
         assertThat(printersClicked).isTrue()
         assertThat(drawerClosed).isTrue()

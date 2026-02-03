@@ -1,5 +1,6 @@
 package dev.giuseppedarro.comanda.features.login.presentation
 
+import android.content.Context
 import androidx.compose.material.Surface
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.test.assertIsDisplayed
@@ -10,11 +11,11 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
-import dev.giuseppedarro.comanda.features.login.domain.use_case.GetBaseUrlUseCase
+import androidx.test.core.app.ApplicationProvider
+import dev.giuseppedarro.comanda.R
 import dev.giuseppedarro.comanda.features.login.domain.use_case.LoginUseCase
 import dev.giuseppedarro.comanda.features.login.domain.use_case.SetBaseUrlUseCase
 import dev.giuseppedarro.comanda.ui.theme.BrandedTheme
-import dev.giuseppedarro.comanda.ui.theme.ComandaTheme
 import io.mockk.coEvery
 import io.mockk.mockk
 import org.junit.Assert.assertTrue
@@ -25,6 +26,8 @@ class LoginScreenTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
+
+    private val context: Context = ApplicationProvider.getApplicationContext()
 
     @Test
     fun whenLoginFails_thenErrorMessageIsShown() {
@@ -49,7 +52,7 @@ class LoginScreenTest {
         }
 
         // Act: Simulate a user clicking the sign-in button.
-        composeTestRule.onNodeWithText("Sign In").performClick()
+        composeTestRule.onNodeWithText(context.getString(R.string.sign_in)).performClick()
         composeTestRule.waitForIdle()
 
         // Assert: The error message from the mocked result is displayed.
@@ -78,8 +81,8 @@ class LoginScreenTest {
         }
 
         composeTestRule.onNodeWithTag("loading_indicator").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Employee ID").assertIsNotEnabled()
-        composeTestRule.onNodeWithText("Password").assertIsNotEnabled()
+        composeTestRule.onNodeWithText(context.getString(R.string.employee_id)).assertIsNotEnabled()
+        composeTestRule.onNodeWithText(context.getString(R.string.password)).assertIsNotEnabled()
     }
 
     @Test
@@ -105,9 +108,9 @@ class LoginScreenTest {
         }
 
         // Act: Simulate user input and a click.
-        composeTestRule.onNodeWithText("Employee ID").performTextInput("id")
-        composeTestRule.onNodeWithText("Password").performTextInput("password")
-        composeTestRule.onNodeWithText("Sign In").performClick()
+        composeTestRule.onNodeWithText(context.getString(R.string.employee_id)).performTextInput("id")
+        composeTestRule.onNodeWithText(context.getString(R.string.password)).performTextInput("password")
+        composeTestRule.onNodeWithText(context.getString(R.string.sign_in)).performClick()
 
         composeTestRule.waitForIdle()
 
@@ -138,8 +141,8 @@ class LoginScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithContentDescription("Configure server").performClick()
-        composeTestRule.onNodeWithText("Save").performClick()
+        composeTestRule.onNodeWithContentDescription(context.getString(R.string.configure_server)).performClick()
+        composeTestRule.onNodeWithText(context.getString(R.string.save)).performClick()
 
         assertTrue(onSaveBaseUrlCalled)
     }

@@ -16,8 +16,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.giuseppedarro.comanda.R
 import dev.giuseppedarro.comanda.ui.theme.ComandaTheme
 
 @Composable
@@ -55,11 +57,11 @@ fun MenuItemRow(
                 )
             }
             IconButton(onClick = { onQuantityChange(quantity - 1) }) {
-                Icon(Icons.Default.RemoveCircle, contentDescription = "Remove")
+                Icon(Icons.Default.RemoveCircle, contentDescription = stringResource(R.string.remove))
             }
             Text(text = quantity.toString())
             IconButton(onClick = { onQuantityChange(quantity + 1) }) {
-                Icon(Icons.Default.AddCircle, contentDescription = "Add")
+                Icon(Icons.Default.AddCircle, contentDescription = stringResource(R.string.add))
             }
         }
     }

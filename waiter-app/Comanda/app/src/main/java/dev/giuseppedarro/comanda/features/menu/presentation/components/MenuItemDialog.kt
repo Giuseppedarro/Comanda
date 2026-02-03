@@ -12,7 +12,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import dev.giuseppedarro.comanda.R
 
 @Composable
 internal fun MenuItemDialog(
@@ -31,7 +33,7 @@ internal fun MenuItemDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text(if (isEditing) "Edit Menu Item" else "Add Menu Item")
+            Text(if (isEditing) stringResource(R.string.edit_menu_item) else stringResource(R.string.add_menu_item))
         },
         text = {
             Column(
@@ -40,20 +42,20 @@ internal fun MenuItemDialog(
                 OutlinedTextField(
                     value = itemName,
                     onValueChange = onItemNameChange,
-                    label = { Text("Name") },
+                    label = { Text(stringResource(R.string.name)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
                     value = itemDescription,
                     onValueChange = onItemDescriptionChange,
-                    label = { Text("Description") },
+                    label = { Text(stringResource(R.string.description)) },
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
                     value = itemPrice,
                     onValueChange = onItemPriceChange,
-                    label = { Text("Price") },
+                    label = { Text(stringResource(R.string.price)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -61,7 +63,7 @@ internal fun MenuItemDialog(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Available", modifier = Modifier.weight(1f))
+                    Text(stringResource(R.string.available), modifier = Modifier.weight(1f))
                     Checkbox(
                         checked = itemAvailable,
                         onCheckedChange = onItemAvailableChange
@@ -74,12 +76,12 @@ internal fun MenuItemDialog(
                 onClick = onConfirm,
                 enabled = itemName.isNotBlank() && itemPrice.isNotBlank()
             ) {
-                Text("Save")
+                Text(stringResource(R.string.save))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         }
     )

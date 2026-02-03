@@ -15,9 +15,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.giuseppedarro.comanda.R
 import dev.giuseppedarro.comanda.ui.theme.ComandaTheme
 
 @Composable
@@ -32,10 +34,10 @@ fun TableDialog(
     AlertDialog(
         modifier = modifier,
         onDismissRequest = onDismissRequest,
-        title = { Text(text = "Open Table") },
+        title = { Text(text = stringResource(R.string.open_table)) },
         text = {
             Column {
-                Text(text = "How many people are sitting at this table?")
+                Text(text = stringResource(R.string.how_many_people_are_sitting_at_this_table))
                 Spacer(modifier = Modifier.height(16.dp))
                 OutlinedTextField(
                     value = numberOfPeople,
@@ -45,7 +47,7 @@ fun TableDialog(
                             numberOfPeople = newValue
                         }
                     },
-                    label = { Text("Number of people") },
+                    label = { Text(stringResource(R.string.number_of_people)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
@@ -59,12 +61,12 @@ fun TableDialog(
                 },
                 enabled = isConfirmEnabled
             ) {
-                Text("Confirm")
+                Text(stringResource(R.string.confirm))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismissRequest) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         }
     )

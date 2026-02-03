@@ -40,11 +40,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.giuseppedarro.comanda.R
 import dev.giuseppedarro.comanda.ui.theme.BrandedTheme
 import dev.giuseppedarro.comanda.ui.theme.ComandaTheme
 import org.koin.androidx.compose.koinViewModel
@@ -115,12 +117,12 @@ fun LoginContent(
                 tint = MaterialTheme.colorScheme.onBackground // White
             )
             Text(
-                text = "Comanda",
+                text = stringResource(R.string.login_title),
                 style = MaterialTheme.typography.headlineLarge,
                 color = MaterialTheme.colorScheme.onBackground // White
             )
             Text(
-                text = "Waiter Portal",
+                text = stringResource(R.string.login_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onBackground // White
             )
@@ -141,7 +143,7 @@ fun LoginContent(
                     modifier = Modifier.padding(24.dp)
                 ) {
                     Text(
-                        text = "Welcome Back",
+                        text = stringResource(R.string.login_welcome_back),
                         style = MaterialTheme.typography.headlineSmall,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth(),
@@ -153,7 +155,7 @@ fun LoginContent(
                     OutlinedTextField(
                         value = uiState.employeeId,
                         onValueChange = onEmployeeIdChange,
-                        label = { Text("Employee ID") },
+                        label = { Text(stringResource(R.string.employee_id)) },
                         leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                         isError = uiState.errorMessage != null,
@@ -166,7 +168,7 @@ fun LoginContent(
                     OutlinedTextField(
                         value = uiState.password,
                         onValueChange = onPasswordChange,
-                        label = { Text("Password") },
+                        label = { Text(stringResource(R.string.password)) },
                         leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
@@ -209,7 +211,10 @@ fun LoginContent(
                                     strokeWidth = 2.dp
                                 )
                             } else {
-                                Text(text = "Sign In", modifier = Modifier.padding(8.dp))
+                                Text(
+                                    text = stringResource(R.string.sign_in),
+                                    modifier = Modifier.padding(8.dp)
+                                )
                             }
                         }
                     }
@@ -218,7 +223,7 @@ fun LoginContent(
         }
 
         // Bottom-center Wi-Fi icon to open server configuration dialog
-        androidx.compose.material3.IconButton(
+        IconButton(
             onClick = {
                 baseUrlText.value = baseUrl
                 showDialog.value = true
@@ -227,36 +232,36 @@ fun LoginContent(
         ) {
             Icon(
                 imageVector = Icons.Default.Wifi,
-                contentDescription = "Configure server",
+                contentDescription = stringResource(R.string.configure_server),
                 tint = MaterialTheme.colorScheme.onBackground
             )
         }
 
         if (showDialog.value) {
-            androidx.compose.material3.AlertDialog(
+            AlertDialog(
                 onDismissRequest = { showDialog.value = false },
-                title = { Text("Server Configuration") },
+                title = { Text(stringResource(R.string.login_server_configuration_title)) },
                 text = {
                     OutlinedTextField(
                         value = baseUrlText.value,
                         onValueChange = { baseUrlText.value = it },
-                        label = { Text("Base URL") },
+                        label = { Text(stringResource(R.string.login_base_url_label)) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
                 },
                 confirmButton = {
-                    androidx.compose.material3.TextButton(onClick = {
+                    TextButton(onClick = {
                         onBaseUrlChange(baseUrlText.value)
                         onSaveBaseUrl()
                         showDialog.value = false
                     }) {
-                        Text("Save")
+                        Text(stringResource(R.string.save))
                     }
                 },
                 dismissButton = {
-                    androidx.compose.material3.TextButton(onClick = { showDialog.value = false }) {
-                        Text("Cancel")
+                    TextButton(onClick = { showDialog.value = false }) {
+                        Text(stringResource(R.string.cancel))
                     }
                 }
             )
@@ -270,7 +275,7 @@ fun LoginScreenPreview() {
     BrandedTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background // Set the background color to Orange
+            color = MaterialTheme.colorScheme.background
         ) {
             LoginContent(
                 uiState = LoginUiState("1234", "password", baseUrl = "http://10.0.2.2:8080/"),
