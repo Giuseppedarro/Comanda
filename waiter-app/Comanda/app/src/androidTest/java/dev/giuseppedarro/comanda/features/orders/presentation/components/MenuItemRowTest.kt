@@ -1,10 +1,13 @@
 package dev.giuseppedarro.comanda.features.orders.presentation.components
 
+import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.test.core.app.ApplicationProvider
+import dev.giuseppedarro.comanda.R
 import dev.giuseppedarro.comanda.ui.theme.ComandaTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -14,6 +17,8 @@ class MenuItemRowTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
+
+    private val context: Context = ApplicationProvider.getApplicationContext()
 
     @Test
     fun menuItemRow_displaysCorrectly() {
@@ -50,7 +55,7 @@ class MenuItemRowTest {
             }
         }
 
-        composeTestRule.onNodeWithContentDescription("Add").performClick()
+        composeTestRule.onNodeWithContentDescription(context.getString(R.string.add)).performClick()
 
         assertEquals(2, newQuantity)
     }
@@ -72,7 +77,7 @@ class MenuItemRowTest {
             }
         }
 
-        composeTestRule.onNodeWithContentDescription("Remove").performClick()
+        composeTestRule.onNodeWithContentDescription(context.getString(R.string.remove)).performClick()
 
         assertEquals(4, newQuantity)
     }

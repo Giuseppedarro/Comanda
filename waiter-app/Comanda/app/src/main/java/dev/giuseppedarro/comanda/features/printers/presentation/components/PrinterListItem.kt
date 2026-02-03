@@ -10,8 +10,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import dev.giuseppedarro.comanda.R
 import dev.giuseppedarro.comanda.features.printers.domain.model.Printer
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,7 +53,7 @@ fun PrinterListItem(
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = "Port: ${printer.port}",
+                    text = stringResource(R.string.port_number, printer.port),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -64,14 +66,14 @@ fun PrinterListItem(
                 IconButton(onClick = { onEditClick(printer) }) {
                     Icon(
                         imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit printer",
+                        contentDescription = stringResource(R.string.edit_printer),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
                 IconButton(onClick = { onDeleteClick(printer) }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete printer",
+                        contentDescription = stringResource(R.string.delete_printer),
                         tint = MaterialTheme.colorScheme.error
                     )
                 }
