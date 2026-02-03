@@ -19,12 +19,26 @@ sealed interface TableOverviewEvent {
     data object LogoutSuccess : TableOverviewEvent
 }
 
+enum class TableFilter {
+    ALL,
+    OCCUPIED,
+    AVAILABLE
+}
+
 data class TableOverviewUiState(
     val tables: List<Table> = emptyList(),
     val isDialogShown: Boolean = false,
     val selectedTable: Table? = null,
-    val isRefreshing: Boolean = false
-)
+    val isRefreshing: Boolean = false,
+    val filter: TableFilter = TableFilter.ALL
+) {
+    val filteredTables: List<Table>
+        get() = when (filter) {
+            TableFilter.OCCUPIED -> tables.filter { it.isOccupied }
+            TableFilter.AVAILABLE -> tables.filter { !it.isOccupied }
+            TableFilter.ALL -> tables
+        }
+}
 
 class TableOverviewViewModel(
     private val getTablesUseCase: GetTablesUseCase,
@@ -49,8 +63,13 @@ class TableOverviewViewModel(
         }.launchIn(viewModelScope)
     }
 
+    fun onFilterChanged(filter: TableFilter) {
+        _uiState.update { it.copy(filter = filter) }
+    }
+
     fun onTableClicked(table: Table) {
         if (table.isOccupied) {
+            // Occupied tables will be handled in a future update
         } else {
             _uiState.update { it.copy(isDialogShown = true, selectedTable = table) }
         }
@@ -69,22 +88,27 @@ class TableOverviewViewModel(
             when (addTableUseCase()) {
                 is Result.Success -> loadTables()
                 is Result.Error -> {
+                    // Handle error
                 }
-                else -> {}
+                else -> {
+                    // Handle other cases
+                }
             }
         }
     }
 
     fun onLogout() {
         viewModelScope.launch {
-            when (val result = logoutUseCase()) {
+            when (logoutUseCase()) {
                 is Result.Success -> {
                     _event.value = TableOverviewEvent.LogoutSuccess
                 }
                 is Result.Error -> {
-                    //TODO
+                    // Handle error
                 }
-                else -> {}
+                else -> {
+                    // Handle other cases
+                }
             }
         }
     }

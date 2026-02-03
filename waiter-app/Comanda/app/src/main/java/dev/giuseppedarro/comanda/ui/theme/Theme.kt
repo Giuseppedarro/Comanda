@@ -31,7 +31,8 @@ private val LightColorScheme = lightColorScheme(
     onPrimary = White,
     onBackground = White,
     onSurface = Black,
-    onPrimaryContainer = White
+    onPrimaryContainer = White,
+    tertiaryContainer = Orange
 )
 
 private val BrandedColorScheme = lightColorScheme(
