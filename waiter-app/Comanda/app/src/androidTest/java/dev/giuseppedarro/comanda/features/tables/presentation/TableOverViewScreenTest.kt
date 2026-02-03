@@ -3,6 +3,7 @@ package dev.giuseppedarro.comanda.features.tables.presentation
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import dev.giuseppedarro.comanda.features.tables.domain.model.Table
 import dev.giuseppedarro.comanda.ui.theme.ComandaTheme
 import org.junit.Rule
@@ -24,15 +25,15 @@ class TableOverViewScreenTest {
         composeTestRule.setContent {
             ComandaTheme {
                 TableOverviewContent(
-                    tables = tables,
+                    uiState = TableOverviewUiState(tables = tables),
                     onTableClick = {},
                     onNavigateToPrinters = {},
                     onNavigateToMenu = {},
                     onNavigateToSettings = {},
                     onLogout = {},
-                    isRefreshing = false,
                     onRefresh = {},
-                    onAddTableClick = {}
+                    onAddTableClick = {},
+                    onFilterChanged = {}
                 )
             }
         }
@@ -47,15 +48,15 @@ class TableOverViewScreenTest {
         composeTestRule.setContent {
             ComandaTheme {
                 TableOverviewContent(
-                    tables = emptyList(),
+                    uiState = TableOverviewUiState(tables = emptyList()),
                     onTableClick = {},
                     onNavigateToPrinters = {},
                     onNavigateToMenu = {},
                     onNavigateToSettings = {},
                     onLogout = {},
-                    isRefreshing = false,
                     onRefresh = {},
-                    onAddTableClick = {}
+                    onAddTableClick = {},
+                    onFilterChanged = {}
                 )
             }
         }
@@ -64,31 +65,31 @@ class TableOverViewScreenTest {
     }
 
     @Test
-    fun whenMultipleTables_displaysInCorrectOrder() {
+    fun whenFilterIsApplied_displaysFilteredTables() {
         val tables = listOf(
-            Table(number = 10, isOccupied = true),
+            Table(number = 1, isOccupied = true),
             Table(number = 2, isOccupied = false),
-            Table(number = 15, isOccupied = true)
+            Table(number = 3, isOccupied = true)
         )
 
         composeTestRule.setContent {
             ComandaTheme {
                 TableOverviewContent(
-                    tables = tables,
+                    uiState = TableOverviewUiState(tables = tables, filter = TableFilter.OCCUPIED),
                     onTableClick = {},
                     onNavigateToPrinters = {},
                     onNavigateToMenu = {},
                     onNavigateToSettings = {},
                     onLogout = {},
-                    isRefreshing = false,
                     onRefresh = {},
-                    onAddTableClick = {}
+                    onAddTableClick = {},
+                    onFilterChanged = {}
                 )
             }
         }
 
-        composeTestRule.onNodeWithText("Table 10").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Table 2").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Table 15").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Table 1").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Table 3").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Table 2").assertDoesNotExist()
     }
 }

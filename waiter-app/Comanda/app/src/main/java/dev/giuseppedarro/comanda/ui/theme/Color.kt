@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 
 // Brand Colors
 val Orange = Color(0xFFF4713D)
+val LightOrange = Color(0xFFFF9800)
 
 // Neutral Colors
 val White = Color(0xFFFFFFFF)
