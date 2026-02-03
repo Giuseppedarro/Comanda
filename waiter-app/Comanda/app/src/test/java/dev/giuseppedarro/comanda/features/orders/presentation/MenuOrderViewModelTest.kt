@@ -1,4 +1,3 @@
-
 package dev.giuseppedarro.comanda.features.orders.presentation
 
 import androidx.lifecycle.SavedStateHandle
@@ -11,6 +10,7 @@ import dev.giuseppedarro.comanda.features.orders.domain.model.OrderItem
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderStatus
 import dev.giuseppedarro.comanda.features.orders.domain.use_case.GetMenuUseCase
 import dev.giuseppedarro.comanda.features.orders.domain.use_case.GetOrdersForTableUseCase
+import dev.giuseppedarro.comanda.features.orders.domain.use_case.PrintBillUseCase
 import dev.giuseppedarro.comanda.features.orders.domain.use_case.SubmitOrderUseCase
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -31,6 +31,7 @@ class MenuOrderViewModelTest {
     private lateinit var getMenu: GetMenuUseCase
     private lateinit var getOrdersForTable: GetOrdersForTableUseCase
     private lateinit var submitOrder: SubmitOrderUseCase
+    private lateinit var printBill: PrintBillUseCase
     private val testDispatcher = StandardTestDispatcher()
 
     @Before
@@ -39,6 +40,7 @@ class MenuOrderViewModelTest {
         getMenu = mockk()
         getOrdersForTable = mockk()
         submitOrder = mockk()
+        printBill = mockk()
     }
 
     @After
@@ -53,7 +55,7 @@ class MenuOrderViewModelTest {
         coEvery { getOrdersForTable(any()) } returns flowOf(Result.Success(null))
 
         // When
-        val viewModel = MenuOrderViewModel(SavedStateHandle(), getMenu, getOrdersForTable, submitOrder)
+        val viewModel = MenuOrderViewModel(SavedStateHandle(), getMenu, getOrdersForTable, submitOrder, printBill)
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
@@ -71,7 +73,7 @@ class MenuOrderViewModelTest {
         coEvery { getOrdersForTable(any()) } returns flowOf(Result.Success(null))
 
         // When
-        val viewModel = MenuOrderViewModel(SavedStateHandle(), getMenu, getOrdersForTable, submitOrder)
+        val viewModel = MenuOrderViewModel(SavedStateHandle(), getMenu, getOrdersForTable, submitOrder, printBill)
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
@@ -91,7 +93,7 @@ class MenuOrderViewModelTest {
         coEvery { getOrdersForTable(1) } returns flowOf(Result.Success(existingOrder))
 
         // When
-        val viewModel = MenuOrderViewModel(savedStateHandle, getMenu, getOrdersForTable, submitOrder)
+        val viewModel = MenuOrderViewModel(savedStateHandle, getMenu, getOrdersForTable, submitOrder, printBill)
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
@@ -106,7 +108,7 @@ class MenuOrderViewModelTest {
     fun `onMenuItemAdded adds new item`() = runTest {
         coEvery { getMenu() } returns flowOf(Result.Success(emptyList()))
         coEvery { getOrdersForTable(any()) } returns flowOf(Result.Success(null))
-        val viewModel = MenuOrderViewModel(SavedStateHandle(), getMenu, getOrdersForTable, submitOrder)
+        val viewModel = MenuOrderViewModel(SavedStateHandle(), getMenu, getOrdersForTable, submitOrder, printBill)
         val menuItem = MenuItem(id = "1", name = "Pizza", price = 1000)
 
         viewModel.onMenuItemAdded(menuItem)
@@ -122,7 +124,7 @@ class MenuOrderViewModelTest {
     fun `onMenuItemAdded increments quantity of existing item`() = runTest {
         coEvery { getMenu() } returns flowOf(Result.Success(emptyList()))
         coEvery { getOrdersForTable(any()) } returns flowOf(Result.Success(null))
-        val viewModel = MenuOrderViewModel(SavedStateHandle(), getMenu, getOrdersForTable, submitOrder)
+        val viewModel = MenuOrderViewModel(SavedStateHandle(), getMenu, getOrdersForTable, submitOrder, printBill)
         val menuItem = MenuItem(id = "1", name = "Pizza", price = 1000)
 
         viewModel.onMenuItemAdded(menuItem) // Add once
@@ -139,7 +141,7 @@ class MenuOrderViewModelTest {
     fun `onQuantityChange updates quantity`() = runTest {
         coEvery { getMenu() } returns flowOf(Result.Success(emptyList()))
         coEvery { getOrdersForTable(any()) } returns flowOf(Result.Success(null))
-        val viewModel = MenuOrderViewModel(SavedStateHandle(), getMenu, getOrdersForTable, submitOrder)
+        val viewModel = MenuOrderViewModel(SavedStateHandle(), getMenu, getOrdersForTable, submitOrder, printBill)
         val menuItem = MenuItem(id = "1", name = "Pizza", price = 1000)
         viewModel.onMenuItemAdded(menuItem)
 
@@ -156,7 +158,7 @@ class MenuOrderViewModelTest {
     fun `onQuantityChange removes item if quantity is zero`() = runTest {
         coEvery { getMenu() } returns flowOf(Result.Success(emptyList()))
         coEvery { getOrdersForTable(any()) } returns flowOf(Result.Success(null))
-        val viewModel = MenuOrderViewModel(SavedStateHandle(), getMenu, getOrdersForTable, submitOrder)
+        val viewModel = MenuOrderViewModel(SavedStateHandle(), getMenu, getOrdersForTable, submitOrder, printBill)
         val menuItem = MenuItem(id = "1", name = "Pizza", price = 1000)
         viewModel.onMenuItemAdded(menuItem)
 
@@ -175,7 +177,7 @@ class MenuOrderViewModelTest {
         coEvery { getMenu() } returns flowOf(Result.Success(emptyList()))
         coEvery { getOrdersForTable(any()) } returns flowOf(Result.Success(null))
         coEvery { submitOrder(any(), any(), any()) } returns Result.Success(Unit)
-        val viewModel = MenuOrderViewModel(savedStateHandle, getMenu, getOrdersForTable, submitOrder)
+        val viewModel = MenuOrderViewModel(savedStateHandle, getMenu, getOrdersForTable, submitOrder, printBill)
         val menuItem = MenuItem(id = "1", name = "Pizza", price = 1000)
         viewModel.onMenuItemAdded(menuItem)
 
@@ -192,7 +194,7 @@ class MenuOrderViewModelTest {
         coEvery { getMenu() } returns flowOf(Result.Success(emptyList()))
         coEvery { getOrdersForTable(any()) } returns flowOf(Result.Success(null))
         coEvery { submitOrder(any(), any(), any()) } returns Result.Error("Network Error")
-        val viewModel = MenuOrderViewModel(savedStateHandle, getMenu, getOrdersForTable, submitOrder)
+        val viewModel = MenuOrderViewModel(savedStateHandle, getMenu, getOrdersForTable, submitOrder, printBill)
         val menuItem = MenuItem(id = "1", name = "Pizza", price = 1000)
         viewModel.onMenuItemAdded(menuItem)
 
