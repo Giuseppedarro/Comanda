@@ -7,8 +7,10 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import dev.giuseppedarro.comanda.core.data.CryptoManager
 import dev.giuseppedarro.comanda.core.data.TokenRepositoryImpl
 import dev.giuseppedarro.comanda.core.domain.TokenRepository
-import dev.giuseppedarro.comanda.core.domain.use_case.RefreshTokenUseCase
+import dev.giuseppedarro.comanda.core.network.AndroidKtorLogger
 import dev.giuseppedarro.comanda.core.network.BaseUrlProvider
+import dev.giuseppedarro.comanda.core.network.HttpClientConfig
+import dev.giuseppedarro.comanda.core.network.KtorLogger
 import dev.giuseppedarro.comanda.core.network.createBasicHttpClient
 import dev.giuseppedarro.comanda.core.network.createHttpClient
 import io.ktor.client.HttpClient
@@ -30,20 +32,27 @@ val coreModule = module {
     // Base URL provider for dynamic configuration
     single { BaseUrlProvider("http://10.0.2.2:8080/") }
 
-    // Basic HTTP client (without Auth) - for login and token refresh
-    // This prevents circular dependencies
-    single<HttpClient>(named("basicClient")) {
-        createBasicHttpClient(get())
-    }
+    // Networking configuration
+    single<KtorLogger> { AndroidKtorLogger() }
+    single { HttpClientConfig() }
 
-    // Refresh token use case - uses basic client to avoid circular dependency
-    factory<RefreshTokenUseCase> {
-        val basicClient = get<HttpClient>(named("basicClient"))
-        RefreshTokenUseCase(basicClient, get())
+    // Basic HTTP client (without Auth) - for login and token refresh
+    single<HttpClient>(named("basicClient")) {
+        createBasicHttpClient(
+            baseUrlProvider = get(),
+            logger = get(),
+            config = get()
+        )
     }
 
     // Main HTTP client with Auth plugin - for all authenticated API calls
     single<HttpClient>(named("authClient")) {
-        createHttpClient(get(), get(), get())
+        createHttpClient(
+            baseUrlProvider = get(),
+            tokenRepository = get(),
+            logger = get(),
+            config = get(),
+            basicClient = get(named("basicClient"))
+        )
     }
 }

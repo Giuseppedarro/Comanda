@@ -13,9 +13,6 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="whenPrinterItemIsClicked_callsNavigateToPrinters()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="TableOverViewScreenTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
