@@ -160,8 +160,12 @@ fun MenuOrderContent(
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
             LazyColumn(modifier = Modifier.weight(1f)) {
-                items(uiState.orderItems) { item ->
+                items(
+                    items = uiState.orderItems,
+                    key = { it.menuItem.id }
+                ) { item ->
                     MenuItemRow(
+                        modifier = Modifier.animateItem(),
                         itemName = item.menuItem.name,
                         itemPrice = item.menuItem.price.toPriceString(),
                         quantity = item.quantity,

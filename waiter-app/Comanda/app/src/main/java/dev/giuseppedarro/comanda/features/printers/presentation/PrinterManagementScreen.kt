@@ -149,6 +149,7 @@ fun PrinterManagementContent(
                             key = { it.id }
                         ) { printer ->
                             PrinterListItem(
+                                modifier = Modifier.animateItem(),
                                 printer = printer,
                                 onEditClick = { onEditClick(it) },
                                 onDeleteClick = { onDeleteClick(it) }

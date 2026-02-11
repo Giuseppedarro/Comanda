@@ -152,8 +152,12 @@ fun CategoryScreenContent(
                         item {
                             Spacer(modifier = Modifier.height(8.dp))
                         }
-                        items(items) { item ->
+                        items(
+                            items = items,
+                            key = { it.id}
+                            ) { item ->
                             MenuItemCard(
+                                modifier = Modifier.animateItem(),
                                 item = item,
                                 onEditClick = { onEditItemClick(item) },
                                 onDeleteClick = { onDeleteItemClick(item) }
