@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.Flow
 class GetTablesUseCase(private val repository: TablesRepository) {
 
     operator fun invoke(): Flow<List<Table>> {
-        // You can add business logic here in the future
         return repository.getTables()
     }
 }

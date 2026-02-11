@@ -41,14 +41,19 @@ import dev.giuseppedarro.comanda.core.presentation.ComandaTopAppBar
 import dev.giuseppedarro.comanda.ui.theme.ComandaTheme
 
 @Composable
-fun SettingsScreen(onBackClick: () -> Unit, onLogout: () -> Unit) {
+fun SettingsScreen(
+    onBackClick: () -> Unit, 
+    onLogout: () -> Unit,
+    onManageUsersClick: () -> Unit
+) {
     var areNotificationsEnabled by remember { mutableStateOf(true) }
 
     SettingsContent(
         onBackClick = onBackClick,
         onLogout = onLogout,
         areNotificationsEnabled = areNotificationsEnabled,
-        onNotificationsToggle = { newState -> areNotificationsEnabled = newState }
+        onNotificationsToggle = { newState -> areNotificationsEnabled = newState },
+        onManageUsersClick = onManageUsersClick
     )
 }
 
@@ -58,6 +63,7 @@ fun SettingsContent(
     onLogout: () -> Unit,
     areNotificationsEnabled: Boolean,
     onNotificationsToggle: (Boolean) -> Unit,
+    onManageUsersClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -112,7 +118,7 @@ fun SettingsContent(
                     icon = { Icon(Icons.Default.ManageAccounts, "Manage Users", tint = MaterialTheme.colorScheme.primary) },
                     title = "Manage Users",
                     subtitle = "Add, remove, or edit user accounts",
-                    onClick = { /* TODO */ }
+                    onClick = onManageUsersClick
                 )
                 Divider(modifier = Modifier.padding(horizontal = 16.dp))
                 SettingItem(
@@ -186,7 +192,8 @@ private fun SettingsContentPreview() {
             onBackClick = {},
             onLogout = {},
             areNotificationsEnabled = true,
-            onNotificationsToggle = {}
+            onNotificationsToggle = {},
+            onManageUsersClick = {}
         )
     }
 }
