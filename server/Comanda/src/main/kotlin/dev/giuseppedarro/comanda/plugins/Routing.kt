@@ -20,6 +20,8 @@ import dev.giuseppedarro.comanda.features.tables.domain.repository.TablesReposit
 import dev.giuseppedarro.comanda.features.tables.domain.usecase.AddTableUseCase
 import dev.giuseppedarro.comanda.features.tables.domain.usecase.GetTablesUseCase
 import dev.giuseppedarro.comanda.features.tables.api.tablesRoutes
+import dev.giuseppedarro.comanda.features.users.api.usersRoutes
+import dev.giuseppedarro.comanda.features.users.domain.usecase.CreateUserUseCase
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -55,6 +57,8 @@ fun Application.configureRouting() {
     val updatePrinterUseCase by inject<UpdatePrinterUseCase>()
     val deletePrinterUseCase by inject<DeletePrinterUseCase>()
 
+    val createUserUseCase by inject<CreateUserUseCase>()
+
     routing {
         authRoutes(loginUseCase, refreshTokenUseCase)
         tablesRoutes(getTablesUseCase, addTableUseCase)
@@ -85,6 +89,7 @@ fun Application.configureRouting() {
             updatePrinterUseCase,
             deletePrinterUseCase
         )
+        usersRoutes(createUserUseCase)
         get("/") {
             call.respondText("Hello World!")
         }

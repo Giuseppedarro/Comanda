@@ -7,9 +7,9 @@ import dev.giuseppedarro.comanda.features.auth.data.model.LoginResponse
 import dev.giuseppedarro.comanda.features.auth.data.model.RefreshTokenRequest
 import dev.giuseppedarro.comanda.features.auth.data.model.TokenResponse
 import dev.giuseppedarro.comanda.features.users.data.Users
-import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.mindrot.jbcrypt.BCrypt
 import java.util.*
 
 class AuthDataSource(
@@ -19,23 +19,35 @@ class AuthDataSource(
 ) {
 
     suspend fun login(request: LoginRequest): Result<LoginResponse> {
+        // 1. Fetch user by employeeId
         val userRow = transaction {
-            Users.select {
-                (Users.employeeId eq request.employeeId) and (Users.password eq request.password)
-            }.singleOrNull()
+            Users.select { Users.employeeId eq request.employeeId }.singleOrNull()
         }
 
         if (userRow != null) {
-            val employeeId = userRow[Users.employeeId]
-            val role = userRow[Users.role]
-            val name = userRow[Users.name]
+            val storedPassword = userRow[Users.password]
             
-            val accessToken = generateAccessToken(employeeId, role, name)
-            val refreshToken = generateRefreshToken(employeeId)
-            return Result.success(LoginResponse(accessToken, refreshToken))
-        } else {
-            return Result.failure(Exception("Invalid credentials"))
+            // 2. Verify Password (Hybrid: Hash or Plain Text)
+            val isPasswordValid = try {
+                // Try to verify as BCrypt hash
+                BCrypt.checkpw(request.password, storedPassword)
+            } catch (e: Exception) {
+                // If checkpw fails (e.g. storedPassword is not a valid hash), fallback to plain text check
+                storedPassword == request.password
+            }
+
+            if (isPasswordValid) {
+                val employeeId = userRow[Users.employeeId]
+                val role = userRow[Users.role]
+                val name = userRow[Users.name]
+                
+                val accessToken = generateAccessToken(employeeId, role, name)
+                val refreshToken = generateRefreshToken(employeeId)
+                return Result.success(LoginResponse(accessToken, refreshToken))
+            }
         }
+        
+        return Result.failure(Exception("Invalid credentials"))
     }
 
     suspend fun refreshToken(request: RefreshTokenRequest): Result<TokenResponse> {
