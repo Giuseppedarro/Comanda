@@ -7,6 +7,7 @@ import dev.giuseppedarro.comanda.features.login.presentation.navigation.loginGra
 import dev.giuseppedarro.comanda.features.menu.presentation.navigation.menuGraph
 import dev.giuseppedarro.comanda.features.orders.presentation.navigation.ordersGraph
 import dev.giuseppedarro.comanda.features.printers.presentation.navigation.printersGraph
+import dev.giuseppedarro.comanda.features.settings.presentation.navigation.settingsNavGraph
 import dev.giuseppedarro.comanda.features.tables.presentation.navigation.tablesGraph
 
 @Composable
@@ -19,5 +20,6 @@ fun NavGraph() {
         ordersGraph(navController)
         printersGraph(navController)
         menuGraph(navController)
+        settingsNavGraph(navController)
     }
 }

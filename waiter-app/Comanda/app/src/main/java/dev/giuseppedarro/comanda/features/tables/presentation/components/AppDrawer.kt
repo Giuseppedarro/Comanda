@@ -68,7 +68,7 @@ fun AppDrawer(
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    "Giuseppe D'''Arrò",
+                    "Giuseppe D'Arrò",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onTertiaryContainer
                 )
@@ -94,7 +94,7 @@ fun AppDrawer(
             }
         )
         NavigationDrawerItem(
-            label = { Text("Settings (to be implemented)") },
+            label = { Text("Settings") },
             icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
             selected = false,
             onClick = {

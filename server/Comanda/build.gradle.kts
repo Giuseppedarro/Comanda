@@ -53,6 +53,9 @@ dependencies {
     // HikariCP
     implementation("com.zaxxer:HikariCP:5.0.1")
 
+    // BCrypt for password hashing
+    implementation("org.mindrot:jbcrypt:0.4")
+
     testImplementation("io.ktor:ktor-server-test-host")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

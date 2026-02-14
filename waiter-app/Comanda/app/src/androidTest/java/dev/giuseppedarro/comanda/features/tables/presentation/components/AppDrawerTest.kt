@@ -35,7 +35,7 @@ class AppDrawerTest {
 
         composeTestRule.onNodeWithText(context.getString(R.string.printers)).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.menu)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(context.getString(R.string.settings_to_be_implemented)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.settings)).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.logout)).assertIsDisplayed()
     }
 

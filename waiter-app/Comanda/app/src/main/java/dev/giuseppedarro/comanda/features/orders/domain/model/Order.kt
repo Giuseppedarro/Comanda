@@ -17,7 +17,7 @@ data class Order(
     val numberOfPeople: Int,
     val status: OrderStatus,
     val items: List<OrderItem>,
-    val createdAt: String,        // ISO instant timestamp
+    val createdAt: String,
     val subtotal: Int? = null,
     val serviceCharge: Int? = null,
     val total: Int? = null

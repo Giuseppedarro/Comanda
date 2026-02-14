@@ -15,6 +15,9 @@ object Orders
 object Printers
 
 @Serializable
+object Settings
+
+@Serializable
 object Menu
 
 @Serializable

@@ -20,6 +20,11 @@ import dev.giuseppedarro.comanda.features.tables.domain.repository.TablesReposit
 import dev.giuseppedarro.comanda.features.tables.domain.usecase.AddTableUseCase
 import dev.giuseppedarro.comanda.features.tables.domain.usecase.GetTablesUseCase
 import dev.giuseppedarro.comanda.features.tables.api.tablesRoutes
+import dev.giuseppedarro.comanda.features.users.api.usersRoutes
+import dev.giuseppedarro.comanda.features.users.domain.usecase.CreateUserUseCase
+import dev.giuseppedarro.comanda.features.users.domain.usecase.DeleteUserUseCase
+import dev.giuseppedarro.comanda.features.users.domain.usecase.GetUsersUseCase
+import dev.giuseppedarro.comanda.features.users.domain.usecase.UpdateUserUseCase
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -55,6 +60,11 @@ fun Application.configureRouting() {
     val updatePrinterUseCase by inject<UpdatePrinterUseCase>()
     val deletePrinterUseCase by inject<DeletePrinterUseCase>()
 
+    val createUserUseCase by inject<CreateUserUseCase>()
+    val getUsersUseCase by inject<GetUsersUseCase>()
+    val updateUserUseCase by inject<UpdateUserUseCase>()
+    val deleteUserUseCase by inject<DeleteUserUseCase>()
+
     routing {
         authRoutes(loginUseCase, refreshTokenUseCase)
         tablesRoutes(getTablesUseCase, addTableUseCase)
@@ -84,6 +94,12 @@ fun Application.configureRouting() {
             createPrinterUseCase,
             updatePrinterUseCase,
             deletePrinterUseCase
+        )
+        usersRoutes(
+            createUserUseCase, 
+            getUsersUseCase,
+            updateUserUseCase,
+            deleteUserUseCase
         )
         get("/") {
             call.respondText("Hello World!")

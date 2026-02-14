@@ -6,6 +6,7 @@ import dev.giuseppedarro.comanda.features.login.di.loginModule
 import dev.giuseppedarro.comanda.features.menu.di.menuModule
 import dev.giuseppedarro.comanda.features.orders.di.ordersModule
 import dev.giuseppedarro.comanda.features.printers.di.printersModule
+import dev.giuseppedarro.comanda.features.settings.di.settingsModule
 import dev.giuseppedarro.comanda.features.tables.di.tablesModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -16,7 +17,15 @@ class ComandaApp : Application() {
 
         startKoin {
             androidContext(this@ComandaApp)
-            modules(loginModule, tablesModule, ordersModule, printersModule, menuModule, coreModule)
+            modules(
+                coreModule, 
+                loginModule, 
+                tablesModule, 
+                ordersModule, 
+                printersModule, 
+                menuModule, 
+                settingsModule
+            )
         }
     }
 }
