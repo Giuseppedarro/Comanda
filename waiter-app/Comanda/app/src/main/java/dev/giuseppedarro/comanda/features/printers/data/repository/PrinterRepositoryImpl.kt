@@ -1,9 +1,7 @@
 package dev.giuseppedarro.comanda.features.printers.data.repository
 
-import dev.giuseppedarro.comanda.core.utils.Result
 import dev.giuseppedarro.comanda.features.printers.data.remote.PrinterApi
 import dev.giuseppedarro.comanda.features.printers.data.remote.dto.CreatePrinterRequest
-import dev.giuseppedarro.comanda.features.printers.data.remote.dto.PrinterDto
 import dev.giuseppedarro.comanda.features.printers.data.remote.dto.UpdatePrinterRequest
 import dev.giuseppedarro.comanda.features.printers.data.remote.dto.toDomain
 import dev.giuseppedarro.comanda.features.printers.domain.model.Printer
@@ -16,10 +14,9 @@ class PrinterRepositoryImpl(
     override suspend fun getAllPrinters(): Result<List<Printer>> {
         return try {
             val printerDtos = printerApi.getAllPrinters()
-            Result.Success(printerDtos.map { it.toDomain() })
+            Result.success(printerDtos.map { it.toDomain() })
         } catch (e: Exception) {
-            e.printStackTrace()
-            Result.Error(e.message ?: "An unknown error occurred")
+            Result.failure(e)
         }
     }
 
@@ -27,10 +24,9 @@ class PrinterRepositoryImpl(
         return try {
             val request = CreatePrinterRequest(name, address, port)
             val printerDto = printerApi.createPrinter(request)
-            Result.Success(printerDto.toDomain())
+            Result.success(printerDto.toDomain())
         } catch (e: Exception) {
-            e.printStackTrace()
-            Result.Error(e.message ?: "An unknown error occurred")
+            Result.failure(e)
         }
     }
 
@@ -38,20 +34,18 @@ class PrinterRepositoryImpl(
         return try {
             val request = UpdatePrinterRequest(name, address, port)
             val printerDto = printerApi.updatePrinter(id, request)
-            Result.Success(printerDto.toDomain())
+            Result.success(printerDto.toDomain())
         } catch (e: Exception) {
-            e.printStackTrace()
-            Result.Error(e.message ?: "An unknown error occurred")
+            Result.failure(e)
         }
     }
 
     override suspend fun deletePrinter(id: Int): Result<Unit> {
         return try {
             printerApi.deletePrinter(id)
-            Result.Success(Unit)
+            Result.success(Unit)
         } catch (e: Exception) {
-            e.printStackTrace()
-            Result.Error(e.message ?: "An unknown error occurred")
+            Result.failure(e)
         }
     }
 }

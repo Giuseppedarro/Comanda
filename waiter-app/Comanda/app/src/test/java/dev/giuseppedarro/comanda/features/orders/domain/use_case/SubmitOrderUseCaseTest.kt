@@ -2,7 +2,6 @@
 package dev.giuseppedarro.comanda.features.orders.domain.use_case
 
 import com.google.common.truth.Truth.assertThat
-import dev.giuseppedarro.comanda.core.utils.Result
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderItem
 import dev.giuseppedarro.comanda.features.orders.domain.repository.OrderRepository
 import io.mockk.coEvery
@@ -28,13 +27,13 @@ class SubmitOrderUseCaseTest {
         val tableNumber = 1
         val numberOfPeople = 4
         val items = emptyList<OrderItem>()
-        coEvery { orderRepository.submitOrder(tableNumber, numberOfPeople, items) } returns Result.Success(Unit)
+        coEvery { orderRepository.submitOrder(tableNumber, numberOfPeople, items) } returns Result.success(Unit)
 
         // When
         val result = submitOrderUseCase(tableNumber, numberOfPeople, items)
 
         // Then
-        assertThat(result).isInstanceOf(Result.Success::class.java)
+        assertThat(result.isSuccess).isTrue()
     }
 
     @Test
@@ -44,13 +43,13 @@ class SubmitOrderUseCaseTest {
         val numberOfPeople = 4
         val items = emptyList<OrderItem>()
         val errorMessage = "Error"
-        coEvery { orderRepository.submitOrder(tableNumber, numberOfPeople, items) } returns Result.Error(errorMessage)
+        coEvery { orderRepository.submitOrder(tableNumber, numberOfPeople, items) } returns Result.failure(java.lang.RuntimeException(errorMessage))
 
         // When
         val result = submitOrderUseCase(tableNumber, numberOfPeople, items)
 
         // Then
-        assertThat(result).isInstanceOf(Result.Error::class.java)
-        assertThat((result as Result.Error).message).isEqualTo(errorMessage)
+        assertThat(result.isFailure).isTrue()
+        assertThat(result.exceptionOrNull()?.message).isEqualTo(errorMessage)
     }
 }

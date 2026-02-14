@@ -2,12 +2,12 @@ package dev.giuseppedarro.comanda.features.menu.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.giuseppedarro.comanda.core.utils.Result
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.menu.domain.usecase.GetMenuUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 data class MenuUiState(
@@ -29,28 +29,21 @@ class MenuViewModel(
 
     fun loadMenu() {
         viewModelScope.launch {
-            getMenuUseCase().collect { result ->
-                when (result) {
-                    is Result.Loading -> {
+            getMenuUseCase()
+                .onStart { _uiState.value = _uiState.value.copy(isLoading = true, error = null) }
+                .collect { result ->
+                    result.onSuccess {
                         _uiState.value = _uiState.value.copy(
-                            isLoading = true,
-                            error = null
-                        )
-                    }
-                    is Result.Success -> {
-                        _uiState.value = _uiState.value.copy(
-                            categories = result.data ?: emptyList(),
+                            categories = it,
                             isLoading = false,
                             error = null
                         )
-                    }
-                    is Result.Error -> {
+                    }.onFailure {
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
-                            error = result.message
+                            error = it.message
                         )
                     }
-                }
             }
         }
     }

@@ -1,6 +1,5 @@
 package dev.giuseppedarro.comanda.features.menu.domain.repository
 
-import dev.giuseppedarro.comanda.core.utils.Result
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuItem
 import kotlinx.coroutines.flow.Flow

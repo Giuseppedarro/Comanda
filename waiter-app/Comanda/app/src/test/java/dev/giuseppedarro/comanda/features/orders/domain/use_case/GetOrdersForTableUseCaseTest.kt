@@ -3,7 +3,6 @@ package dev.giuseppedarro.comanda.features.orders.domain.use_case
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import dev.giuseppedarro.comanda.core.utils.Result
 import dev.giuseppedarro.comanda.features.orders.domain.model.Order
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderItem
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderStatus
@@ -37,7 +36,7 @@ class GetOrdersForTableUseCaseTest {
             items = emptyList<OrderItem>(),
             createdAt = "2026-01-16T10:00:00Z"
         )
-        coEvery { orderRepository.getOrdersForTable(tableNumber) } returns flowOf(Result.Success(order))
+        coEvery { orderRepository.getOrdersForTable(tableNumber) } returns flowOf(Result.success(order))
 
         // When
         val result = getOrdersForTableUseCase(tableNumber)
@@ -45,8 +44,8 @@ class GetOrdersForTableUseCaseTest {
         // Then
         result.test {
             val emission = awaitItem()
-            assertThat(emission).isInstanceOf(Result.Success::class.java)
-            assertThat((emission as Result.Success).data).isEqualTo(order)
+            assertThat(emission.isSuccess).isTrue()
+            assertThat(emission.getOrNull()).isEqualTo(order)
             awaitComplete()
         }
     }
@@ -55,7 +54,7 @@ class GetOrdersForTableUseCaseTest {
     fun `invoke should return null when repository returns success with null`() = runTest {
         // Given
         val tableNumber = 1
-        coEvery { orderRepository.getOrdersForTable(tableNumber) } returns flowOf(Result.Success(null))
+        coEvery { orderRepository.getOrdersForTable(tableNumber) } returns flowOf(Result.success(null))
 
         // When
         val result = getOrdersForTableUseCase(tableNumber)
@@ -63,8 +62,8 @@ class GetOrdersForTableUseCaseTest {
         // Then
         result.test {
             val emission = awaitItem()
-            assertThat(emission).isInstanceOf(Result.Success::class.java)
-            assertThat((emission as Result.Success).data).isNull()
+            assertThat(emission.isSuccess).isTrue()
+            assertThat(emission.getOrNull()).isNull()
             awaitComplete()
         }
     }
@@ -74,7 +73,7 @@ class GetOrdersForTableUseCaseTest {
         // Given
         val tableNumber = 1
         val errorMessage = "Error"
-        coEvery { orderRepository.getOrdersForTable(tableNumber) } returns flowOf(Result.Error(errorMessage))
+        coEvery { orderRepository.getOrdersForTable(tableNumber) } returns flowOf(Result.failure(RuntimeException(errorMessage)))
 
         // When
         val result = getOrdersForTableUseCase(tableNumber)
@@ -82,8 +81,8 @@ class GetOrdersForTableUseCaseTest {
         // Then
         result.test {
             val emission = awaitItem()
-            assertThat(emission).isInstanceOf(Result.Error::class.java)
-            assertThat((emission as Result.Error).message).isEqualTo(errorMessage)
+            assertThat(emission.isFailure).isTrue()
+            assertThat(emission.exceptionOrNull()?.message).isEqualTo(errorMessage)
             awaitComplete()
         }
     }

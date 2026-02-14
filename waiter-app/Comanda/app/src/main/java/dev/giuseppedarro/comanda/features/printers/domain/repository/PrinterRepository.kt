@@ -1,6 +1,5 @@
 package dev.giuseppedarro.comanda.features.printers.domain.repository
 
-import dev.giuseppedarro.comanda.core.utils.Result
 import dev.giuseppedarro.comanda.features.printers.domain.model.Printer
 
 interface PrinterRepository {

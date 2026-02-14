@@ -1,6 +1,5 @@
 package dev.giuseppedarro.comanda.features.tables.domain.use_case
 
-import dev.giuseppedarro.comanda.core.utils.Result
 import dev.giuseppedarro.comanda.features.tables.domain.repository.TablesRepository
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -22,25 +21,25 @@ class AddTableUseCaseTest {
     @Test
     fun when_repository_adds_table_successfully_then_return_success() = runBlocking {
         // Arrange
-        coEvery { repository.addTable() } returns Result.Success(Unit)
+        coEvery { repository.addTable() } returns Result.success(Unit)
 
         // Act
         val result = addTableUseCase()
 
         // Assert
-        assertTrue(result is Result.Success)
+        assertTrue(result.isSuccess)
     }
 
     @Test
     fun when_repository_fails_to_add_table_then_return_failure() = runBlocking {
         // Arrange
         val exception = Exception("Failed to add table")
-        coEvery { repository.addTable() } returns Result.Error(exception.message ?: "An unknown error occurred")
+        coEvery { repository.addTable() } returns Result.failure(exception)
 
         // Act
         val result = addTableUseCase()
 
         // Assert
-        assertTrue(result is Result.Error)
+        assertTrue(result.isFailure)
     }
 }

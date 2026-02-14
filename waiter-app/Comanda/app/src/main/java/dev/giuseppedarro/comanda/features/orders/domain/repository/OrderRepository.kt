@@ -1,6 +1,5 @@
 package dev.giuseppedarro.comanda.features.orders.domain.repository
 
-import dev.giuseppedarro.comanda.core.utils.Result
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.orders.domain.model.Order
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderItem

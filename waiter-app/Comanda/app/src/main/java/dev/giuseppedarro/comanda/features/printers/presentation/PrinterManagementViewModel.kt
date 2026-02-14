@@ -2,7 +2,6 @@ package dev.giuseppedarro.comanda.features.printers.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.giuseppedarro.comanda.core.utils.Result
 import dev.giuseppedarro.comanda.features.printers.domain.model.Printer
 import dev.giuseppedarro.comanda.features.printers.domain.use_case.CreatePrinterUseCase
 import dev.giuseppedarro.comanda.features.printers.domain.use_case.DeletePrinterUseCase
@@ -43,23 +42,17 @@ class PrinterManagementViewModel(
                 error = null
             )
 
-            when (val result = getAllPrintersUseCase()) {
-                is Result.Success -> {
-                    _uiState.value = _uiState.value.copy(
-                        printers = result.data ?: emptyList(),
-                        isLoading = false,
-                        error = null
-                    )
-                }
-                is Result.Error -> {
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        error = result.message
-                    )
-                }
-                is Result.Loading -> {
-                    // Already set loading at the start
-                }
+            getAllPrintersUseCase().onSuccess {
+                _uiState.value = _uiState.value.copy(
+                    printers = it,
+                    isLoading = false,
+                    error = null
+                )
+            }.onFailure {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = it.message
+                )
             }
         }
     }
@@ -99,24 +92,18 @@ class PrinterManagementViewModel(
                 error = null
             )
 
-            when (val result = createPrinterUseCase(name, address, port)) {
-                is Result.Success -> {
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        isAddDialogOpen = false,
-                        error = null
-                    )
-                    loadPrinters() // Reload to get updated list
-                }
-                is Result.Error -> {
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        error = result.message
-                    )
-                }
-                is Result.Loading -> {
-                    // Already set loading at the start
-                }
+            createPrinterUseCase(name, address, port).onSuccess {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    isAddDialogOpen = false,
+                    error = null
+                )
+                loadPrinters() // Reload to get updated list
+            }.onFailure {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = it.message
+                )
             }
         }
     }
@@ -128,25 +115,19 @@ class PrinterManagementViewModel(
                 error = null
             )
 
-            when (val result = updatePrinterUseCase(id, name, address, port)) {
-                is Result.Success -> {
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        isEditDialogOpen = false,
-                        editingPrinter = null,
-                        error = null
-                    )
-                    loadPrinters() // Reload to get updated list
-                }
-                is Result.Error -> {
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        error = result.message
-                    )
-                }
-                is Result.Loading -> {
-                    // Already set loading at the start
-                }
+            updatePrinterUseCase(id, name, address, port).onSuccess {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    isEditDialogOpen = false,
+                    editingPrinter = null,
+                    error = null
+                )
+                loadPrinters() // Reload to get updated list
+            }.onFailure {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = it.message
+                )
             }
         }
     }
@@ -158,23 +139,17 @@ class PrinterManagementViewModel(
                 error = null
             )
 
-            when (val result = deletePrinterUseCase(printer.id)) {
-                is Result.Success -> {
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        error = null
-                    )
-                    loadPrinters() // Reload to get updated list
-                }
-                is Result.Error -> {
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        error = result.message
-                    )
-                }
-                is Result.Loading -> {
-                    // Already set loading at the start
-                }
+            deletePrinterUseCase(printer.id).onSuccess {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = null
+                )
+                loadPrinters() // Reload to get updated list
+            }.onFailure {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = it.message
+                )
             }
         }
     }

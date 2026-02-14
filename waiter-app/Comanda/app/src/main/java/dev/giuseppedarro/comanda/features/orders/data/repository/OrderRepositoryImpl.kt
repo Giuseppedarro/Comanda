@@ -1,6 +1,5 @@
 package dev.giuseppedarro.comanda.features.orders.data.repository
 
-import dev.giuseppedarro.comanda.core.utils.Result
 import dev.giuseppedarro.comanda.features.orders.data.remote.OrderApi
 import dev.giuseppedarro.comanda.features.orders.data.remote.dto.OrderItemRequest
 import dev.giuseppedarro.comanda.features.orders.data.remote.dto.SubmitOrderRequest
@@ -18,7 +17,6 @@ class OrderRepositoryImpl(
 ) : OrderRepository {
 
     override fun getMenu(): Flow<Result<List<MenuCategory>>> = flow {
-        emit(Result.Loading())
         try {
             val remoteMenu = api.getMenu()
             val mapped = remoteMenu.map { categoryDto ->
@@ -33,21 +31,20 @@ class OrderRepositoryImpl(
                     }
                 )
             }
-            emit(Result.Success(mapped))
+            emit(Result.success(mapped))
         } catch (e: Exception) {
-            emit(Result.Error(e.message ?: "An unknown error occurred"))
+            emit(Result.failure(e))
         }
     }
 
     override fun getOrdersForTable(tableNumber: Int): Flow<Result<Order?>> = flow {
-        emit(Result.Loading())
         try {
             // Token is automatically injected by Ktor Auth plugin
             val orderResponse = api.getOrdersForTable(tableNumber)
 
             // If orderResponse is null, it means no order exists for this table (404 from backend)
             if (orderResponse == null) {
-                emit(Result.Success(null))
+                emit(Result.success(null))
                 return@flow
             }
 
@@ -88,9 +85,9 @@ class OrderRepositoryImpl(
                 total = orderResponse.total
             )
 
-            emit(Result.Success(order))
+            emit(Result.success(order))
         } catch (e: Exception) {
-            emit(Result.Error(e.message ?: "An unknown error occurred"))
+            emit(Result.failure(e))
         }
     }
 
@@ -111,10 +108,9 @@ class OrderRepositoryImpl(
             )
 
             api.submitOrder(request)
-            Result.Success(Unit)
+            Result.success(Unit)
         } catch (e: Exception) {
-            e.printStackTrace()
-            Result.Error(e.message ?: "An unknown error occurred")
+            Result.failure(e)
         }
     }
 
@@ -135,10 +131,9 @@ class OrderRepositoryImpl(
             )
 
             api.printBill(request)
-            Result.Success(Unit)
+            Result.success(Unit)
         } catch (e: Exception) {
-            e.printStackTrace()
-            Result.Error(e.message ?: "An unknown error occurred")
+            Result.failure(e)
         }
     }
 }

@@ -2,7 +2,6 @@ package dev.giuseppedarro.comanda.features.tables.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.giuseppedarro.comanda.core.utils.Result
 import dev.giuseppedarro.comanda.features.login.domain.use_case.LogoutUseCase
 import dev.giuseppedarro.comanda.features.tables.domain.model.Table
 import dev.giuseppedarro.comanda.features.tables.domain.use_case.AddTableUseCase
@@ -85,31 +84,19 @@ class TableOverviewViewModel(
 
     fun onAddTableClicked() {
         viewModelScope.launch {
-            when (addTableUseCase()) {
-                is Result.Success -> loadTables()
-                is Result.Error -> {
+            addTableUseCase().onSuccess { loadTables() }
+                .onFailure {
                     // Handle error
                 }
-                else -> {
-                    // Handle other cases
-                }
-            }
         }
     }
 
     fun onLogout() {
         viewModelScope.launch {
-            when (logoutUseCase()) {
-                is Result.Success -> {
-                    _event.value = TableOverviewEvent.LogoutSuccess
-                }
-                is Result.Error -> {
+            logoutUseCase().onSuccess { _event.value = TableOverviewEvent.LogoutSuccess }
+                .onFailure {
                     // Handle error
                 }
-                else -> {
-                    // Handle other cases
-                }
-            }
         }
     }
 

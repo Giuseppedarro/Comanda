@@ -1,6 +1,5 @@
 package dev.giuseppedarro.comanda.features.menu.data.repository
 
-import dev.giuseppedarro.comanda.core.utils.Result
 import dev.giuseppedarro.comanda.features.menu.data.remote.MenuApi
 import dev.giuseppedarro.comanda.features.menu.data.remote.dto.toCreateRequest
 import dev.giuseppedarro.comanda.features.menu.data.remote.dto.toDomain
@@ -18,56 +17,55 @@ class MenuRepositoryImpl(
 ) : MenuRepository {
 
     override fun getMenu(): Flow<Result<List<MenuCategory>>> = flow {
-        emit(Result.Loading())
         try {
             val categories = api.getMenu().map { it.toDomain() }
-            emit(Result.Success(categories))
+            emit(Result.success(categories))
         } catch (e: Exception) {
-            emit(Result.Error(e.message ?: "Unknown error"))
+            emit(Result.failure(e))
         }
     }.catch { e ->
-        emit(Result.Error(e.message ?: "Unknown error"))
+        emit(Result.failure(e))
     }
 
     override suspend fun createCategory(category: MenuCategory): Result<Unit> = try {
         api.createCategory(category.toDto())
-        Result.Success(Unit)
+        Result.success(Unit)
     } catch (e: Exception) {
-        Result.Error(e.message ?: "Unknown error")
+        Result.failure(e)
     }
 
     override suspend fun updateCategory(category: MenuCategory): Result<Unit> = try {
         api.updateCategory(category.id, category.toDto())
-        Result.Success(Unit)
+        Result.success(Unit)
     } catch (e: Exception) {
-        Result.Error(e.message ?: "Unknown error")
+        Result.failure(e)
     }
 
     override suspend fun deleteCategory(categoryId: String): Result<Unit> = try {
         api.deleteCategory(categoryId)
-        Result.Success(Unit)
+        Result.success(Unit)
     } catch (e: Exception) {
-        Result.Error(e.message ?: "Unknown error")
+        Result.failure(e)
     }
 
     override suspend fun addMenuItem(categoryId: String, item: MenuItem): Result<Unit> = try {
         api.addMenuItem(categoryId, item.toCreateRequest())
-        Result.Success(Unit)
+        Result.success(Unit)
     } catch (e: Exception) {
-        Result.Error(e.message ?: "Unknown error")
+        Result.failure(e)
     }
 
     override suspend fun updateMenuItem(item: MenuItem): Result<Unit> = try {
         api.updateMenuItem(item.id, item.toUpdateRequest())
-        Result.Success(Unit)
+        Result.success(Unit)
     } catch (e: Exception) {
-        Result.Error(e.message ?: "Unknown error")
+        Result.failure(e)
     }
 
     override suspend fun deleteMenuItem(itemId: String): Result<Unit> = try {
         api.deleteMenuItem(itemId)
-        Result.Success(Unit)
+        Result.success(Unit)
     } catch (e: Exception) {
-        Result.Error(e.message ?: "Unknown error")
+        Result.failure(e)
     }
 }
