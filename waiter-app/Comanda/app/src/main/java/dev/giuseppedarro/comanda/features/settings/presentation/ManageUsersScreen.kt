@@ -1,22 +1,33 @@
 package dev.giuseppedarro.comanda.features.settings.presentation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
@@ -33,9 +44,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -45,18 +54,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.giuseppedarro.comanda.R
 import dev.giuseppedarro.comanda.core.presentation.ComandaTopAppBar
-import dev.giuseppedarro.comanda.features.settings.data.remote.dto.CreateUserRequest
+import dev.giuseppedarro.comanda.features.settings.domain.model.User
 import dev.giuseppedarro.comanda.ui.theme.ComandaTheme
 import org.koin.androidx.compose.koinViewModel
-
-// Mock data until the GET endpoint is implemented
-data class MockUser(val id: String, val name: String, val role: String)
-
-private val mockUsers = listOf(
-    MockUser("1", "Giuseppe D'Arrò", "ADMIN"),
-    MockUser("2", "John Doe", "WAITER"),
-    MockUser("3", "Jane Smith", "WAITER")
-)
 
 @Composable
 fun ManageUsersScreen(
@@ -64,53 +64,75 @@ fun ManageUsersScreen(
     viewModel: ManageUsersViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var showAddUserDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(uiState) {
-        if (uiState.isUserCreated) {
-            showAddUserDialog = false
-            snackbarHostState.showSnackbar("User created successfully!")
-            viewModel.onUserCreatedConsumed()
-        }
-        if (uiState.error != null) {
-            snackbarHostState.showSnackbar("Error: ${uiState.error}")
-            viewModel.onErrorConsumed()
+    LaunchedEffect(Unit) {
+        viewModel.eventChannel.collect {
+            when (it) {
+                is ManageUsersViewModel.UiEvent.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(it.message)
+                }
+            }
         }
     }
 
     ManageUsersContent(
-        users = mockUsers,
+        uiState = uiState,
         onBackClick = onBackClick,
-        onAddUserClick = { showAddUserDialog = true },
-        onEditUserClick = { /* TODO */ },
-        onDeleteUserClick = { /* TODO */ },
+        onAddUserClick = viewModel::onAddUserClick,
+        onEditUserClick = viewModel::onEditUserClick,
+        onDeleteUserClick = viewModel::onDeleteUserClick,
+        onRefresh = viewModel::onRefresh,
         snackbarHostState = snackbarHostState
     )
 
-    if (showAddUserDialog) {
+    if (uiState.showAddUserDialog) {
         AddUserDialog(
             isLoading = uiState.isLoading,
-            onDismissRequest = { showAddUserDialog = false },
+            state = uiState.addUserDialogState,
+            onStateChange = viewModel::onAddUserDialogStateChange,
+            onDismissRequest = viewModel::onDismissAddUserDialog,
             onConfirm = viewModel::createUser
+        )
+    }
+
+    if (uiState.showEditUserDialog) {
+        EditUserDialog(
+            isLoading = uiState.isLoading,
+            state = uiState.editUserDialogState,
+            onStateChange = viewModel::onEditUserDialogStateChange,
+            onDismissRequest = viewModel::onDismissEditUserDialog,
+            onConfirm = viewModel::updateUser
+        )
+    }
+
+    if (uiState.showDeleteUserDialog) {
+        DeleteUserDialog(
+            isLoading = uiState.isLoading,
+            onDismissRequest = viewModel::onDismissDeleteUserDialog,
+            onConfirm = viewModel::deleteUser
         )
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun ManageUsersContent(
-    users: List<MockUser>,
+    uiState: ManageUsersState,
     onBackClick: () -> Unit,
     onAddUserClick: () -> Unit,
-    onEditUserClick: (MockUser) -> Unit,
-    onDeleteUserClick: (MockUser) -> Unit,
+    onEditUserClick: (User) -> Unit,
+    onDeleteUserClick: (User) -> Unit,
+    onRefresh: () -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
+    val pullRefreshState = rememberPullRefreshState(uiState.isRefreshing || uiState.isLoading, onRefresh)
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             ComandaTopAppBar(
-                title = "Manage Users",
+                title = stringResource(R.string.manage_users),
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -123,32 +145,80 @@ private fun ManageUsersContent(
         },
         floatingActionButton = {
             FloatingActionButton(onClick = onAddUserClick) {
-                Icon(Icons.Default.Add, contentDescription = "Add User")
+                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_user))
             }
         }
     ) { paddingValues ->
-        LazyColumn(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .pullRefresh(pullRefreshState)
         ) {
-            items(users, key = { it.id }) {
-                UserItem(user = it, onEdit = { onEditUserClick(it) }, onDelete = { onDeleteUserClick(it) })
+            when {
+                uiState.users.isEmpty() && !uiState.isLoading && !uiState.isRefreshing -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = stringResource(R.string.no_users_found),
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = stringResource(R.string.add_user_prompt),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+
+                else -> {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        contentPadding = PaddingValues(top = 16.dp, bottom = 16.dp)
+                    ) {
+                        items(uiState.users, key = { it.id }) { user ->
+                            UserItem(
+                                modifier = Modifier.animateItem(),
+                                user = user,
+                                onEdit = { onEditUserClick(user) },
+                                onDelete = { onDeleteUserClick(user) })
+                        }
+                    }
+                }
             }
+
+            PullRefreshIndicator(
+                refreshing = uiState.isRefreshing || uiState.isLoading,
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
         }
     }
 }
 
 @Composable
 private fun UserItem(
-    user: MockUser,
+    user: User,
     onEdit: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    ElevatedCard(
-        modifier = Modifier.fillMaxWidth()
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -156,13 +226,23 @@ private fun UserItem(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = user.name, style = MaterialTheme.typography.titleMedium)
-                Text(text = user.role, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    text = user.role,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
             IconButton(onClick = onEdit) {
-                Icon(Icons.Default.Edit, contentDescription = "Edit User")
+                Icon(
+                    imageVector = Icons.Default.Edit, contentDescription = stringResource(R.string.edit_user),
+                    tint = MaterialTheme.colorScheme.primary
+                    )
             }
             IconButton(onClick = onDelete) {
-                Icon(Icons.Default.Delete, contentDescription = "Delete User")
+                Icon(
+                    imageVector = Icons.Default.Delete, contentDescription = stringResource(R.string.delete_user),
+                    tint = MaterialTheme.colorScheme.primary
+                    )
             }
         }
     }
@@ -172,52 +252,49 @@ private fun UserItem(
 @Composable
 private fun AddUserDialog(
     isLoading: Boolean,
+    state: AddUserDialogState,
+    onStateChange: (AddUserDialogState) -> Unit,
     onDismissRequest: () -> Unit,
-    onConfirm: (CreateUserRequest) -> Unit
+    onConfirm: () -> Unit
 ) {
-    var employeeId by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var role by remember { mutableStateOf("WAITER") }
-
     AlertDialog(
         onDismissRequest = onDismissRequest,
-        title = { Text("Add New User") },
+        title = { Text(stringResource(R.string.add_new_user)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (isLoading) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
                 } else {
                     OutlinedTextField(
-                        value = employeeId,
-                        onValueChange = { employeeId = it },
-                        label = { Text("Employee ID") },
+                        value = state.employeeId,
+                        onValueChange = { onStateChange(state.copy(employeeId = it)) },
+                        label = { Text(stringResource(R.string.employee_id)) },
                         singleLine = true
                     )
                     OutlinedTextField(
-                        value = name,
-                        onValueChange = { name = it },
-                        label = { Text("Name") },
+                        value = state.name,
+                        onValueChange = { onStateChange(state.copy(name = it)) },
+                        label = { Text(stringResource(R.string.name)) },
                         singleLine = true
                     )
                     OutlinedTextField(
-                        value = password,
-                        onValueChange = { password = it },
-                        label = { Text("Password") },
+                        value = state.password,
+                        onValueChange = { onStateChange(state.copy(password = it)) },
+                        label = { Text(stringResource(R.string.password)) },
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         singleLine = true
                     )
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         FilterChip(
-                            selected = role == "WAITER",
-                            onClick = { role = "WAITER" },
-                            label = { Text("Waiter") }
+                            selected = state.role == "WAITER",
+                            onClick = { onStateChange(state.copy(role = "WAITER")) },
+                            label = { Text(stringResource(R.string.waiter)) }
                         )
                         FilterChip(
-                            selected = role == "ADMIN",
-                            onClick = { role = "ADMIN" },
-                            label = { Text("Admin") }
+                            selected = state.role == "ADMIN",
+                            onClick = { onStateChange(state.copy(role = "ADMIN")) },
+                            label = { Text(stringResource(R.string.admin)) }
                         )
                     }
                 }
@@ -225,33 +302,133 @@ private fun AddUserDialog(
         },
         confirmButton = {
             TextButton(
-                onClick = {
-                    val request = CreateUserRequest(employeeId, name, password, role.lowercase())
-                    onConfirm(request)
-                },
+                onClick = onConfirm,
                 enabled = !isLoading
             ) {
-                Text("Create")
+                Text(stringResource(R.string.create))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismissRequest, enabled = !isLoading) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         }
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun EditUserDialog(
+    isLoading: Boolean,
+    state: EditUserDialogState,
+    onStateChange: (EditUserDialogState) -> Unit,
+    onDismissRequest: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        title = { Text(stringResource(R.string.edit_user)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                if (isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                } else {
+                    OutlinedTextField(
+                        value = state.employeeId,
+                        onValueChange = { onStateChange(state.copy(employeeId = it)) },
+                        label = { Text(stringResource(R.string.employee_id)) },
+                        singleLine = true
+                    )
+                    OutlinedTextField(
+                        value = state.name,
+                        onValueChange = { onStateChange(state.copy(name = it)) },
+                        label = { Text(stringResource(R.string.name)) },
+                        singleLine = true
+                    )
+                    OutlinedTextField(
+                        value = state.password,
+                        onValueChange = { onStateChange(state.copy(password = it)) },
+                        label = { Text(stringResource(R.string.new_password)) },
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        singleLine = true
+                    )
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        FilterChip(
+                            selected = state.role == "WAITER",
+                            onClick = { onStateChange(state.copy(role = "WAITER")) },
+                            label = { Text(stringResource(R.string.waiter)) }
+                        )
+                        FilterChip(
+                            selected = state.role == "ADMIN",
+                            onClick = { onStateChange(state.copy(role = "ADMIN")) },
+                            label = { Text(stringResource(R.string.admin)) }
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = onConfirm,
+                enabled = !isLoading
+            ) {
+                Text(stringResource(R.string.update))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismissRequest, enabled = !isLoading) {
+                Text(stringResource(R.string.cancel))
+            }
+        }
+    )
+}
+
+@Composable
+private fun DeleteUserDialog(
+    isLoading: Boolean,
+    onDismissRequest: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        title = { Text(stringResource(R.string.delete_user)) },
+        text = { Text(stringResource(R.string.delete_user_confirmation)) },
+        confirmButton = {
+            TextButton(
+                onClick = onConfirm,
+                enabled = !isLoading
+            ) {
+                Text(stringResource(R.string.delete))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismissRequest, enabled = !isLoading) {
+                Text(stringResource(R.string.cancel))
+            }
+        }
+    )
+}
+
+
+@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Preview(showBackground = true)
 @Composable
 private fun ManageUsersContentPreview() {
     ComandaTheme {
+        val mockUsers = listOf(
+            User("1", "001", "Giuseppe D'Arrò", "ADMIN"),
+            User("2", "002", "Mario Rossi", "WAITER"),
+            User("3", "003", "Jan Smit", "WAITER")
+        )
+
         ManageUsersContent(
-            users = mockUsers,
+            uiState = ManageUsersState(users = mockUsers),
             onBackClick = {},
             onAddUserClick = {},
             onEditUserClick = {},
             onDeleteUserClick = {},
+            onRefresh = {},
             snackbarHostState = SnackbarHostState()
         )
     }

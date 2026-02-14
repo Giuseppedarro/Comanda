@@ -42,7 +42,7 @@ import dev.giuseppedarro.comanda.ui.theme.ComandaTheme
 
 @Composable
 fun SettingsScreen(
-    onBackClick: () -> Unit, 
+    onBackClick: () -> Unit,
     onLogout: () -> Unit,
     onManageUsersClick: () -> Unit
 ) {
@@ -87,51 +87,51 @@ fun SettingsContent(
                 .verticalScroll(rememberScrollState())
         ) {
             Spacer(modifier = Modifier.height(16.dp))
-            SettingsGroup(title = "Appearance") {
+            SettingsGroup(title = stringResource(R.string.appearance)) {
                 SettingItem(
-                    icon = { Icon(Icons.Default.Palette, "Theme", tint = MaterialTheme.colorScheme.primary) },
-                    title = "Theme",
-                    subtitle = "Choose your preferred theme",
+                    icon = { Icon(Icons.Default.Palette, stringResource(R.string.theme), tint = MaterialTheme.colorScheme.primary) },
+                    title = stringResource(R.string.theme),
+                    subtitle = stringResource(R.string.choose_your_preferred_theme),
                     onClick = { /* TODO */ }
                 )
                 Divider(modifier = Modifier.padding(horizontal = 16.dp))
                 SettingItem(
-                    icon = { Icon(Icons.Default.Language, "Language", tint = MaterialTheme.colorScheme.primary) },
-                    title = "Language",
-                    subtitle = "Select your language",
+                    icon = { Icon(Icons.Default.Language, stringResource(R.string.language), tint = MaterialTheme.colorScheme.primary) },
+                    title = stringResource(R.string.language),
+                    subtitle = stringResource(R.string.select_your_language),
                     onClick = { /* TODO */ }
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))
-            SettingsGroup(title = "Notifications") {
+            SettingsGroup(title = stringResource(R.string.notifications)) {
                 SettingItem(
-                    icon = { Icon(Icons.Default.Notifications, "Notifications", tint = MaterialTheme.colorScheme.primary) },
-                    title = "Enable notifications",
-                    subtitle = "Receive alerts and updates",
+                    icon = { Icon(Icons.Default.Notifications, stringResource(R.string.notifications), tint = MaterialTheme.colorScheme.primary) },
+                    title = stringResource(R.string.enable_notifications),
+                    subtitle = stringResource(R.string.receive_alerts_and_updates),
                     onClick = { onNotificationsToggle(!areNotificationsEnabled) },
                     control = { Switch(checked = areNotificationsEnabled, onCheckedChange = onNotificationsToggle) }
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))
-            SettingsGroup(title = "Account") {
+            SettingsGroup(title = stringResource(R.string.account)) {
                 SettingItem(
-                    icon = { Icon(Icons.Default.ManageAccounts, "Manage Users", tint = MaterialTheme.colorScheme.primary) },
-                    title = "Manage Users",
-                    subtitle = "Add, remove, or edit user accounts",
+                    icon = { Icon(Icons.Default.ManageAccounts, stringResource(R.string.manage_users), tint = MaterialTheme.colorScheme.primary) },
+                    title = stringResource(R.string.manage_users),
+                    subtitle = stringResource(R.string.manage_users_subtitle),
                     onClick = onManageUsersClick
                 )
                 Divider(modifier = Modifier.padding(horizontal = 16.dp))
                 SettingItem(
-                    icon = { Icon(Icons.Default.Edit, "Edit Profile", tint = MaterialTheme.colorScheme.primary) },
-                    title = "Edit Profile",
-                    subtitle = "Change your name or password",
+                    icon = { Icon(Icons.Default.Edit, stringResource(R.string.edit_profile), tint = MaterialTheme.colorScheme.primary) },
+                    title = stringResource(R.string.edit_profile),
+                    subtitle = stringResource(R.string.edit_profile_subtitle),
                     onClick = { /* TODO */ }
                 )
                 Divider(modifier = Modifier.padding(horizontal = 16.dp))
                 SettingItem(
-                    icon = { Icon(Icons.AutoMirrored.Filled.Logout, "Logout", tint = MaterialTheme.colorScheme.primary) },
-                    title = "Logout",
-                    subtitle = "You will be returned to the login screen",
+                    icon = { Icon(Icons.AutoMirrored.Filled.Logout, stringResource(R.string.logout), tint = MaterialTheme.colorScheme.primary) },
+                    title = stringResource(R.string.logout),
+                    subtitle = stringResource(R.string.logout_subtitle),
                     onClick = onLogout
                 )
             }

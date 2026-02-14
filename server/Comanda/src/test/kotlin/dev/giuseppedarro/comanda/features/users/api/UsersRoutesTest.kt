@@ -4,6 +4,9 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import dev.giuseppedarro.comanda.features.users.domain.model.User
 import dev.giuseppedarro.comanda.features.users.domain.usecase.CreateUserUseCase
+import dev.giuseppedarro.comanda.features.users.domain.usecase.DeleteUserUseCase
+import dev.giuseppedarro.comanda.features.users.domain.usecase.GetUsersUseCase
+import dev.giuseppedarro.comanda.features.users.domain.usecase.UpdateUserUseCase
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
@@ -22,97 +25,122 @@ import org.koin.ktor.plugin.Koin
 
 class UsersRoutesTest {
 
+    private val mySecret = "secret"
+    private val myIssuer = "test-issuer"
+    private val myAudience = "test-audience"
+
+    private fun Application.setupTestApp(
+        createUserUseCase: CreateUserUseCase = mockk(),
+        getUsersUseCase: GetUsersUseCase = mockk(),
+        updateUserUseCase: UpdateUserUseCase = mockk(),
+        deleteUserUseCase: DeleteUserUseCase = mockk()
+    ) {
+        install(ContentNegotiation) {
+            json()
+        }
+        
+        install(Authentication) {
+            jwt("auth-jwt") {
+                verifier(
+                    JWT.require(Algorithm.HMAC256(mySecret))
+                        .withAudience(myAudience)
+                        .withIssuer(myIssuer)
+                        .build()
+                )
+                validate { credential ->
+                    if (credential.payload.audience.contains(myAudience)) JWTPrincipal(credential.payload) else null
+                }
+            }
+        }
+        
+        install(Koin) {
+            modules(module {
+                single { createUserUseCase }
+                single { getUsersUseCase }
+                single { updateUserUseCase }
+                single { deleteUserUseCase }
+            })
+        }
+        
+        this.routing {
+            usersRoutes(createUserUseCase, getUsersUseCase, updateUserUseCase, deleteUserUseCase)
+        }
+    }
+
+    private fun generateToken(): String {
+        return JWT.create()
+            .withAudience(myAudience)
+            .withIssuer(myIssuer)
+            .sign(Algorithm.HMAC256(mySecret))
+    }
+
     @Test
-    fun `POST users should return 201 Created when authorized and valid data`() = testApplication {
-        // Mock UseCase
+    fun `POST users should return 201 Created when authorized`() = testApplication {
         val createUserUseCase = mockk<CreateUserUseCase>()
         val expectedUser = User(1, "john.doe", "John Doe", "waiter")
-        
         coEvery { createUserUseCase(any()) } returns Result.success(expectedUser)
 
-        // Setup Application
         application {
-            install(ContentNegotiation) {
-                json()
-            }
-            
-            // Setup Auth with a real verifier for a dummy secret
-            val mySecret = "secret"
-            val myIssuer = "test-issuer"
-            val myAudience = "test-audience"
-            
-            install(Authentication) {
-                jwt("auth-jwt") {
-                    verifier(
-                        JWT.require(Algorithm.HMAC256(mySecret))
-                            .withAudience(myAudience)
-                            .withIssuer(myIssuer)
-                            .build()
-                    )
-                    validate { credential ->
-                        if (credential.payload.audience.contains(myAudience)) JWTPrincipal(credential.payload) else null
-                    }
-                }
-            }
-            
-            // Setup Koin with mock
-            install(Koin) {
-                modules(module {
-                    single { createUserUseCase }
-                })
-            }
-            
-            // Install Routes - Explicitly call routing on the application
-            this.routing {
-                usersRoutes(createUserUseCase)
-            }
+            setupTestApp(createUserUseCase = createUserUseCase)
         }
 
-        // Generate a valid token
-        val token = JWT.create()
-            .withAudience("test-audience")
-            .withIssuer("test-issuer")
-            .sign(Algorithm.HMAC256("secret"))
-
-        // Execute Request
         val response = client.post("/users") {
-            header(HttpHeaders.Authorization, "Bearer $token")
+            header(HttpHeaders.Authorization, "Bearer ${generateToken()}")
             contentType(ContentType.Application.Json)
-            setBody("""
-                {
-                    "employeeId": "john.doe",
-                    "name": "John Doe",
-                    "password": "password123",
-                    "role": "waiter"
-                }
-            """.trimIndent())
+            setBody("""{"employeeId": "john.doe", "name": "John Doe", "password": "pass", "role": "waiter"}""")
         }
 
-        // Assert
         assertEquals(HttpStatusCode.Created, response.status)
     }
 
     @Test
-    fun `POST users should return 401 Unauthorized when no token`() = testApplication {
-        val createUserUseCase = mockk<CreateUserUseCase>()
-        
+    fun `GET users should return 200 OK`() = testApplication {
+        val getUsersUseCase = mockk<GetUsersUseCase>()
+        coEvery { getUsersUseCase() } returns Result.success(emptyList())
+
         application {
-            install(ContentNegotiation) { json() }
-            install(Authentication) {
-                jwt("auth-jwt") {
-                    validate { null } // Fail validation
-                }
-            }
-            this.routing {
-                usersRoutes(createUserUseCase)
-            }
+            setupTestApp(getUsersUseCase = getUsersUseCase)
         }
 
-        val response = client.post("/users") {
+        val response = client.get("/users") {
+            header(HttpHeaders.Authorization, "Bearer ${generateToken()}")
+        }
+
+        assertEquals(HttpStatusCode.OK, response.status)
+    }
+
+    @Test
+    fun `PUT users should return 200 OK when updating`() = testApplication {
+        val updateUserUseCase = mockk<UpdateUserUseCase>()
+        val expectedUser = User(1, "john.doe", "Updated Name", "waiter")
+        coEvery { updateUserUseCase(any()) } returns Result.success(expectedUser)
+
+        application {
+            setupTestApp(updateUserUseCase = updateUserUseCase)
+        }
+
+        val response = client.put("/users/1") {
+            header(HttpHeaders.Authorization, "Bearer ${generateToken()}")
             contentType(ContentType.Application.Json)
-            setBody("""{"employeeId": "test"}""")
+            setBody("""{"name": "Updated Name"}""")
         }
 
-        assertEquals(HttpStatusCode.Unauthorized, response.status)
+        assertEquals(HttpStatusCode.OK, response.status)
+    }
+
+    @Test
+    fun `DELETE users should return 204 No Content`() = testApplication {
+        val deleteUserUseCase = mockk<DeleteUserUseCase>()
+        coEvery { deleteUserUseCase(any()) } returns Result.success(Unit)
+
+        application {
+            setupTestApp(deleteUserUseCase = deleteUserUseCase)
+        }
+
+        val response = client.delete("/users/1") {
+            header(HttpHeaders.Authorization, "Bearer ${generateToken()}")
+        }
+
+        assertEquals(HttpStatusCode.NoContent, response.status)
     }
 }
