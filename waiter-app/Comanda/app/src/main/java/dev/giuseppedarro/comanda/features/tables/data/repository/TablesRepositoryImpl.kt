@@ -1,6 +1,5 @@
 package dev.giuseppedarro.comanda.features.tables.data.repository
 
-import dev.giuseppedarro.comanda.core.utils.Result
 import dev.giuseppedarro.comanda.features.tables.data.remote.TableApi
 import dev.giuseppedarro.comanda.features.tables.data.remote.dto.toDomain
 import dev.giuseppedarro.comanda.features.tables.domain.model.Table
@@ -17,7 +16,6 @@ class TablesRepositoryImpl(
             val tableDtos = tableApi.getTables()
             emit(tableDtos.map { it.toDomain() })
         } catch (e: Exception) {
-            e.printStackTrace()
             emit(emptyList()) // Emit an empty list on error to avoid crashing the UI
         }
     }
@@ -26,10 +24,9 @@ class TablesRepositoryImpl(
         return try {
             // Token is automatically injected by Ktor Auth plugin
             tableApi.addTable()
-            Result.Success(Unit)
+            Result.success(Unit)
         } catch (e: Exception) {
-            e.printStackTrace()
-            Result.Error(e.message ?: "An unknown error occurred")
+            Result.failure(e)
         }
     }
 }

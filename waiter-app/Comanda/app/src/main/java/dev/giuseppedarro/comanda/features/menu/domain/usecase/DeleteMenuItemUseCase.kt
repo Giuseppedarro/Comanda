@@ -1,6 +1,5 @@
 package dev.giuseppedarro.comanda.features.menu.domain.usecase
 
-import dev.giuseppedarro.comanda.core.utils.Result
 import dev.giuseppedarro.comanda.features.menu.domain.repository.MenuRepository
 
 class DeleteMenuItemUseCase(private val repository: MenuRepository) {

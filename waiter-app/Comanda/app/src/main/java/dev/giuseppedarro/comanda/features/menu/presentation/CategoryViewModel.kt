@@ -3,7 +3,6 @@ package dev.giuseppedarro.comanda.features.menu.presentation
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.giuseppedarro.comanda.core.utils.Result
 import dev.giuseppedarro.comanda.core.utils.toPriceCents
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuItem
 import dev.giuseppedarro.comanda.features.menu.domain.usecase.AddMenuItemUseCase
@@ -13,6 +12,7 @@ import dev.giuseppedarro.comanda.features.menu.domain.usecase.UpdateMenuItemUseC
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 data class CategoryUiState(
@@ -44,36 +44,23 @@ class CategoryViewModel(
 
     fun loadCategory() {
         viewModelScope.launch {
-            getMenuUseCase().collect { result ->
-                when (result) {
-                    is Result.Loading -> {
-                        _uiState.value = _uiState.value.copy(
-                            isLoading = true,
-                            error = null
-                        )
-                    }
-
-                    is Result.Success -> {
-                        val category = result.data?.find { it.name == categoryName }
-                        System.out.println("DEBUG_CATEGORY_ID: In loadCategory, found category ID: ${category?.id}")
-                        if (category?.items?.isNotEmpty() == true) {
-                            System.out.println("DEBUG_CATEGORY_ID: In loadCategory, first item's categoryId: ${category.items.first().categoryId}")
-                        }
+            getMenuUseCase()
+                .onStart { _uiState.value = _uiState.value.copy(isLoading = true, error = null) }
+                .collect { result ->
+                    result.onSuccess {
+                        val category = it.find { it.name == categoryName }
                         _uiState.value = _uiState.value.copy(
                             categoryId = category?.id ?: "",
                             items = category?.items ?: emptyList(),
                             isLoading = false,
                             error = null
                         )
-                    }
-
-                    is Result.Error -> {
+                    }.onFailure {
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
-                            error = result.message
+                            error = it.message
                         )
                     }
-                }
             }
         }
     }
@@ -86,7 +73,6 @@ class CategoryViewModel(
     }
 
     fun onEditItemClick(item: MenuItem) {
-        System.out.println("DEBUG_CATEGORY_ID: In onEditItemClick, selected item: $item")
         _uiState.value = _uiState.value.copy(
             isDialogShown = true,
             selectedItem = item
@@ -104,8 +90,6 @@ class CategoryViewModel(
         viewModelScope.launch {
             val priceInCents = price.toPriceCents()
             val categoryId = _uiState.value.categoryId
-            System.out.println("DEBUG_CATEGORY_ID: In onSaveItem, categoryId from state: $categoryId")
-            System.out.println("DEBUG_CATEGORY_ID: In onSaveItem, selectedItem from state: ${_uiState.value.selectedItem}")
 
             val item = if (_uiState.value.selectedItem != null) {
                 // Update existing item
@@ -127,7 +111,6 @@ class CategoryViewModel(
                     displayOrder = _uiState.value.items.size
                 )
             }
-            System.out.println("DEBUG_CATEGORY_ID: In onSaveItem, item to be sent: $item")
 
             val result = if (_uiState.value.selectedItem != null) {
                 updateMenuItemUseCase(item)
@@ -135,43 +118,30 @@ class CategoryViewModel(
                 addMenuItemUseCase(categoryId, item)
             }
 
-            when (result) {
-                is Result.Success -> {
-                    _uiState.value = _uiState.value.copy(
-                        isDialogShown = false,
-                        selectedItem = null,
-                        error = null
-                    )
-                    loadCategory()
-                }
-
-                is Result.Error -> {
-                    _uiState.value = _uiState.value.copy(
-                        error = result.message
-                    )
-                }
-
-                else -> {}
+            result.onSuccess {
+                _uiState.value = _uiState.value.copy(
+                    isDialogShown = false,
+                    selectedItem = null,
+                    error = null
+                )
+                loadCategory()
+            }.onFailure {
+                _uiState.value = _uiState.value.copy(
+                    error = it.message
+                )
             }
         }
     }
 
     fun onDeleteItemClick(item: MenuItem) {
         viewModelScope.launch {
-            val result = deleteMenuItemUseCase(item.id)
-            when (result) {
-                is Result.Success -> {
-                    loadCategory()
-                }
-
-                is Result.Error -> {
+            deleteMenuItemUseCase(item.id)
+                .onSuccess { loadCategory() }
+                .onFailure {
                     _uiState.value = _uiState.value.copy(
-                        error = result.message
+                        error = it.message
                     )
                 }
-
-                else -> {}
-            }
         }
     }
 

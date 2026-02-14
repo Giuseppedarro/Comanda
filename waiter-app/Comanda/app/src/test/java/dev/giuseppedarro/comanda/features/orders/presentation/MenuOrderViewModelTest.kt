@@ -3,7 +3,6 @@ package dev.giuseppedarro.comanda.features.orders.presentation
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import dev.giuseppedarro.comanda.core.utils.Result
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuItem
 import dev.giuseppedarro.comanda.features.orders.domain.model.Order
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderItem
@@ -51,8 +50,8 @@ class MenuOrderViewModelTest {
     @Test
     fun `init loads menu successfully`() = runTest {
         // Given
-        coEvery { getMenu() } returns flowOf(Result.Success(emptyList()))
-        coEvery { getOrdersForTable(any()) } returns flowOf(Result.Success(null))
+        coEvery { getMenu() } returns flowOf(Result.success(emptyList()))
+        coEvery { getOrdersForTable(any()) } returns flowOf(Result.success(null))
 
         // When
         val viewModel = MenuOrderViewModel(SavedStateHandle(), getMenu, getOrdersForTable, submitOrder, printBill)
@@ -69,8 +68,8 @@ class MenuOrderViewModelTest {
     @Test
     fun `init fails to load menu`() = runTest {
         // Given
-        coEvery { getMenu() } returns flowOf(Result.Error("Failed to load menu"))
-        coEvery { getOrdersForTable(any()) } returns flowOf(Result.Success(null))
+        coEvery { getMenu() } returns flowOf(Result.failure(Exception("Failed to load menu")))
+        coEvery { getOrdersForTable(any()) } returns flowOf(Result.success(null))
 
         // When
         val viewModel = MenuOrderViewModel(SavedStateHandle(), getMenu, getOrdersForTable, submitOrder, printBill)
@@ -89,8 +88,8 @@ class MenuOrderViewModelTest {
         val existingItem = OrderItem(MenuItem("1", "Pizza", 1000), 2)
         val existingOrder = Order(1, 4, OrderStatus.OPEN, listOf(existingItem), "")
         val savedStateHandle = SavedStateHandle(mapOf("tableNumber" to 1))
-        coEvery { getMenu() } returns flowOf(Result.Success(emptyList()))
-        coEvery { getOrdersForTable(1) } returns flowOf(Result.Success(existingOrder))
+        coEvery { getMenu() } returns flowOf(Result.success(emptyList()))
+        coEvery { getOrdersForTable(1) } returns flowOf(Result.success(existingOrder))
 
         // When
         val viewModel = MenuOrderViewModel(savedStateHandle, getMenu, getOrdersForTable, submitOrder, printBill)
@@ -106,8 +105,8 @@ class MenuOrderViewModelTest {
 
     @Test
     fun `onMenuItemAdded adds new item`() = runTest {
-        coEvery { getMenu() } returns flowOf(Result.Success(emptyList()))
-        coEvery { getOrdersForTable(any()) } returns flowOf(Result.Success(null))
+        coEvery { getMenu() } returns flowOf(Result.success(emptyList()))
+        coEvery { getOrdersForTable(any()) } returns flowOf(Result.success(null))
         val viewModel = MenuOrderViewModel(SavedStateHandle(), getMenu, getOrdersForTable, submitOrder, printBill)
         val menuItem = MenuItem(id = "1", name = "Pizza", price = 1000)
 
@@ -122,8 +121,8 @@ class MenuOrderViewModelTest {
 
     @Test
     fun `onMenuItemAdded increments quantity of existing item`() = runTest {
-        coEvery { getMenu() } returns flowOf(Result.Success(emptyList()))
-        coEvery { getOrdersForTable(any()) } returns flowOf(Result.Success(null))
+        coEvery { getMenu() } returns flowOf(Result.success(emptyList()))
+        coEvery { getOrdersForTable(any()) } returns flowOf(Result.success(null))
         val viewModel = MenuOrderViewModel(SavedStateHandle(), getMenu, getOrdersForTable, submitOrder, printBill)
         val menuItem = MenuItem(id = "1", name = "Pizza", price = 1000)
 
@@ -139,8 +138,8 @@ class MenuOrderViewModelTest {
 
     @Test
     fun `onQuantityChange updates quantity`() = runTest {
-        coEvery { getMenu() } returns flowOf(Result.Success(emptyList()))
-        coEvery { getOrdersForTable(any()) } returns flowOf(Result.Success(null))
+        coEvery { getMenu() } returns flowOf(Result.success(emptyList()))
+        coEvery { getOrdersForTable(any()) } returns flowOf(Result.success(null))
         val viewModel = MenuOrderViewModel(SavedStateHandle(), getMenu, getOrdersForTable, submitOrder, printBill)
         val menuItem = MenuItem(id = "1", name = "Pizza", price = 1000)
         viewModel.onMenuItemAdded(menuItem)
@@ -156,8 +155,8 @@ class MenuOrderViewModelTest {
 
     @Test
     fun `onQuantityChange removes item if quantity is zero`() = runTest {
-        coEvery { getMenu() } returns flowOf(Result.Success(emptyList()))
-        coEvery { getOrdersForTable(any()) } returns flowOf(Result.Success(null))
+        coEvery { getMenu() } returns flowOf(Result.success(emptyList()))
+        coEvery { getOrdersForTable(any()) } returns flowOf(Result.success(null))
         val viewModel = MenuOrderViewModel(SavedStateHandle(), getMenu, getOrdersForTable, submitOrder, printBill)
         val menuItem = MenuItem(id = "1", name = "Pizza", price = 1000)
         viewModel.onMenuItemAdded(menuItem)
@@ -174,9 +173,9 @@ class MenuOrderViewModelTest {
     @Test
     fun `onSendOrder succeeds`() = runTest {
         val savedStateHandle = SavedStateHandle(mapOf("tableNumber" to 1, "numberOfPeople" to 4))
-        coEvery { getMenu() } returns flowOf(Result.Success(emptyList()))
-        coEvery { getOrdersForTable(any()) } returns flowOf(Result.Success(null))
-        coEvery { submitOrder(any(), any(), any()) } returns Result.Success(Unit)
+        coEvery { getMenu() } returns flowOf(Result.success(emptyList()))
+        coEvery { getOrdersForTable(any()) } returns flowOf(Result.success(null))
+        coEvery { submitOrder(any(), any(), any()) } returns Result.success(Unit)
         val viewModel = MenuOrderViewModel(savedStateHandle, getMenu, getOrdersForTable, submitOrder, printBill)
         val menuItem = MenuItem(id = "1", name = "Pizza", price = 1000)
         viewModel.onMenuItemAdded(menuItem)
@@ -191,9 +190,9 @@ class MenuOrderViewModelTest {
     @Test
     fun `onSendOrder fails`() = runTest {
         val savedStateHandle = SavedStateHandle(mapOf("tableNumber" to 1, "numberOfPeople" to 4))
-        coEvery { getMenu() } returns flowOf(Result.Success(emptyList()))
-        coEvery { getOrdersForTable(any()) } returns flowOf(Result.Success(null))
-        coEvery { submitOrder(any(), any(), any()) } returns Result.Error("Network Error")
+        coEvery { getMenu() } returns flowOf(Result.success(emptyList()))
+        coEvery { getOrdersForTable(any()) } returns flowOf(Result.success(null))
+        coEvery { submitOrder(any(), any(), any()) } returns Result.failure(Exception("Network Error"))
         val viewModel = MenuOrderViewModel(savedStateHandle, getMenu, getOrdersForTable, submitOrder, printBill)
         val menuItem = MenuItem(id = "1", name = "Pizza", price = 1000)
         viewModel.onMenuItemAdded(menuItem)

@@ -3,7 +3,6 @@ package dev.giuseppedarro.comanda.features.orders.presentation
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.giuseppedarro.comanda.core.utils.Result
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuItem
 import dev.giuseppedarro.comanda.features.orders.domain.model.Order
@@ -15,6 +14,7 @@ import dev.giuseppedarro.comanda.features.orders.domain.use_case.SubmitOrderUseC
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -58,34 +58,36 @@ class MenuOrderViewModel(
 
     private fun loadMenu() {
         viewModelScope.launch {
-            getMenu().collect { res ->
-                when (res) {
-                    is Result.Loading -> _uiState.update { it.copy(isLoading = true) }
-                    is Result.Success -> _uiState.update {
-                        it.copy(
-                            menuCategories = res.data.orEmpty(),
-                            isLoading = false,
-                            error = null
-                        )
+            getMenu()
+                .onStart { _uiState.update { it.copy(isLoading = true) } }
+                .collect { result ->
+                    result.onSuccess {
+                        _uiState.update {
+                            it.copy(
+                                menuCategories = result.getOrThrow(),
+                                isLoading = false,
+                                error = null
+                            )
+                        }
+                    }.onFailure {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                error = result.exceptionOrNull()?.message
+                            )
+                        }
                     }
-                    is Result.Error -> _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            error = res.message
-                        )
-                    }
-                }
             }
         }
     }
 
     private fun loadExistingOrder(table: Int) {
         viewModelScope.launch {
-            getOrdersForTable(table).collect { res ->
-                when (res) {
-                    is Result.Loading -> _uiState.update { it.copy(isLoading = true) }
-                    is Result.Success -> {
-                        val order = res.data
+            getOrdersForTable(table)
+                .onStart { _uiState.update { it.copy(isLoading = true) } }
+                .collect { result ->
+                    result.onSuccess {
+                        val order = result.getOrNull()
                         _uiState.update {
                             it.copy(
                                 orderItems = order?.items ?: emptyList(),
@@ -95,14 +97,14 @@ class MenuOrderViewModel(
                                 error = null
                             )
                         }
+                    }.onFailure {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                error = result.exceptionOrNull()?.message
+                            )
+                        }
                     }
-                    is Result.Error -> _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            error = res.message
-                        )
-                    }
-                }
             }
         }
     }
@@ -154,8 +156,8 @@ class MenuOrderViewModel(
         }
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
-            when (val res = submitOrder(tableNumber, peopleCount, items)) {
-                is Result.Success -> {
+            submitOrder(tableNumber, peopleCount, items)
+                .onSuccess {
                     _uiState.update {
                         it.copy(
                             isLoading = false,
@@ -164,14 +166,11 @@ class MenuOrderViewModel(
                     }
                     onSuccess()
                 }
-                is Result.Error -> {
-                    _uiState.update { it.copy(isLoading = false, error = res.message) }
-                    onError(res.message ?: "Unknown error")
+                .onFailure {
+                    val errorMessage = it.message ?: "Unknown error"
+                    _uiState.update { it.copy(isLoading = false, error = errorMessage) }
+                    onError(errorMessage)
                 }
-                is Result.Loading -> {
-                    // no-op, already set isLoading above
-                }
-            }
         }
     }
 
@@ -190,8 +189,8 @@ class MenuOrderViewModel(
         }
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
-            when (val res = printBill(tableNumber, peopleCount, items)) {
-                is Result.Success -> {
+            printBill(tableNumber, peopleCount, items)
+                .onSuccess {
                     _uiState.update {
                         it.copy(
                             isLoading = false,
@@ -200,14 +199,11 @@ class MenuOrderViewModel(
                     }
                     onSuccess()
                 }
-                is Result.Error -> {
-                    _uiState.update { it.copy(isLoading = false, error = res.message) }
-                    onError(res.message ?: "Unknown error")
+                .onFailure {
+                    val errorMessage = it.message ?: "Unknown error"
+                    _uiState.update { it.copy(isLoading = false, error = errorMessage) }
+                    onError(errorMessage)
                 }
-                is Result.Loading -> {
-                    // no-op, already set isLoading above
-                }
-            }
         }
     }
 }

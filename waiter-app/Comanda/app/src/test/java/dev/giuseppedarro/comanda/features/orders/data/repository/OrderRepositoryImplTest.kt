@@ -3,7 +3,6 @@ package dev.giuseppedarro.comanda.features.orders.data.repository
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import dev.giuseppedarro.comanda.core.utils.Result
 import dev.giuseppedarro.comanda.features.orders.data.remote.OrderApi
 import dev.giuseppedarro.comanda.features.orders.data.remote.dto.GetOrderResponse
 import dev.giuseppedarro.comanda.features.orders.data.remote.dto.MenuCategoryDto
@@ -28,7 +27,7 @@ class OrderRepositoryImplTest {
     }
 
     @Test
-    fun getMenu_should_emit_loading_and_then_success() = runTest {
+    fun getMenu_should_emit_success() = runTest {
         // Given
         val menuDto = listOf(MenuCategoryDto("Pizzas", listOf(MenuItemDto(id = "margherita", name = "Margherita", price = 1000))))
         coEvery { orderApi.getMenu() } returns menuDto
@@ -38,10 +37,9 @@ class OrderRepositoryImplTest {
 
         // Then
         result.test {
-            assertThat(awaitItem()).isInstanceOf(Result.Loading::class.java)
             val success = awaitItem()
-            assertThat(success).isInstanceOf(Result.Success::class.java)
-            assertThat((success as Result.Success).data?.first()?.name).isEqualTo("Pizzas")
+            assertThat(success.isSuccess).isTrue()
+            assertThat(success.getOrNull()?.first()?.name).isEqualTo("Pizzas")
             awaitComplete()
         }
     }
@@ -56,14 +54,13 @@ class OrderRepositoryImplTest {
 
         // Then
         result.test {
-            assertThat(awaitItem()).isInstanceOf(Result.Loading::class.java)
-            assertThat(awaitItem()).isInstanceOf(Result.Error::class.java)
+            assertThat(awaitItem().isFailure).isTrue()
             awaitComplete()
         }
     }
 
     @Test
-    fun getOrdersForTable_should_emit_loading_and_then_success() = runTest {
+    fun getOrdersForTable_should_emit_success() = runTest {
         // Given
         val tableNumber = 1
         val orderResponse = GetOrderResponse(
@@ -85,10 +82,9 @@ class OrderRepositoryImplTest {
 
         // Then
         result.test {
-            assertThat(awaitItem()).isInstanceOf(Result.Loading::class.java)
             val success = awaitItem()
-            assertThat(success).isInstanceOf(Result.Success::class.java)
-            val order = (success as Result.Success).data
+            assertThat(success.isSuccess).isTrue()
+            val order = success.getOrNull()
             assertThat(order?.tableNumber).isEqualTo(tableNumber)
             assertThat(order?.status).isEqualTo(OrderStatus.OPEN)
             assertThat(order?.items?.first()?.menuItem?.name).isEqualTo("Margherita")
@@ -107,10 +103,9 @@ class OrderRepositoryImplTest {
 
         // Then
         result.test {
-            assertThat(awaitItem()).isInstanceOf(Result.Loading::class.java)
             val success = awaitItem()
-            assertThat(success).isInstanceOf(Result.Success::class.java)
-            assertThat((success as Result.Success).data).isNull()
+            assertThat(success.isSuccess).isTrue()
+            assertThat(success.getOrNull()).isNull()
             awaitComplete()
         }
     }
@@ -126,8 +121,7 @@ class OrderRepositoryImplTest {
 
         // Then
         result.test {
-            assertThat(awaitItem()).isInstanceOf(Result.Loading::class.java)
-            assertThat(awaitItem()).isInstanceOf(Result.Error::class.java)
+            assertThat(awaitItem().isFailure).isTrue()
             awaitComplete()
         }
     }
@@ -143,7 +137,7 @@ class OrderRepositoryImplTest {
         val result = orderRepository.submitOrder(tableNumber, numberOfPeople, emptyList())
 
         // Then
-        assertThat(result).isInstanceOf(Result.Success::class.java)
+        assertThat(result.isSuccess).isTrue()
     }
 
     @Test
@@ -157,6 +151,6 @@ class OrderRepositoryImplTest {
         val result = orderRepository.submitOrder(tableNumber, numberOfPeople, emptyList())
 
         // Then
-        assertThat(result).isInstanceOf(Result.Error::class.java)
+        assertThat(result.isFailure).isTrue()
     }
 }
