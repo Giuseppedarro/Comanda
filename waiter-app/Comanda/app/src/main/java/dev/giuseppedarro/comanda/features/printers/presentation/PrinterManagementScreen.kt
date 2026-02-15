@@ -23,6 +23,7 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.ExperimentalMaterialApi
+import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -210,7 +211,7 @@ fun PrinterManagementScreenPreview() {
         )
     )
 
-    dev.giuseppedarro.comanda.ui.theme.ComandaTheme {
+    ComandaTheme {
         PrinterManagementContent(
             printers = mockPrinters,
             isLoading = false,
@@ -229,7 +230,7 @@ fun PrinterManagementScreenPreview() {
 @Preview(showBackground = true)
 @Composable
 fun PrinterManagementScreenEmptyPreview() {
-    dev.giuseppedarro.comanda.ui.theme.ComandaTheme {
+    ComandaTheme {
         PrinterManagementContent(
             printers = emptyList(),
             isLoading = false,
@@ -248,7 +249,7 @@ fun PrinterManagementScreenEmptyPreview() {
 @Preview(showBackground = true)
 @Composable
 fun PrinterManagementScreenLoadingPreview() {
-    dev.giuseppedarro.comanda.ui.theme.ComandaTheme {
+    ComandaTheme {
         PrinterManagementContent(
             printers = emptyList(),
             isLoading = true,
@@ -267,7 +268,7 @@ fun PrinterManagementScreenLoadingPreview() {
 @Preview(showBackground = true)
 @Composable
 fun PrinterManagementScreenErrorPreview() {
-    dev.giuseppedarro.comanda.ui.theme.ComandaTheme {
+    ComandaTheme {
         PrinterManagementContent(
             printers = emptyList(),
             isLoading = false,

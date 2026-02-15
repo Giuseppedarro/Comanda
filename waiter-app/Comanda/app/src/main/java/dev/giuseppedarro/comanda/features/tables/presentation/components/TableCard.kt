@@ -17,9 +17,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.giuseppedarro.comanda.R
-import dev.giuseppedarro.comanda.ui.theme.ComandaTheme
-import dev.giuseppedarro.comanda.ui.theme.Green
-import dev.giuseppedarro.comanda.ui.theme.Orange
+import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
+import dev.giuseppedarro.comanda.core.ui.theme.Green
+import dev.giuseppedarro.comanda.core.ui.theme.Orange
 
 @Composable
 fun TableCard(

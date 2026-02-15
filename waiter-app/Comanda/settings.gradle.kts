@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Comanda"
 include(":app")
- 
+include(":core")

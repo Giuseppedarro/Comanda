@@ -1,4 +1,4 @@
-package dev.giuseppedarro.comanda.core.navigation
+package dev.giuseppedarro.comanda.navigation
 
 import kotlinx.serialization.Serializable
 

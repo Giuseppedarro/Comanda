@@ -45,7 +45,7 @@ import dev.giuseppedarro.comanda.features.orders.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuItem
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderItem
 import dev.giuseppedarro.comanda.features.orders.presentation.components.MenuItemRow
-import dev.giuseppedarro.comanda.ui.theme.ComandaTheme
+import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)

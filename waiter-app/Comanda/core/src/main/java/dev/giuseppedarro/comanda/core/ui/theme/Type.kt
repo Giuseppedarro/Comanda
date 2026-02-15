@@ -1,4 +1,4 @@
-package dev.giuseppedarro.comanda.ui.theme
+package dev.giuseppedarro.comanda.core.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

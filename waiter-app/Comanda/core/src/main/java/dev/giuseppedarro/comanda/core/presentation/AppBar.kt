@@ -22,7 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.giuseppedarro.comanda.ui.theme.ComandaTheme
+import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

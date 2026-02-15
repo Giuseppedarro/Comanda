@@ -20,7 +20,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.giuseppedarro.comanda.R
-import dev.giuseppedarro.comanda.ui.theme.ComandaTheme
+import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
 
 @Composable
 fun TableDialog(

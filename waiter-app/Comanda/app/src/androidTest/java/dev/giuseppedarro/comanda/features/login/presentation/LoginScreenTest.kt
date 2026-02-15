@@ -14,8 +14,7 @@ import androidx.compose.ui.test.performTextInput
 import androidx.test.core.app.ApplicationProvider
 import dev.giuseppedarro.comanda.R
 import dev.giuseppedarro.comanda.features.login.domain.use_case.LoginUseCase
-import dev.giuseppedarro.comanda.features.login.domain.use_case.SetBaseUrlUseCase
-import dev.giuseppedarro.comanda.ui.theme.BrandedTheme
+import dev.giuseppedarro.comanda.core.ui.theme.BrandedTheme
 import io.mockk.coEvery
 import io.mockk.mockk
 import org.junit.Assert.assertTrue

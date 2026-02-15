@@ -3,10 +3,10 @@ package dev.giuseppedarro.comanda.features.tables.presentation.navigation
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import dev.giuseppedarro.comanda.core.navigation.Login
-import dev.giuseppedarro.comanda.core.navigation.Menu
-import dev.giuseppedarro.comanda.core.navigation.Settings
-import dev.giuseppedarro.comanda.core.navigation.Tables
+import dev.giuseppedarro.comanda.navigation.Login
+import dev.giuseppedarro.comanda.navigation.Menu
+import dev.giuseppedarro.comanda.navigation.Settings
+import dev.giuseppedarro.comanda.navigation.Tables
 import dev.giuseppedarro.comanda.features.orders.presentation.navigation.MenuOrder
 import dev.giuseppedarro.comanda.features.tables.presentation.TableOverviewScreen
 

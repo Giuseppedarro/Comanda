@@ -8,7 +8,7 @@ import androidx.compose.ui.test.onNodeWithText
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuItem
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderItem
-import dev.giuseppedarro.comanda.ui.theme.ComandaTheme
+import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
 import io.mockk.mockk
 import org.junit.Rule
 import org.junit.Test

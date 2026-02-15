@@ -5,8 +5,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
-import dev.giuseppedarro.comanda.core.navigation.Orders
-import dev.giuseppedarro.comanda.core.navigation.Tables
+import dev.giuseppedarro.comanda.navigation.Orders
+import dev.giuseppedarro.comanda.navigation.Tables
 import dev.giuseppedarro.comanda.features.orders.presentation.MenuOrderScreen
 
 fun NavGraphBuilder.ordersGraph(navController: NavController) {

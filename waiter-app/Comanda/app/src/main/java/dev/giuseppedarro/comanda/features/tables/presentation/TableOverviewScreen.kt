@@ -51,7 +51,7 @@ import dev.giuseppedarro.comanda.features.tables.domain.model.Table
 import dev.giuseppedarro.comanda.features.tables.presentation.components.AppDrawer
 import dev.giuseppedarro.comanda.features.tables.presentation.components.TableCard
 import dev.giuseppedarro.comanda.features.tables.presentation.components.TableDialog
-import dev.giuseppedarro.comanda.ui.theme.ComandaTheme
+import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 

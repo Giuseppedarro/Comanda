@@ -49,7 +49,6 @@ class CryptoManagerTest {
         val encryptedData2 = cryptoManager.encrypt(plaintext)
 
         // Then
-        // Because of randomized IVs (initialization vectors) in GCM mode,
         // the encrypted data should be different.
         assertThat(encryptedData1.data).isNotEqualTo(encryptedData2.data)
         assertThat(encryptedData1.iv).isNotEqualTo(encryptedData2.iv)

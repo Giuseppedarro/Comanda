@@ -1,8 +1,8 @@
 package dev.giuseppedarro.comanda.core.network
 
 import dev.giuseppedarro.comanda.core.domain.TokenRepository
-import dev.giuseppedarro.comanda.features.login.data.dto.LoginResponse
-import dev.giuseppedarro.comanda.features.login.data.dto.RefreshTokenRequest
+import dev.giuseppedarro.comanda.core.network.dto.LoginResponse
+import dev.giuseppedarro.comanda.core.network.dto.RefreshTokenRequest
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
@@ -63,14 +63,21 @@ fun createHttpClient(
                     }
                 }
 
-                refreshTokens {
-                    handleTokenRefresh(
-                        basicClient = basicClient,
-                        refreshToken = oldTokens?.refreshToken ?: "",
-                        refreshPath = config.refreshTokenPath,
-                        tokenRepository = tokenRepository,
-                        logger = logger
-                    )
+                refreshTokens {                    val tokenToRefresh = oldTokens?.refreshToken
+                    if (tokenToRefresh.isNullOrBlank()) {
+                        // Don't attempt to refresh with an invalid token.
+                        // Clear any lingering tokens and fail the auth.
+                        tokenRepository.clear()
+                        null
+                    } else {
+                        handleTokenRefresh(
+                            basicClient = basicClient,
+                            refreshToken = tokenToRefresh,
+                            refreshPath = config.refreshTokenPath,
+                            tokenRepository = tokenRepository,
+                            logger = logger
+                        )
+                    }
                 }
             }
         }
