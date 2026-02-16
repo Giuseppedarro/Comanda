@@ -1,15 +1,17 @@
 package dev.giuseppedarro.comanda.features.printers.presentation.navigation
 
-import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import dev.giuseppedarro.comanda.navigation.Printers
 import dev.giuseppedarro.comanda.features.printers.presentation.PrinterManagementScreen
+import kotlinx.serialization.Serializable
 
-fun NavGraphBuilder.printersGraph(navController: NavController) {
+@Serializable
+object Printers
+
+fun NavGraphBuilder.printersGraph(onNavigateBack: () -> Unit) {
     composable<Printers> {
         PrinterManagementScreen(
-            onNavigateBack = { navController.popBackStack() }
+            onNavigateBack = onNavigateBack
         )
     }
 }

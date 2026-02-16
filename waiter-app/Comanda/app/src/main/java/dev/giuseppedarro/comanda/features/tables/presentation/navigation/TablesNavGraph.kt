@@ -1,35 +1,27 @@
 package dev.giuseppedarro.comanda.features.tables.presentation.navigation
 
-import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import dev.giuseppedarro.comanda.navigation.Login
-import dev.giuseppedarro.comanda.navigation.Menu
-import dev.giuseppedarro.comanda.navigation.Settings
-import dev.giuseppedarro.comanda.navigation.Tables
-import dev.giuseppedarro.comanda.features.orders.presentation.navigation.MenuOrder
 import dev.giuseppedarro.comanda.features.tables.presentation.TableOverviewScreen
+import kotlinx.serialization.Serializable
+
+@Serializable
+object Tables
 
 fun NavGraphBuilder.tablesGraph(
-    navController: NavController,
-    onNavigateToPrinters: () -> Unit
+    onNavigateToOrder: (tableNumber: Int, numberOfPeople: Int) -> Unit,
+    onNavigateToPrinters: () -> Unit,
+    onNavigateToMenu: () -> Unit,
+    onNavigateToSettings: () -> Unit,
+    onLogout: () -> Unit
 ) {
     composable<Tables> {
         TableOverviewScreen(
-            onNavigateToOrder = { tableNumber, numberOfPeople ->
-                navController.navigate(MenuOrder(tableNumber, numberOfPeople))
-            },
+            onNavigateToOrder = onNavigateToOrder,
             onNavigateToPrinters = onNavigateToPrinters,
-            onNavigateToMenu = {
-                navController.navigate(Menu)
-            },
-            onNavigateToSettings = { navController.navigate(Settings) },
-            onLogout = {
-                // Navigate back to login and clear the back stack
-                navController.navigate(Login) {
-                    popUpTo<Tables> { inclusive = true }
-                }
-            }
+            onNavigateToMenu = onNavigateToMenu,
+            onNavigateToSettings = onNavigateToSettings,
+            onLogout = onLogout
         )
     }
 }
