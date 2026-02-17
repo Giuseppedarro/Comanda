@@ -9,7 +9,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.test.core.app.ApplicationProvider
-import dev.giuseppedarro.comanda.R
+import dev.giuseppedarro.comanda.features.tables.R
 import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue

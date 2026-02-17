@@ -1,6 +1,7 @@
-package dev.giuseppedarro.comanda.features.tables.domain.use_case
+package dev.giuseppedarro.comanda.features.tables.use_case
 
 import dev.giuseppedarro.comanda.features.tables.domain.repository.TablesRepository
+import dev.giuseppedarro.comanda.features.tables.domain.use_case.AddTableUseCase
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking

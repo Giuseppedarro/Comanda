@@ -13,10 +13,10 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="LoginRepositoryImplTest">
+      <SelectionState runConfigName="LoginScreenTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="LoginScreenTest">
+      <SelectionState runConfigName="Tests in 'dev.giuseppedarro.comanda.features.tables'">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

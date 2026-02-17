@@ -1,8 +1,9 @@
-package dev.giuseppedarro.comanda.features.tables.domain.use_case
+package dev.giuseppedarro.comanda.features.tables.use_case
 
 import app.cash.turbine.test
 import dev.giuseppedarro.comanda.features.tables.domain.model.Table
 import dev.giuseppedarro.comanda.features.tables.domain.repository.TablesRepository
+import dev.giuseppedarro.comanda.features.tables.domain.use_case.GetTablesUseCase
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
