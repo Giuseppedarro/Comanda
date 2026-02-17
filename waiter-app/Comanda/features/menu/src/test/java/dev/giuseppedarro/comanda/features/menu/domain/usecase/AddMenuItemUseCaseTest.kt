@@ -24,7 +24,7 @@ class AddMenuItemUseCaseTest {
     fun `invoke should call addMenuItem on repository`() = runTest {
         // Given
         val categoryId = "1"
-        val menuItem = MenuItem("1", "Margherita", "Tomato and Mozzarella", 5.0)
+        val menuItem = MenuItem("1", "1", "Margherita", "Tomato and Mozzarella", 500, true, 0)
         coEvery { menuRepository.addMenuItem(categoryId, menuItem) } returns Result.success(Unit)
 
         // When

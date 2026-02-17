@@ -23,7 +23,7 @@ class UpdateCategoryUseCaseTest {
     @Test
     fun `invoke should call updateCategory on repository`() = runTest {
         // Given
-        val category = MenuCategory("1", "Pizzas", emptyList())
+        val category = MenuCategory("1", "Pizzas", 0, emptyList())
         coEvery { menuRepository.updateCategory(category) } returns Result.success(Unit)
 
         // When

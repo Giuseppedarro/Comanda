@@ -24,8 +24,8 @@ class CreateUserUseCaseTest {
     @Test
     fun `invoke should call createUser on repository`() = runTest {
         // Given
-        val user = User("1", "test", "waiter")
-        val request = CreateUserRequest("test", "password", "waiter")
+        val user = User("1", "test", "test","waiter")
+        val request = CreateUserRequest("test", "test", "password", "WAITER")
         coEvery { userRepository.createUser(request) } returns Result.success(user)
 
         // When

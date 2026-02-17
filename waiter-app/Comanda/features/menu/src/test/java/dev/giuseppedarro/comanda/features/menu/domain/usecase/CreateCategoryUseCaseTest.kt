@@ -23,7 +23,7 @@ class CreateCategoryUseCaseTest {
     @Test
     fun `invoke should call createCategory on repository`() = runTest {
         // Given
-        val category = MenuCategory("1", "Pizzas", emptyList())
+        val category = MenuCategory("1", "Pizzas", 0, emptyList())
         coEvery { menuRepository.createCategory(category) } returns Result.success(Unit)
 
         // When

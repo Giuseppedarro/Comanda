@@ -25,7 +25,7 @@ class GetMenuUseCaseTest {
     @Test
     fun `invoke should return menu from repository`() = runTest {
         // Given
-        val menu = listOf(MenuCategory("1", "Pizzas", emptyList()))
+        val menu = listOf(MenuCategory("1", "Pizzas", 0, emptyList()))
         coEvery { menuRepository.getMenu() } returns flowOf(Result.success(menu))
 
         // When

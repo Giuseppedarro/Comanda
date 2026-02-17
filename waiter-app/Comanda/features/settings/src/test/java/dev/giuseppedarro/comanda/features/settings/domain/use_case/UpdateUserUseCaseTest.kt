@@ -24,7 +24,7 @@ class UpdateUserUseCaseTest {
     @Test
     fun `invoke should call updateUser on repository`() = runTest {
         // Given
-        val user = User("1", "test", "waiter")
+        val user = User("1", "test", "test", "waiter")
         val request = UpdateUserRequest("test", "password", "waiter")
         coEvery { userRepository.updateUser("1", request) } returns Result.success(user)
 

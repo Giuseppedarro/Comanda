@@ -38,7 +38,7 @@ class MenuViewModelTest {
     @Test
     fun `state is updated with menu when use case returns success`() = runTest {
         // Given
-        val menu = listOf(MenuCategory("1", "Pizzas", emptyList()))
+        val menu = listOf(MenuCategory("1", "Pizzas", 0, emptyList()))
         coEvery { getMenuUseCase() } returns flowOf(Result.success(menu))
 
         // When
@@ -46,6 +46,7 @@ class MenuViewModelTest {
 
         // Then
         viewModel.uiState.test {
+            skipItems(1) // Skip initial state
             val loadingState = awaitItem()
             assertThat(loadingState.isLoading).isTrue()
 
@@ -67,6 +68,7 @@ class MenuViewModelTest {
 
         // Then
         viewModel.uiState.test {
+            skipItems(1) // Skip initial state
             val loadingState = awaitItem()
             assertThat(loadingState.isLoading).isTrue()
 

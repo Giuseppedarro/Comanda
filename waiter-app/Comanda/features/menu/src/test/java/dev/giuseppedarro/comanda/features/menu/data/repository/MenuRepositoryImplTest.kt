@@ -28,7 +28,7 @@ class MenuRepositoryImplTest {
     @Test
     fun `getMenu should return success when api is successful`() = runTest {
         // Given
-        val menuCategoryDtos = listOf(MenuCategoryDto("1", "Pizzas", emptyList()))
+        val menuCategoryDtos = listOf(MenuCategoryDto(name = "Pizzas", items = emptyList(), id = "1"))
         coEvery { menuApi.getMenu() } returns menuCategoryDtos
 
         // When
@@ -68,7 +68,7 @@ class MenuRepositoryImplTest {
     @Test
     fun `createCategory should return success when api is successful`() = runTest {
         // Given
-        val category = MenuCategory("1", "Pizzas", emptyList())
+        val category = MenuCategory("1", "Pizzas", 0, emptyList())
         coJustRun { menuApi.createCategory(any()) }
 
         // When
@@ -81,7 +81,7 @@ class MenuRepositoryImplTest {
     @Test
     fun `createCategory should return failure when api throws exception`() = runTest {
         // Given
-        val category = MenuCategory("1", "Pizzas", emptyList())
+        val category = MenuCategory("1", "Pizzas", 0, emptyList())
         val exception = RuntimeException("Error")
         coEvery { menuApi.createCategory(any()) } throws exception
 
@@ -96,7 +96,7 @@ class MenuRepositoryImplTest {
     @Test
     fun `updateCategory should return success when api is successful`() = runTest {
         // Given
-        val category = MenuCategory("1", "Pizzas", emptyList())
+        val category = MenuCategory("1", "Pizzas", 0, emptyList())
         coJustRun { menuApi.updateCategory(any(), any()) }
 
         // When
@@ -109,7 +109,7 @@ class MenuRepositoryImplTest {
     @Test
     fun `updateCategory should return failure when api throws exception`() = runTest {
         // Given
-        val category = MenuCategory("1", "Pizzas", emptyList())
+        val category = MenuCategory("1", "Pizzas", 0, emptyList())
         val exception = RuntimeException("Error")
         coEvery { menuApi.updateCategory(any(), any()) } throws exception
 
@@ -153,7 +153,7 @@ class MenuRepositoryImplTest {
     fun `addMenuItem should return success when api is successful`() = runTest {
         // Given
         val categoryId = "1"
-        val menuItem = MenuItem("1", "Margherita", "Tomato and Mozzarella", 5.0)
+        val menuItem = MenuItem("1", "1", "Margherita", "Tomato and Mozzarella", 500, true, 0)
         coJustRun { menuApi.addMenuItem(any(), any()) }
 
         // When
@@ -167,7 +167,7 @@ class MenuRepositoryImplTest {
     fun `addMenuItem should return failure when api throws exception`() = runTest {
         // Given
         val categoryId = "1"
-        val menuItem = MenuItem("1", "Margherita", "Tomato and Mozzarella", 5.0)
+        val menuItem = MenuItem("1", "1", "Margherita", "Tomato and Mozzarella", 500, true, 0)
         val exception = RuntimeException("Error")
         coEvery { menuApi.addMenuItem(any(), any()) } throws exception
 
@@ -182,7 +182,7 @@ class MenuRepositoryImplTest {
     @Test
     fun `updateMenuItem should return success when api is successful`() = runTest {
         // Given
-        val menuItem = MenuItem("1", "Margherita", "Tomato and Mozzarella", 5.0)
+        val menuItem = MenuItem("1", "1", "Margherita", "Tomato and Mozzarella", 500, true, 0)
         coJustRun { menuApi.updateMenuItem(any(), any()) }
 
         // When
@@ -195,7 +195,7 @@ class MenuRepositoryImplTest {
     @Test
     fun `updateMenuItem should return failure when api throws exception`() = runTest {
         // Given
-        val menuItem = MenuItem("1", "Margherita", "Tomato and Mozzarella", 5.0)
+        val menuItem = MenuItem("1", "1", "Margherita", "Tomato and Mozzarella", 500, true, 0)
         val exception = RuntimeException("Error")
         coEvery { menuApi.updateMenuItem(any(), any()) } throws exception
 

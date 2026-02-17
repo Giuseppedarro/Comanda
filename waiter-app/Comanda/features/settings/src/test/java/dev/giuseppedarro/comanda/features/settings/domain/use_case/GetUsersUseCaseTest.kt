@@ -25,7 +25,7 @@ class GetUsersUseCaseTest {
     @Test
     fun `invoke should return users from repository`() = runTest {
         // Given
-        val users = listOf(User("1", "test", "waiter"))
+        val users = listOf(User(id = "1", employeeId = "test-id", name = "test-name", role = "waiter"))
         coEvery { userRepository.getUsers() } returns flowOf(Result.success(users))
 
         // When

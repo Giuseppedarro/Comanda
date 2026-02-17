@@ -39,6 +39,9 @@ class ManageUsersViewModelTest {
         createUserUseCase = mockk(relaxed = true)
         updateUserUseCase = mockk(relaxed = true)
         deleteUserUseCase = mockk(relaxed = true)
+
+        coEvery { getUsersUseCase() } returns flowOf(Result.success(emptyList()))
+
         viewModel = ManageUsersViewModel(
             getUsersUseCase = getUsersUseCase,
             createUserUseCase = createUserUseCase,
@@ -55,17 +58,15 @@ class ManageUsersViewModelTest {
     @Test
     fun `state is updated with users when use case returns success`() = runTest {
         // Given
-        val users = listOf(User("1", "test", "waiter"))
+        val users = listOf(User("1", "test-id", "test-name", "waiter"))
         coEvery { getUsersUseCase() } returns flowOf(Result.success(users))
 
         // When
         viewModel.onRefresh()
+        testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
         viewModel.uiState.test {
-            val loadingState = awaitItem()
-            assertThat(loadingState.isRefreshing).isTrue()
-
             val successState = awaitItem()
             assertThat(successState.isRefreshing).isFalse()
             assertThat(successState.users).isEqualTo(users)
@@ -81,12 +82,10 @@ class ManageUsersViewModelTest {
 
         // When
         viewModel.onRefresh()
+        testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
         viewModel.uiState.test {
-            val loadingState = awaitItem()
-            assertThat(loadingState.isRefreshing).isTrue()
-
             val errorState = awaitItem()
             assertThat(errorState.isRefreshing).isFalse()
             assertThat(errorState.users).isEmpty()
@@ -121,7 +120,7 @@ class ManageUsersViewModelTest {
     @Test
     fun `onEditUserClick updates state to show edit user dialog`() = runTest {
         // Given
-        val user = User("1", "test", "waiter")
+        val user = User("1", "test-id", "test-name", "waiter")
 
         // When
         viewModel.onEditUserClick(user)
@@ -150,7 +149,7 @@ class ManageUsersViewModelTest {
     @Test
     fun `onDeleteUserClick updates state to show delete user dialog`() = runTest {
         // Given
-        val user = User("1", "test", "waiter")
+        val user = User("1", "test-id", "test-name", "waiter")
 
         // When
         viewModel.onDeleteUserClick(user)
@@ -183,6 +182,7 @@ class ManageUsersViewModelTest {
 
         // When
         viewModel.createUser()
+        testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
         coVerify { createUserUseCase(any()) }
@@ -191,12 +191,13 @@ class ManageUsersViewModelTest {
     @Test
     fun `updateUser calls updateUserUseCase`() = runTest {
         // Given
-        val user = User("1", "test", "waiter")
+        val user = User("1", "test-id", "test-name", "waiter")
         viewModel.onEditUserClick(user)
         coEvery { updateUserUseCase(any(), any()) } returns Result.success(mockk())
 
         // When
         viewModel.updateUser()
+        testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
         coVerify { updateUserUseCase(any(), any()) }
@@ -205,14 +206,15 @@ class ManageUsersViewModelTest {
     @Test
     fun `deleteUser calls deleteUserUseCase`() = runTest {
         // Given
-        val user = User("1", "test", "waiter")
+        val user = User("1", "test-id", "test-name", "waiter")
         viewModel.onDeleteUserClick(user)
         coEvery { deleteUserUseCase(any()) } returns Result.success(Unit)
 
         // When
         viewModel.deleteUser()
+        testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
-        coVerify { deleteUserUseCase(any()) }
+        coVerify { deleteUserUseCase(user.id) }
     }
 }

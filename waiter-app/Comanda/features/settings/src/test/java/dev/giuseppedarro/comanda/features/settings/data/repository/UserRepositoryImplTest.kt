@@ -8,7 +8,6 @@ import dev.giuseppedarro.comanda.features.settings.data.remote.dto.UpdateUserReq
 import dev.giuseppedarro.comanda.features.settings.data.remote.dto.UserResponse
 import dev.giuseppedarro.comanda.features.settings.domain.repository.UserRepository
 import io.mockk.coEvery
-import io.mockk.coJustRun
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -28,7 +27,14 @@ class UserRepositoryImplTest {
     @Test
     fun `getUsers should return success when api is successful`() = runTest {
         // Given
-        val userResponses = listOf(UserResponse("1", "test", "waiter"))
+        val userResponses: List<UserResponse> = listOf(
+            UserResponse(
+                id = 1,
+                employeeId = "test-id",
+                name = "test-name",
+                role = "WAITER"
+            )
+        )
         coEvery { userApi.getUsers() } returns Result.success(userResponses)
 
         // When
@@ -42,7 +48,7 @@ class UserRepositoryImplTest {
             assertThat(users).isNotNull()
             assertThat(users!!).hasSize(1)
             assertThat(users[0].id).isEqualTo("1")
-            assertThat(users[0].username).isEqualTo("test")
+            assertThat(users[0].name).isEqualTo("test-name")
             awaitComplete()
         }
     }
@@ -68,28 +74,30 @@ class UserRepositoryImplTest {
     @Test
     fun `createUser should return success when api is successful`() = runTest {
         // Given
-        val userResponse = UserResponse("1", "test", "waiter")
-        coEvery { userApi.createUser(any()) } returns Result.success(userResponse)
+        val userResponse = UserResponse(1, "test-id", "test-name", "WAITER")
+        val request = CreateUserRequest("test-id", "test-name", "password", "WAITER")
+        coEvery { userApi.createUser(request) } returns Result.success(userResponse)
 
         // When
-        val result = userRepository.createUser(CreateUserRequest("test", "password", "waiter"))
+        val result = userRepository.createUser(request)
 
         // Then
         assertThat(result.isSuccess).isTrue()
         val user = result.getOrNull()
         assertThat(user).isNotNull()
         assertThat(user!!.id).isEqualTo("1")
-        assertThat(user.username).isEqualTo("test")
+        assertThat(user.name).isEqualTo("test-name")
     }
 
     @Test
     fun `createUser should return failure when api throws exception`() = runTest {
         // Given
         val exception = RuntimeException("Error")
-        coEvery { userApi.createUser(any()) } returns Result.failure(exception)
+        val request = CreateUserRequest("test-id", "test-name", "password", "WAITER")
+        coEvery { userApi.createUser(request) } returns Result.failure(exception)
 
         // When
-        val result = userRepository.createUser(CreateUserRequest("test", "password", "waiter"))
+        val result = userRepository.createUser(request)
 
         // Then
         assertThat(result.isFailure).isTrue()
@@ -99,28 +107,30 @@ class UserRepositoryImplTest {
     @Test
     fun `updateUser should return success when api is successful`() = runTest {
         // Given
-        val userResponse = UserResponse("1", "test", "waiter")
-        coEvery { userApi.updateUser(any(), any()) } returns Result.success(userResponse)
+        val userResponse = UserResponse(1, "test-id", "test-name", "WAITER")
+        val request = UpdateUserRequest(name = "test-name", password = "password", role = "WAITER", employeeId = "test-id")
+        coEvery { userApi.updateUser("1", request) } returns Result.success(userResponse)
 
         // When
-        val result = userRepository.updateUser("1", UpdateUserRequest("test", "password", "waiter"))
+        val result = userRepository.updateUser("1", request)
 
         // Then
         assertThat(result.isSuccess).isTrue()
         val user = result.getOrNull()
         assertThat(user).isNotNull()
         assertThat(user!!.id).isEqualTo("1")
-        assertThat(user.username).isEqualTo("test")
+        assertThat(user.name).isEqualTo("test-name")
     }
 
     @Test
     fun `updateUser should return failure when api throws exception`() = runTest {
         // Given
         val exception = RuntimeException("Error")
-        coEvery { userApi.updateUser(any(), any()) } returns Result.failure(exception)
+        val request = UpdateUserRequest(name = "test-name", password = "password", role = "WAITER", employeeId = "test-id")
+        coEvery { userApi.updateUser("1", request) } returns Result.failure(exception)
 
         // When
-        val result = userRepository.updateUser("1", UpdateUserRequest("test", "password", "waiter"))
+        val result = userRepository.updateUser("1", request)
 
         // Then
         assertThat(result.isFailure).isTrue()
@@ -130,7 +140,7 @@ class UserRepositoryImplTest {
     @Test
     fun `deleteUser should return success when api is successful`() = runTest {
         // Given
-        coEvery { userApi.deleteUser(any()) } returns Result.success(Unit)
+        coEvery { userApi.deleteUser("1") } returns Result.success(Unit)
 
         // When
         val result = userRepository.deleteUser("1")
@@ -143,7 +153,7 @@ class UserRepositoryImplTest {
     fun `deleteUser should return failure when api throws exception`() = runTest {
         // Given
         val exception = RuntimeException("Error")
-        coEvery { userApi.deleteUser(any()) } returns Result.failure(exception)
+        coEvery { userApi.deleteUser("1") } returns Result.failure(exception)
 
         // When
         val result = userRepository.deleteUser("1")

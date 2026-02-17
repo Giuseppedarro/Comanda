@@ -45,6 +45,9 @@ class CategoryViewModelTest {
         savedStateHandle = SavedStateHandle().apply {
             set("categoryName", "Pizzas")
         }
+
+        coEvery { getMenuUseCase() } returns flowOf(Result.success(listOf(MenuCategory("1", "Pizzas", 0, emptyList()))))
+
         viewModel = CategoryViewModel(
             savedStateHandle = savedStateHandle,
             getMenuUseCase = getMenuUseCase,
@@ -62,7 +65,7 @@ class CategoryViewModelTest {
     @Test
     fun `state is updated with category items when use case returns success`() = runTest {
         // Given
-        val menu = listOf(MenuCategory("1", "Pizzas", emptyList()))
+        val menu = listOf(MenuCategory("1", "Pizzas", 0, emptyList()))
         coEvery { getMenuUseCase() } returns flowOf(Result.success(menu))
 
         // When
@@ -70,6 +73,7 @@ class CategoryViewModelTest {
 
         // Then
         viewModel.uiState.test {
+            skipItems(1)
             val loadingState = awaitItem()
             assertThat(loadingState.isLoading).isTrue()
 
@@ -91,6 +95,7 @@ class CategoryViewModelTest {
 
         // Then
         viewModel.uiState.test {
+            skipItems(1)
             val loadingState = awaitItem()
             assertThat(loadingState.isLoading).isTrue()
 
@@ -117,7 +122,7 @@ class CategoryViewModelTest {
     @Test
     fun `onEditItemClick updates state to show dialog with selected item`() = runTest {
         // Given
-        val menuItem = MenuItem("1", "Margherita", "", 0.0)
+        val menuItem = MenuItem("1", "1", "Margherita", "", 0, true, 0)
 
         // When
         viewModel.onEditItemClick(menuItem)
@@ -150,6 +155,7 @@ class CategoryViewModelTest {
 
         // When
         viewModel.onSaveItem("Margherita", "", "12.34")
+        testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
         coVerify { addMenuItemUseCase(any(), any()) }
@@ -158,12 +164,13 @@ class CategoryViewModelTest {
     @Test
     fun `onSaveItem calls updateMenuItem when selectedItem is not null`() = runTest {
         // Given
-        val menuItem = MenuItem("1", "Margherita", "", 0.0)
+        val menuItem = MenuItem("1", "1", "Margherita", "", 0, true, 0)
         viewModel.onEditItemClick(menuItem)
         coEvery { updateMenuItemUseCase(any()) } returns Result.success(Unit)
 
         // When
         viewModel.onSaveItem("Margherita", "", "12.34")
+        testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
         coVerify { updateMenuItemUseCase(any()) }
@@ -172,11 +179,12 @@ class CategoryViewModelTest {
     @Test
     fun `onDeleteItemClick calls deleteMenuItem`() = runTest {
         // Given
-        val menuItem = MenuItem("1", "Margherita", "", 0.0)
+        val menuItem = MenuItem("1", "1", "Margherita", "", 0, true, 0)
         coEvery { deleteMenuItemUseCase(any()) } returns Result.success(Unit)
 
         // When
         viewModel.onDeleteItemClick(menuItem)
+        testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
         coVerify { deleteMenuItemUseCase(menuItem.id) }

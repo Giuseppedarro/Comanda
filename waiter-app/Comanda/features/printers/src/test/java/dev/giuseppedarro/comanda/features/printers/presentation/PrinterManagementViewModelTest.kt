@@ -12,6 +12,7 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -38,6 +39,9 @@ class PrinterManagementViewModelTest {
         createPrinterUseCase = mockk(relaxed = true)
         updatePrinterUseCase = mockk(relaxed = true)
         deletePrinterUseCase = mockk(relaxed = true)
+
+        coEvery { getAllPrintersUseCase() } returns Result.success(emptyList())
+
         viewModel = PrinterManagementViewModel(
             getAllPrintersUseCase = getAllPrintersUseCase,
             createPrinterUseCase = createPrinterUseCase,
@@ -62,6 +66,7 @@ class PrinterManagementViewModelTest {
 
         // Then
         viewModel.uiState.test {
+            skipItems(1)
             val loadingState = awaitItem()
             assertThat(loadingState.isLoading).isTrue()
 
@@ -83,6 +88,7 @@ class PrinterManagementViewModelTest {
 
         // Then
         viewModel.uiState.test {
+            skipItems(1)
             val loadingState = awaitItem()
             assertThat(loadingState.isLoading).isTrue()
 
@@ -153,6 +159,7 @@ class PrinterManagementViewModelTest {
 
         // When
         viewModel.createPrinter("Test", "1.1.1.1", 1111)
+        testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
         coVerify { createPrinterUseCase("Test", "1.1.1.1", 1111) }
@@ -165,6 +172,7 @@ class PrinterManagementViewModelTest {
 
         // When
         viewModel.updatePrinter(1, "Test", "1.1.1.1", 1111)
+        testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
         coVerify { updatePrinterUseCase(1, "Test", "1.1.1.1", 1111) }
@@ -178,6 +186,7 @@ class PrinterManagementViewModelTest {
 
         // When
         viewModel.deletePrinter(printer)
+        testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
         coVerify { deletePrinterUseCase(1) }

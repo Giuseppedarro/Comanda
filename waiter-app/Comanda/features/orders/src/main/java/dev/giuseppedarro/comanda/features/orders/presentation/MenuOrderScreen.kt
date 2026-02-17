@@ -14,10 +14,10 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -152,7 +152,7 @@ fun MenuOrderContent(
                         Icon(Icons.Filled.Newspaper, contentDescription = "Send bill")
                     }
                     IconButton(onClick = onSendClick, enabled = !uiState.isLoading) {
-                        Icon(Icons.Filled.Send, contentDescription = "Send order")
+                        Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send order")
                     }
                 }
             )
@@ -174,7 +174,7 @@ fun MenuOrderContent(
                 }
             }
 
-            Divider(modifier = Modifier.padding(horizontal = 16.dp)) // Added padding to this divider
+            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp)) // Added padding to this divider
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),

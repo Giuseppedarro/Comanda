@@ -23,7 +23,7 @@ class UpdateMenuItemUseCaseTest {
     @Test
     fun `invoke should call updateMenuItem on repository`() = runTest {
         // Given
-        val menuItem = MenuItem("1", "Margherita", "Tomato and Mozzarella", 5.0)
+        val menuItem = MenuItem("1", "1", "Margherita", "Tomato and Mozzarella", 500, true, 0)
         coEvery { menuRepository.updateMenuItem(menuItem) } returns Result.success(Unit)
 
         // When

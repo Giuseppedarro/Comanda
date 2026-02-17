@@ -11,7 +11,6 @@ android {
 
     defaultConfig {
         minSdk = 26
-        targetSdk = 36 // This is the fix
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -35,6 +34,9 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+    testOptions {
+        targetSdk = 36
     }
 
     packaging {
