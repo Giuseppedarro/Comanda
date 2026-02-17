@@ -1,25 +1,21 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
 }
 
 android {
-    namespace = "dev.giuseppedarro.comanda"
+    namespace = "dev.giuseppedarro.comanda.features.menu"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "dev.giuseppedarro.comanda"
         minSdk = 26
-        targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        testInstrumentationRunnerArgument("mockk.agent.android.factory", "io.mockk.proxy.android.AndroidMockKAgentFactory")
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
@@ -38,9 +34,6 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-    buildFeatures {
-        compose = true
-    }
 
     packaging {
         resources {
@@ -53,18 +46,14 @@ android {
             useLegacyPackaging = true
         }
     }
+
 }
 
 dependencies {
     implementation(project(":core"))
-    implementation(project(":features:login"))
-    implementation(project(":features:tables"))
-    implementation(project(":features:orders"))
-    implementation(project(":features:menu"))
-    implementation(project(":features:printers"))
-
-    implementation("androidx.core:core-splashscreen:1.0.1")
-
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
     // Testing
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
@@ -78,9 +67,12 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.truth)
-    androidTestImplementation("io.mockk:mockk:1.13.5")
+    // androidTestImplementation("io.mockk:mockk:1.13.5")
     androidTestImplementation("io.mockk:mockk-android:1.13.5")
+    androidTestImplementation("io.ktor:ktor-client-mock:2.3.12")
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 }
