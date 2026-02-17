@@ -62,6 +62,7 @@ dependencies {
     implementation(project(":features:orders"))
     implementation(project(":features:menu"))
     implementation(project(":features:printers"))
+    implementation(project(":features:settings"))
 
     implementation("androidx.core:core-splashscreen:1.0.1")
 
