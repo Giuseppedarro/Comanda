@@ -19,7 +19,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        testInstrumentationRunnerArgument("mockk.agent.android.factory", "io.mockk.proxy.android.AndroidMockKAgentFactory")
+        testInstrumentationRunnerArguments["mockk.agent.android.factory"] = "io.mockk.proxy.android.AndroidMockKAgentFactory"
     }
 
     buildTypes {
@@ -47,7 +47,6 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
             excludes += "/META-INF/LICENSE.md"
             excludes += "/META-INF/LICENSE-notice.md"
-            // These are typically not needed in Android tests
             pickFirsts += "/META-INF/DEPENDENCIES"
         }
         jniLibs {
@@ -57,34 +56,15 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.core.ktx)
+    implementation(project(":core"))
+    implementation(project(":features:login"))
+    implementation(project(":features:tables"))
+    implementation(project(":features:orders"))
+    implementation(project(":features:menu"))
+    implementation(project(":features:printers"))
+    implementation(project(":features:settings"))
+
     implementation("androidx.core:core-splashscreen:1.0.1")
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.graphics)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation("androidx.compose.material:material:1.6.7")
-    implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.material.icons.extended)
-
-    // Koin
-    implementation(libs.koin.core)
-    implementation(libs.koin.android)
-    implementation(libs.koin.androidx.compose)
-
-    // DataStore
-    implementation(libs.androidx.datastore.preferences)
-
-    // Ktor
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.cio)
-    implementation(libs.ktor.client.auth)
-    implementation(libs.ktor.client.logging)
-    implementation(libs.ktor.client.content.negotiation)
-    implementation(libs.ktor.serialization.kotlinx.json)
 
     // Testing
     testImplementation(libs.junit)
@@ -101,7 +81,6 @@ dependencies {
     androidTestImplementation(libs.truth)
     androidTestImplementation("io.mockk:mockk:1.13.5")
     androidTestImplementation("io.mockk:mockk-android:1.13.5")
-
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)

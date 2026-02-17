@@ -21,4 +21,10 @@ dependencyResolutionManagement {
 
 rootProject.name = "Comanda"
 include(":app")
- 
+include(":core")
+include(":features:login")
+include("features:tables")
+include(":features:orders")
+include(":features:menu")
+include(":features:printers")
+include(":features:settings")
