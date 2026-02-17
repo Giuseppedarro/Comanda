@@ -7,7 +7,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
-import dev.giuseppedarro.comanda.R
+import dev.giuseppedarro.comanda.features.orders.R
 import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule

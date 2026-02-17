@@ -1,10 +1,10 @@
-
-package dev.giuseppedarro.comanda.features.orders.domain.use_case
+package dev.giuseppedarro.comanda.features.orders.use_case
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.orders.domain.repository.OrderRepository
+import dev.giuseppedarro.comanda.features.orders.domain.use_case.GetMenuUseCase
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf

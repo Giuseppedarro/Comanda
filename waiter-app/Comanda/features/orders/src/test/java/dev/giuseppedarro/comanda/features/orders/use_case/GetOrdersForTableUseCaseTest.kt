@@ -1,5 +1,4 @@
-
-package dev.giuseppedarro.comanda.features.orders.domain.use_case
+package dev.giuseppedarro.comanda.features.orders.use_case
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
@@ -7,6 +6,7 @@ import dev.giuseppedarro.comanda.features.orders.domain.model.Order
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderItem
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderStatus
 import dev.giuseppedarro.comanda.features.orders.domain.repository.OrderRepository
+import dev.giuseppedarro.comanda.features.orders.domain.use_case.GetOrdersForTableUseCase
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf

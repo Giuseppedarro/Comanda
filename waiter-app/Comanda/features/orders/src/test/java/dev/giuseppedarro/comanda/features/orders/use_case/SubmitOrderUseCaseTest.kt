@@ -1,14 +1,15 @@
-
-package dev.giuseppedarro.comanda.features.orders.domain.use_case
+package dev.giuseppedarro.comanda.features.orders.use_case
 
 import com.google.common.truth.Truth.assertThat
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderItem
 import dev.giuseppedarro.comanda.features.orders.domain.repository.OrderRepository
+import dev.giuseppedarro.comanda.features.orders.domain.use_case.SubmitOrderUseCase
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
+import java.lang.RuntimeException
 
 class SubmitOrderUseCaseTest {
 
@@ -43,7 +44,9 @@ class SubmitOrderUseCaseTest {
         val numberOfPeople = 4
         val items = emptyList<OrderItem>()
         val errorMessage = "Error"
-        coEvery { orderRepository.submitOrder(tableNumber, numberOfPeople, items) } returns Result.failure(java.lang.RuntimeException(errorMessage))
+        coEvery { orderRepository.submitOrder(tableNumber, numberOfPeople, items) } returns Result.failure(
+            RuntimeException(errorMessage)
+        )
 
         // When
         val result = submitOrderUseCase(tableNumber, numberOfPeople, items)
