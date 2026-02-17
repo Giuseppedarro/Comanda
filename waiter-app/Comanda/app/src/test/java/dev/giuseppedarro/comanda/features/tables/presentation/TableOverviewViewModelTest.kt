@@ -2,7 +2,7 @@ package dev.giuseppedarro.comanda.features.tables.presentation
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import dev.giuseppedarro.comanda.features.login.domain.use_case.LogoutUseCase
+import dev.giuseppedarro.comanda.core.domain.use_case.LogoutUseCase
 import dev.giuseppedarro.comanda.features.tables.domain.model.Table
 import dev.giuseppedarro.comanda.features.tables.domain.use_case.AddTableUseCase
 import dev.giuseppedarro.comanda.features.tables.domain.use_case.GetTablesUseCase

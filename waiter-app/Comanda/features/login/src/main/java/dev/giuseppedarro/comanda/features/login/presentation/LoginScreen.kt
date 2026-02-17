@@ -46,7 +46,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.giuseppedarro.comanda.R
+import dev.giuseppedarro.comanda.features.login.R
 import dev.giuseppedarro.comanda.core.ui.theme.BrandedTheme
 import org.koin.androidx.compose.koinViewModel
 

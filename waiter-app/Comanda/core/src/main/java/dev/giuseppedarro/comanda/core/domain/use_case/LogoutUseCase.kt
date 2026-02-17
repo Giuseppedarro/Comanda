@@ -1,4 +1,4 @@
-package dev.giuseppedarro.comanda.features.login.domain.use_case
+package dev.giuseppedarro.comanda.core.domain.use_case
 
 import dev.giuseppedarro.comanda.core.domain.TokenRepository
 
