@@ -32,4 +32,6 @@ jobs:
       run: chmod +x gradlew
       
     - name: Build with Gradle
+      env:
+        GRADLE_JVM_ARGS: -Xmx4096m
       run: ./gradlew build
