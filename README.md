@@ -21,7 +21,7 @@ Comanda is a modern, end-to-end restaurant management system designed to streaml
 - **Table Management:** View and manage restaurant tables with occupancy status.
 - **Order Submission:** Submit orders directly from the waiter app with a categorized menu.
 - **Printer Management:** Configure and manage printers (Kitchen, Bar, Cashier) for automatic order ticket printing.
-- **Smart Order Diff:** Only prints new/changed items when orders are modified, reducing waste.
+- **Staff Management:** A dedicated administrative module to manage the workforce
 
 ##  Technologies & Libraries
 
@@ -72,7 +72,7 @@ graph TD
 This project is a monorepo containing the following modules:
 
 - `waiter-app/`: The Android application for waiters.
-- `cashier-app/`: The desktop application for the cashier.
+- `cashier-app/`: The desktop application for the cashier (TODO).
 - `server/`: The Ktor backend.
 
 ## Getting Started
