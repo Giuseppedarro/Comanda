@@ -1,7 +1,7 @@
 package dev.giuseppedarro.comanda.features.orders.data.remote
 
+import dev.giuseppedarro.comanda.core.network.dto.MenuCategoryDto
 import dev.giuseppedarro.comanda.features.orders.data.remote.dto.GetOrderResponse
-import dev.giuseppedarro.comanda.features.orders.data.remote.dto.MenuCategoryDto
 import dev.giuseppedarro.comanda.features.orders.data.remote.dto.SubmitOrderRequest
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body

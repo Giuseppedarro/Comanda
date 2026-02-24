@@ -21,7 +21,9 @@ Comanda is a modern, end-to-end restaurant management system designed to streaml
 - **Table Management:** View and manage restaurant tables with occupancy status.
 - **Order Submission:** Submit orders directly from the waiter app with a categorized menu.
 - **Printer Management:** Configure and manage printers (Kitchen, Bar, Cashier) for automatic order ticket printing.
-- **Staff Management:** A dedicated administrative module to manage the workforce
+- **Staff Management:** A dedicated administrative module to manage the workforce.
+    - **User Management:** Create, Read, Update, and Delete users.
+    - **Role Assignment:** Assign roles such as 'Waiter' or 'Admin' to control access levels.
 
 ##  Technologies & Libraries
 
@@ -32,6 +34,7 @@ This project is built with a modern technology stack, showcasing the power of Ko
 | Library | Version |
 |---|---|
 | Kotlin | 2.0.21 |
+| Android Gradle Plugin | 8.13.2 |
 | Jetpack Compose BOM | 2024.09.00 |
 | Activity Compose | 1.8.0 |
 | Lifecycle KTX | 2.6.1 |
@@ -47,6 +50,7 @@ This project is built with a modern technology stack, showcasing the power of Ko
 
 | Library | Version | Description |
 |---|---|---|
+| Kotlin | 2.2.20 | Language version. |
 | Ktor | 3.3.0 | Core framework for building the server. |
 | Exposed | 0.41.1 | Kotlin SQL framework for database access. |
 | PostgreSQL | 14.5 (DB) / 42.5.0 (Driver) | Database running in Docker (v14.5) with JDBC driver (v42.5.0). |
@@ -72,6 +76,7 @@ graph TD
 This project is a monorepo containing the following modules:
 
 - `waiter-app/`: The Android application for waiters.
+    - **Modular Architecture:** Organized into `:app`, `:core`, and `:features` (login, tables, orders, menu, printers, settings).
 - `cashier-app/`: The desktop application for the cashier (TODO).
 - `server/`: The Ktor backend.
 
