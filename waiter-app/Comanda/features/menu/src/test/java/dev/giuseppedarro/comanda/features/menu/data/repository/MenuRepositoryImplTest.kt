@@ -2,8 +2,9 @@ package dev.giuseppedarro.comanda.features.menu.data.repository
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import dev.giuseppedarro.comanda.core.network.dto.MenuCategoryDto
+import dev.giuseppedarro.comanda.core.network.dto.MenuItemDto
 import dev.giuseppedarro.comanda.features.menu.data.remote.MenuApi
-import dev.giuseppedarro.comanda.features.menu.data.remote.dto.MenuCategoryDto
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuItem
 import dev.giuseppedarro.comanda.features.menu.domain.repository.MenuRepository
@@ -28,7 +29,7 @@ class MenuRepositoryImplTest {
     @Test
     fun `getMenu should return success when api is successful`() = runTest {
         // Given
-        val menuCategoryDtos = listOf(MenuCategoryDto(name = "Pizzas", items = emptyList(), id = "1"))
+        val menuCategoryDtos = listOf(MenuCategoryDto(name = "Pizzas", items = emptyList<MenuItemDto>(), id = "1"))
         coEvery { menuApi.getMenu() } returns menuCategoryDtos
 
         // When

@@ -1,12 +1,11 @@
-
 package dev.giuseppedarro.comanda.features.orders.data.repository
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import dev.giuseppedarro.comanda.core.network.dto.MenuCategoryDto
+import dev.giuseppedarro.comanda.core.network.dto.MenuItemDto
 import dev.giuseppedarro.comanda.features.orders.data.remote.OrderApi
 import dev.giuseppedarro.comanda.features.orders.data.remote.dto.GetOrderResponse
-import dev.giuseppedarro.comanda.features.orders.data.remote.dto.MenuCategoryDto
-import dev.giuseppedarro.comanda.features.orders.data.remote.dto.MenuItemDto
 import dev.giuseppedarro.comanda.features.orders.data.remote.dto.OrderResponseItem
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderStatus
 import io.mockk.coEvery
