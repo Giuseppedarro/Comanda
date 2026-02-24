@@ -58,8 +58,7 @@ This directory contains all the independent feature modules. Each feature is a s
 
 - **`:features:printers`**: Provides the UI and logic for managing the restaurant's printers, including full CRUD functionality.
 
-- **`:features:settings`**: Contains the main settings screen for the app, including a sub-feature for managing users (CRUD operations).
-
-## Architectural Refactoring Notes
-
-- **DTO Duplication**: There is a known duplication of Data Transfer Objects (DTOs) between the `:features:login` and `:core` modules, and between the `:features:menu` and `:features:orders` modules. This should be refactored to a single source of truth to improve maintainability.
+- **`:features:settings`**: Contains the main settings screen for the app.
+    - **User Management**: A dedicated sub-feature for managing staff accounts.
+    - **CRUD Operations**: Admins can Create, Read, Update, and Delete users.
+    - **Role Management**: Assign roles (e.g., 'Waiter', 'Admin') to control access permissions.

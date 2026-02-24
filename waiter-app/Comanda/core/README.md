@@ -46,7 +46,3 @@ Contains miscellaneous helper and utility functions that can be used by any feat
 ### `di` Package
 
 - **`CoreModule.kt`**: The Koin dependency injection module for `:core`. It correctly constructs and provides all the components listed above, making them available for feature modules to use. It uses named qualifiers (`authClient`, `basicClient`) to differentiate between the two HTTP clients.
-
-## Key Findings & Refactoring Notes
-
-- **DTO Duplication**: The DTOs used for the token refresh mechanism (`LoginResponse`, `RefreshTokenRequest`) are currently defined in this module but are **duplicated** in the `:features:login` module. The `:login` module should be refactored to use the DTOs from `:core` instead of defining its own.

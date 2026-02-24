@@ -27,9 +27,10 @@ The domain layer contains the core business logic of the feature.
 
 The data layer is responsible for data operations, such as making network requests.
 
-- **`dto` package**: Contains Data Transfer Objects used for serializing and deserializing network requests and responses (`LoginRequest`, `LoginResponse`, `RefreshTokenRequest`).
-- **`repository/LoginRepositoryImpl.kt`**: The concrete implementation of the `LoginRepository` interface. It uses a Ktor `HttpClient` to make a POST request to the authentication endpoint and uses the `:core` module's `TokenRepository` to store the received tokens.
+- **`remote/LoginApi.kt`**: A Ktor-based API client responsible for making the login request. It uses the `basicClient` from `:core`.
+- **`dto` package**: Contains the `LoginRequest` Data Transfer Object used for serializing the network request. The `LoginResponse` is sourced from the `:core` module.
+- **`repository/LoginRepositoryImpl.kt`**: The concrete implementation of the `LoginRepository` interface. It uses the `LoginApi` to perform the network request and the `:core` module's `TokenRepository` to store the received tokens.
 
 ## Dependency Injection
 
-- **`di/LoginModule.kt`**: Provides all the necessary dependencies for this feature using Koin. It defines the creation of the `LoginRepository`, all use cases, and the `LoginViewModel`. It resolves dependencies from the `:core` module, such as the `HttpClient` and `TokenRepository`.
+- **`di/LoginModule.kt`**: Provides all the necessary dependencies for this feature using Koin. It defines the creation of the `LoginApi`, the `LoginRepository`, all use cases, and the `LoginViewModel`. It resolves dependencies from the `:core` module, such as the `HttpClient` (`basicClient`) and `TokenRepository`.

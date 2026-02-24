@@ -11,7 +11,7 @@ This module follows the principles of Clean Architecture, separating the code in
 This layer handles all network interactions for the feature.
 
 - **`remote/OrderApi.kt`**: A Ktor-based API client that defines methods for fetching the menu (`getMenu`), fetching existing orders (`getOrdersForTable`), submitting new orders (`submitOrder`), and printing bills (`printBill`). It uses the `authClient` from `:core` for all requests.
-- **`remote/dto/`**: This package contains a comprehensive set of Data Transfer Objects that map directly to the API's JSON structures for requests and responses.
+- **`remote/dto/`**: This package contains a comprehensive set of Data Transfer Objects that map directly to the API's JSON structures for requests and responses. The `MenuCategoryDto` and `MenuItemDto` are sourced from the `:core` module.
 - **`repository/OrderRepositoryImpl.kt`**: The implementation of the `OrderRepository`. Its key responsibility is to orchestrate data calls and map the flat network DTOs into rich, useful domain models. For example, when fetching an existing order, it makes a second call to the menu API to combine order item data with full menu item details (name, price) into a complete `Order` object.
 
 ### Domain Layer

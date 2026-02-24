@@ -1,5 +1,7 @@
 package dev.giuseppedarro.comanda.features.menu.data.remote.dto
 
+import dev.giuseppedarro.comanda.core.network.dto.MenuCategoryDto
+import dev.giuseppedarro.comanda.core.network.dto.MenuItemDto
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuItem
 
@@ -23,7 +25,7 @@ fun MenuCategory.toDto(): MenuCategoryDto {
 
 fun MenuItemDto.toDomain(categoryId: String = "", displayOrder: Int = 0): MenuItem {
     return MenuItem(
-        id = id,
+        id = id ?: "",
         categoryId = this.categoryId ?: categoryId,
         name = name,
         description = description ?: "",

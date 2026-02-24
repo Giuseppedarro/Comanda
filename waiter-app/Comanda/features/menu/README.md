@@ -36,7 +36,3 @@ This is the UI layer, built with Jetpack Compose. It is composed of two main scr
 ## Dependency Injection
 
 - **`di/MenuModule.kt`**: Provides all dependencies for the feature using Koin, including the API, repository, all use cases, and both `MenuViewModel` and `CategoryViewModel`.
-
-## Key Findings & Refactoring Notes
-
-- **DTO Duplication**: The DTOs in this module (`MenuCategoryDto`, `MenuItemDto`) are very similar to those found in the `:features:orders` module. A single source of truth for these models should be established to avoid code duplication and potential inconsistencies.
