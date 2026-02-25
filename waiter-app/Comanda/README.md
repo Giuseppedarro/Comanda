@@ -19,6 +19,7 @@ The application is built following modern Android development best practices, wi
 - **Dependency Rule**: The dependency flow is strictly one-way: `app` -> `features` -> `core`. The `:core` module knows nothing about the features, and features know nothing about each other.
 - **Dependency Injection**: [Koin](https://insert-koin.io/) is used for dependency injection throughout the app to provide dependencies and manage their lifecycle.
 - **UI**: The entire UI is built with [Jetpack Compose](https://developer.android.com/jetpack/compose).
+- **Stateful/Stateless UI Pattern**: Feature screens are split into a stateful, non-previewable composable (the "Screen") that manages state and a stateless, easily previewable composable (the "Content") that purely renders the UI.
 - **Networking**: Networking is handled by [Ktor](https://ktor.io/), a modern asynchronous HTTP client.
 - **Navigation**: Navigation is managed with [Jetpack Navigation for Compose](https://developer.android.com/jetpack/compose/navigation), using type-safe routes with Kotlin Serialization.
 

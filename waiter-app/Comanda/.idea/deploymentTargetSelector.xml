@@ -13,7 +13,7 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="Tests in 'dev.giuseppedarro.comanda.features.orders.presentation'">
+      <SelectionState runConfigName="ThemeRepositoryImplTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

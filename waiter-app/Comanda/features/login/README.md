@@ -8,7 +8,7 @@ This module follows the principles of Clean Architecture, separating the code in
 
 ### Presentation Layer
 
-The presentation layer is responsible for the UI and handling user interactions.
+The presentation layer is responsible for the UI and handling user interactions. It follows a stateful/stateless pattern where the "Screen" composable manages state and the "Content" composable is a stateless, previewable function.
 
 - **`LoginViewModel.kt`**: Manages the UI state (`LoginUiState`) for the login screen. It interacts with the domain layer's use cases to perform login operations and manage the base URL.
 - **`LoginScreen.kt`**: A Jetpack Compose screen that displays the login form, handles user input for employee ID and password, shows loading states, and displays error messages. It also contains a dialog to allow the user to change the server's base URL.

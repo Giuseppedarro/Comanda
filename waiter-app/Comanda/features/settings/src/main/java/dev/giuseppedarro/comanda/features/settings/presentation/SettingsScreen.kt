@@ -44,7 +44,8 @@ import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
 fun SettingsScreen(
     onBackClick: () -> Unit,
     onLogout: () -> Unit,
-    onManageUsersClick: () -> Unit
+    onManageUsersClick: () -> Unit,
+    onThemeSettingsClick: () -> Unit
 ) {
     var areNotificationsEnabled by remember { mutableStateOf(true) }
 
@@ -53,7 +54,8 @@ fun SettingsScreen(
         onLogout = onLogout,
         areNotificationsEnabled = areNotificationsEnabled,
         onNotificationsToggle = { newState -> areNotificationsEnabled = newState },
-        onManageUsersClick = onManageUsersClick
+        onManageUsersClick = onManageUsersClick,
+        onThemeSettingsClick = onThemeSettingsClick
     )
 }
 
@@ -63,7 +65,8 @@ fun SettingsContent(
     onLogout: () -> Unit,
     areNotificationsEnabled: Boolean,
     onNotificationsToggle: (Boolean) -> Unit,
-    onManageUsersClick: () -> Unit
+    onManageUsersClick: () -> Unit,
+    onThemeSettingsClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -92,7 +95,7 @@ fun SettingsContent(
                     icon = { Icon(Icons.Default.Palette, stringResource(R.string.theme), tint = MaterialTheme.colorScheme.primary) },
                     title = stringResource(R.string.theme),
                     subtitle = stringResource(R.string.choose_your_preferred_theme),
-                    onClick = { /* TODO */ }
+                    onClick = onThemeSettingsClick
                 )
                 Divider(modifier = Modifier.padding(horizontal = 16.dp))
                 SettingItem(
@@ -170,7 +173,7 @@ fun SettingItem(
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        icon()
+        icon() 
         Spacer(modifier = Modifier.width(16.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(text = title, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
@@ -193,7 +196,8 @@ private fun SettingsContentPreview() {
             onLogout = {},
             areNotificationsEnabled = true,
             onNotificationsToggle = {},
-            onManageUsersClick = {}
+            onManageUsersClick = {},
+            onThemeSettingsClick = {}
         )
     }
 }

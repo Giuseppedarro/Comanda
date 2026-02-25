@@ -79,4 +79,11 @@
     <string name="edit_profile">Edit Profile</string>
     <string name="edit_profile_subtitle">Change your name or password</string>
     <string name="logout_subtitle">You will be returned to the login screen</string>
+
+    <!-- Theme Settings Screen -->
+    <string name="theme_options">Theme Options</string>
+    <string name="use_system_theme">Use system theme</string>
+    <string name="follow_system_theme">Follow the system\'s theme</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="enable_dark_mode">Enable dark mode</string>
 </resources>

@@ -8,6 +8,7 @@ import dev.giuseppedarro.comanda.features.settings.domain.use_case.DeleteUserUse
 import dev.giuseppedarro.comanda.features.settings.domain.use_case.GetUsersUseCase
 import dev.giuseppedarro.comanda.features.settings.domain.use_case.UpdateUserUseCase
 import dev.giuseppedarro.comanda.features.settings.presentation.ManageUsersViewModel
+import dev.giuseppedarro.comanda.features.settings.presentation.ThemeSettingsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -20,4 +21,5 @@ val settingsModule = module {
     factory { UpdateUserUseCase(get()) }
     factory { DeleteUserUseCase(get()) }
     viewModel { ManageUsersViewModel(get(), get(), get(), get()) }
+    viewModel { ThemeSettingsViewModel(get(), get()) }
 }

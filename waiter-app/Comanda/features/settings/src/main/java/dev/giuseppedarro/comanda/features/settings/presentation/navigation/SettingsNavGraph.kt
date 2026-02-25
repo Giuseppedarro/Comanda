@@ -5,6 +5,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import dev.giuseppedarro.comanda.features.settings.presentation.ManageUsersScreen
 import dev.giuseppedarro.comanda.features.settings.presentation.SettingsScreen
+import dev.giuseppedarro.comanda.features.settings.presentation.ThemeSettingsScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -16,10 +17,14 @@ object SettingsMainRoute
 @Serializable
 object ManageUsersRoute
 
+@Serializable
+object ThemeSettingsRoute
+
 fun NavGraphBuilder.settingsNavGraph(
     onBackClick: () -> Unit,
     onLogout: () -> Unit,
-    onManageUsersClick: () -> Unit
+    onManageUsersClick: () -> Unit,
+    onThemeSettingsClick: () -> Unit
 ) {
     navigation<Settings>(
         startDestination = SettingsMainRoute,
@@ -28,11 +33,17 @@ fun NavGraphBuilder.settingsNavGraph(
             SettingsScreen(
                 onBackClick = onBackClick,
                 onLogout = onLogout,
-                onManageUsersClick = onManageUsersClick
+                onManageUsersClick = onManageUsersClick,
+                onThemeSettingsClick = onThemeSettingsClick
             )
         }
         composable<ManageUsersRoute> {
             ManageUsersScreen(
+                onBackClick = onBackClick
+            )
+        }
+        composable<ThemeSettingsRoute> {
+            ThemeSettingsScreen(
                 onBackClick = onBackClick
             )
         }

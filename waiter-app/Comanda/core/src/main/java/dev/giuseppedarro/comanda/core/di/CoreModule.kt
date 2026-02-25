@@ -6,7 +6,11 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStoreFile
 import dev.giuseppedarro.comanda.core.data.CryptoManager
 import dev.giuseppedarro.comanda.core.data.TokenRepositoryImpl
+import dev.giuseppedarro.comanda.core.data.repository.ThemeRepositoryImpl
 import dev.giuseppedarro.comanda.core.domain.TokenRepository
+import dev.giuseppedarro.comanda.core.domain.repository.ThemeRepository
+import dev.giuseppedarro.comanda.core.domain.use_case.GetThemePreferencesUseCase
+import dev.giuseppedarro.comanda.core.domain.use_case.SaveThemePreferencesUseCase
 import dev.giuseppedarro.comanda.core.network.AndroidKtorLogger
 import dev.giuseppedarro.comanda.core.network.BaseUrlProvider
 import dev.giuseppedarro.comanda.core.network.HttpClientConfig
@@ -21,13 +25,24 @@ import org.koin.dsl.module
 val coreModule = module {
     // Encrypted token storage
     single<CryptoManager> { CryptoManager() }
-    single<DataStore<Preferences>> {
+    single<DataStore<Preferences>>(named("tokenDataStore")) {
         val context = androidContext()
         PreferenceDataStoreFactory.create(
             produceFile = { context.preferencesDataStoreFile("tokens.preferences_pb") }
         )
     }
-    single<TokenRepository> { TokenRepositoryImpl(get(), get()) }
+    single<TokenRepository> { TokenRepositoryImpl(get(named("tokenDataStore")), get()) }
+
+    // Theme preferences storage
+    single<DataStore<Preferences>>(named("themeDataStore")) {
+        val context = androidContext()
+        PreferenceDataStoreFactory.create(
+            produceFile = { context.preferencesDataStoreFile("theme.preferences_pb") }
+        )
+    }
+    single<ThemeRepository> { ThemeRepositoryImpl(get(named("themeDataStore"))) }
+    single { GetThemePreferencesUseCase(get()) }
+    single { SaveThemePreferencesUseCase(get()) }
 
     // Base URL provider for dynamic configuration
     single { BaseUrlProvider("http://10.0.2.2:8080/") }
