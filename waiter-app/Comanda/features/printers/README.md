@@ -24,7 +24,7 @@ This layer contains the core business logic and models for the feature.
 
 ### Presentation Layer
 
-The UI-facing layer, built with Jetpack Compose.
+The UI-facing layer, built with Jetpack Compose. It follows a stateful/stateless pattern where the "Screen" composable manages state and the "Content" composable is a stateless, previewable function.
 
 - **`PrinterManagementViewModel.kt`**: The ViewModel for the feature. It manages the `PrinterManagementUiState`, including the list of printers, loading/error states, and the visibility of the add/edit dialogs. After any CUD operation, it reloads the printer list to ensure the UI is always up-to-date.
 - **`PrinterManagementScreen.kt`**: The main screen for managing printers. It displays a list of configured printers using a `LazyColumn`, provides a `FloatingActionButton` to add new ones, and uses a pull-to-refresh mechanism. It uses a `Snackbar` to display errors.

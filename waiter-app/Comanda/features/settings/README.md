@@ -24,11 +24,14 @@ The user management section has its own complete `data`, `domain`, and `presenta
 
 ### Presentation Layer
 
-- **`SettingsScreen.kt`**: The main entry point for the settings feature. It displays a list of setting categories (Appearance, Notifications, Account) and provides navigation to the "Manage Users" screen. For simple toggles like notifications, it uses its own internal state.
+This is the UI layer, built with Jetpack Compose. It follows a stateful/stateless pattern where the "Screen" composable manages state and the "Content" composable is a stateless, previewable function.
+
+- **`SettingsScreen.kt`**: The main entry point for the settings feature. It displays a list of setting categories (Appearance, Notifications, Account) and provides navigation to the "Manage Users" and "Theme Settings" screens.
+- **`ThemeSettingsScreen.kt` / `ThemeSettingsViewModel.kt`**: A dedicated screen for managing the application's theme. It allows the user to choose between following the system theme or manually selecting light/dark mode. The `ViewModel` interacts with use cases from the `:core` module to persist the user's choice.
 - **`ManageUsersScreen.kt` / `ManageUsersViewModel.kt`**: A dedicated screen for managing users. It displays a list of all users and provides functionality to add, edit, and delete them via dialogs. The ViewModel uses a `Channel` to send one-time UI events like snackbar messages.
 - **`ManageUsersState.kt`**: Defines the comprehensive UI state for the user management screen, including separate data classes for the state of the add and edit dialogs.
-- **`navigation/SettingsNavGraph.kt`**: Defines a nested navigation graph for the feature. It has a main route (`SettingsMainRoute`) for the `SettingsScreen` and a secondary route (`ManageUsersRoute`) for the `ManageUsersScreen`.
+- **`navigation/SettingsNavGraph.kt`**: Defines a nested navigation graph for the feature. It has routes for the main settings screen (`SettingsMainRoute`), the user management screen (`ManageUsersRoute`), and the new theme settings screen (`ThemeSettingsRoute`).
 
 ## Dependency Injection
 
-- **`di/SettingsModule.kt`**: Provides all dependencies for the user management part of the feature using Koin, including the API, repository, use cases, and the `ManageUsersViewModel`.
+- **`di/SettingsModule.kt`**: Provides all dependencies for this feature using Koin. This includes the components for user management (API, repository, use cases, `ManageUsersViewModel`) and the new `ThemeSettingsViewModel`, which resolves its dependencies from the `:core` module.

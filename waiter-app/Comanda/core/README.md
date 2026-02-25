@@ -20,15 +20,18 @@ This package handles all shared client-server communication infrastructure.
 
 This package is responsible for the secure persistence of shared data.
 
-- **`TokenRepositoryImpl.kt`**: The concrete implementation of `TokenRepository`. It uses Jetpack `DataStore` to save tokens to disk.
+- **`TokenRepositoryImpl.kt`**: The concrete implementation of `TokenRepository`. It uses a named Jetpack `DataStore` to save tokens to disk.
+- **`ThemeRepositoryImpl.kt`**: The concrete implementation of `ThemeRepository`. It uses a separate, named Jetpack `DataStore` to persist the user's chosen theme preferences.
 - **`CryptoManager.kt`**: A robust encryption utility that uses `AES/GCM` backed by the `AndroidKeyStore`. It ensures that authentication tokens are always stored securely on the device, never in plain text.
 
 ### `domain` Package
 
 This layer defines the contracts and business logic for shared data.
 
-- **`TokenRepository.kt`**: The interface (contract) for storing and retrieving authentication tokens. It provides a clean abstraction for the rest of the app to use, hiding the underlying implementation details.
+- **`TokenRepository.kt`**: The interface (contract) for storing and retrieving authentication tokens.
+- **`ThemeRepository.kt`**: The interface (contract) for storing and retrieving the application's theme preferences.
 - **`use_case/LogoutUseCase.kt`**: A simple, reusable use case that encapsulates the logic for logging out a user by clearing their stored tokens.
+- **`use_case/GetThemePreferencesUseCase.kt` & `SaveThemePreferencesUseCase.kt`**: Use cases for retrieving and saving the app theme preferences.
 
 ### `ui` & `presentation` Packages
 
@@ -45,4 +48,4 @@ Contains miscellaneous helper and utility functions that can be used by any feat
 
 ### `di` Package
 
-- **`CoreModule.kt`**: The Koin dependency injection module for `:core`. It correctly constructs and provides all the components listed above, making them available for feature modules to use. It uses named qualifiers (`authClient`, `basicClient`) to differentiate between the two HTTP clients.
+- **`CoreModule.kt`**: The Koin dependency injection module for `:core`. It correctly constructs and provides all the components listed above, making them available for feature modules to use. It uses named qualifiers (`authClient`, `basicClient`, `tokenDataStore`, `themeDataStore`) to differentiate between the various components.

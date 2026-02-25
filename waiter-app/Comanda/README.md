@@ -19,6 +19,7 @@ The application is built following modern Android development best practices, wi
 - **Dependency Rule**: The dependency flow is strictly one-way: `app` -> `features` -> `core`. The `:core` module knows nothing about the features, and features know nothing about each other.
 - **Dependency Injection**: [Koin](https://insert-koin.io/) is used for dependency injection throughout the app to provide dependencies and manage their lifecycle.
 - **UI**: The entire UI is built with [Jetpack Compose](https://developer.android.com/jetpack/compose).
+- **Stateful/Stateless UI Pattern**: Feature screens are split into a stateful, non-previewable composable (the "Screen") that manages state and a stateless, easily previewable composable (the "Content") that purely renders the UI.
 - **Networking**: Networking is handled by [Ktor](https://ktor.io/), a modern asynchronous HTTP client.
 - **Navigation**: Navigation is managed with [Jetpack Navigation for Compose](https://developer.android.com/jetpack/compose/navigation), using type-safe routes with Kotlin Serialization.
 
@@ -34,14 +35,15 @@ The main application module. Its primary responsibilities are:
 - To assemble the final Android application (APK).
 - To initialize app-wide components (like Koin) in the `Application` class.
 - To host the main `NavHost` and orchestrate the navigation between the different feature modules.
+- To observe the user's chosen theme from the `:core` module and apply it globally to the `ComandaTheme` wrapper.
 
 ### `:core`
 
 This is the foundational library module for the entire application. It contains shared code, components, and utilities that are used by all feature modules. Its key responsibilities include:
 
 - **Networking**: Providing a robust, auto-refreshing Ktor `HttpClient` (`authClient`) for authenticated calls and a separate `basicClient` for unauthenticated calls.
-- **Data Persistence**: Securely persisting authentication tokens using Jetpack `DataStore` and the `AndroidKeyStore` for encryption.
-- **Domain Logic**: Defining the contract for token storage (`TokenRepository`) and shared business logic like `LogoutUseCase`.
+- **Data Persistence**: Securely persisting authentication tokens and user theme preferences using Jetpack `DataStore`.
+- **Domain Logic**: Defining contracts (`TokenRepository`, `ThemeRepository`) and shared business logic (`LogoutUseCase`, `GetThemePreferencesUseCase`, `SaveThemePreferencesUseCase`).
 - **Shared UI**: Providing the application's visual identity (`ComandaTheme`), shared components like `ComandaTopAppBar`, and utility functions for price formatting.
 
 ### `:features`
@@ -59,6 +61,5 @@ This directory contains all the independent feature modules. Each feature is a s
 - **`:features:printers`**: Provides the UI and logic for managing the restaurant's printers, including full CRUD functionality.
 
 - **`:features:settings`**: Contains the main settings screen for the app.
-    - **User Management**: A dedicated sub-feature for managing staff accounts.
-    - **CRUD Operations**: Admins can Create, Read, Update, and Delete users.
-    - **Role Management**: Assign roles (e.g., 'Waiter', 'Admin') to control access permissions.
+    - **Theme Management**: A sub-feature allowing the user to choose between a light theme, a dark theme, or following the system's theme setting. The choice is persisted on the device.
+    - **User Management**: A dedicated sub-feature for managing staff accounts, including full CRUD functionality and role management.

@@ -66,6 +66,9 @@ dependencies {
 
     implementation("androidx.core:core-splashscreen:1.0.1")
 
+    // Koin
+    implementation(libs.koin.android)
+
     // Testing
     testImplementation(libs.junit)
     testImplementation(libs.mockk)

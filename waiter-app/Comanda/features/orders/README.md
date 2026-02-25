@@ -27,7 +27,7 @@ This layer contains the core business logic and models, completely independent o
 
 ### Presentation Layer
 
-This is the UI layer, built with Jetpack Compose.
+This is the UI layer, built with Jetpack Compose. It follows a stateful/stateless pattern where the "Screen" composable manages state and the "Content" composable is a stateless, previewable function.
 
 - **`MenuOrderViewModel.kt`**: The brain of the feature's UI. It uses `SavedStateHandle` to receive navigation arguments (table number, number of people) in a lifecycle-aware way. It manages the complex `MenuOrderUiState`, including the current list of ordered items, the full menu, and UI visibility states. It contains the business logic for adding/removing items from the virtual cart.
 - **`MenuOrderScreen.kt`**: The main screen for this feature. It displays the current order and a grid of menu categories. It uses a `ModalBottomSheet` to allow users to select items from a chosen category. It communicates with the ViewModel to update the order and uses callbacks to notify the UI of the success or failure of network operations.

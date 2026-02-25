@@ -13,13 +13,14 @@ import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
     primary = Orange,
-    background = Orange,
-    surface = White,
+    background = DarkGrey,
+    surface = MediumGrey,
     primaryContainer = Orange,
-    onPrimary = White,
-    onBackground = White,
-    onSurface = Black,
-    onPrimaryContainer = White
+    onPrimary = Black,
+    onBackground = OffWhite,
+    onSurface = OffWhite,
+    onPrimaryContainer = White,
+    tertiaryContainer = Orange
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -45,8 +46,8 @@ private val BrandedColorScheme = lightColorScheme(
 
 @Composable
 fun ComandaTheme(
-    darkTheme: Boolean = false, // Force light mode
-    dynamicColor: Boolean = false, // Disabled to enforce brand colors
+    darkTheme: Boolean = false,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

@@ -24,7 +24,7 @@ This layer contains the core business logic and models for the feature.
 
 ### Presentation Layer
 
-This is the UI layer, built with Jetpack Compose. It is composed of two main screens:
+This is the UI layer, built with Jetpack Compose. It follows a stateful/stateless pattern where the "Screen" composable manages state and the "Content" composable is a stateless, previewable function. It is composed of two main screens:
 
 - **`MenuScreen.kt` / `MenuViewModel.kt`**: This screen provides an overview of all menu categories. It displays them in a list and allows the user to navigate to a specific category's detail screen.
 - **`CategoryScreen.kt` / `CategoryViewModel.kt`**: This screen displays all the items within a single category. It provides the ability to add, edit, and delete items in that category. It uses `SavedStateHandle` to receive the category name as a navigation argument.

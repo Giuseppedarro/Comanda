@@ -14,6 +14,7 @@ import dev.giuseppedarro.comanda.features.printers.presentation.navigation.Print
 import dev.giuseppedarro.comanda.features.printers.presentation.navigation.printersGraph
 import dev.giuseppedarro.comanda.features.settings.presentation.navigation.ManageUsersRoute
 import dev.giuseppedarro.comanda.features.settings.presentation.navigation.Settings
+import dev.giuseppedarro.comanda.features.settings.presentation.navigation.ThemeSettingsRoute
 import dev.giuseppedarro.comanda.features.settings.presentation.navigation.settingsNavGraph
 import dev.giuseppedarro.comanda.features.tables.presentation.navigation.Tables
 import dev.giuseppedarro.comanda.features.tables.presentation.navigation.tablesGraph
@@ -60,7 +61,8 @@ fun NavGraph() {
                     popUpTo<Settings> { inclusive = true }
                 }
             },
-            onManageUsersClick = { navController.navigate(ManageUsersRoute) }
+            onManageUsersClick = { navController.navigate(ManageUsersRoute) },
+            onThemeSettingsClick = { navController.navigate(ThemeSettingsRoute)}
         )
     }
 }
