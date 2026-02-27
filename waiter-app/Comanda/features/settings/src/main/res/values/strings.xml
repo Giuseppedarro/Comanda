@@ -86,4 +86,9 @@
     <string name="follow_system_theme">Follow the system\'s theme</string>
     <string name="dark_mode">Dark Mode</string>
     <string name="enable_dark_mode">Enable dark mode</string>
+
+    <!-- Language Settings Screen -->
+    <string name="language_english">English</string>
+    <string name="language_italian">Italian</string>
+    <string name="language_dutch">Dutch</string>
 </resources>

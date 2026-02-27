@@ -45,7 +45,8 @@ fun SettingsScreen(
     onBackClick: () -> Unit,
     onLogout: () -> Unit,
     onManageUsersClick: () -> Unit,
-    onThemeSettingsClick: () -> Unit
+    onThemeSettingsClick: () -> Unit,
+    onLanguageSettingsClick: () -> Unit
 ) {
     var areNotificationsEnabled by remember { mutableStateOf(true) }
 
@@ -55,7 +56,8 @@ fun SettingsScreen(
         areNotificationsEnabled = areNotificationsEnabled,
         onNotificationsToggle = { newState -> areNotificationsEnabled = newState },
         onManageUsersClick = onManageUsersClick,
-        onThemeSettingsClick = onThemeSettingsClick
+        onThemeSettingsClick = onThemeSettingsClick,
+        onLanguageSettingsClick = onLanguageSettingsClick
     )
 }
 
@@ -66,7 +68,8 @@ fun SettingsContent(
     areNotificationsEnabled: Boolean,
     onNotificationsToggle: (Boolean) -> Unit,
     onManageUsersClick: () -> Unit,
-    onThemeSettingsClick: () -> Unit
+    onThemeSettingsClick: () -> Unit,
+    onLanguageSettingsClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -102,7 +105,7 @@ fun SettingsContent(
                     icon = { Icon(Icons.Default.Language, stringResource(R.string.language), tint = MaterialTheme.colorScheme.primary) },
                     title = stringResource(R.string.language),
                     subtitle = stringResource(R.string.select_your_language),
-                    onClick = { /* TODO */ }
+                    onClick = onLanguageSettingsClick
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))
@@ -197,7 +200,8 @@ private fun SettingsContentPreview() {
             areNotificationsEnabled = true,
             onNotificationsToggle = {},
             onManageUsersClick = {},
-            onThemeSettingsClick = {}
+            onThemeSettingsClick = {},
+            onLanguageSettingsClick = {}
         )
     }
 }

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Comanda</string>
+    <string name="open_table">Apri tavolo</string>
+    <string name="how_many_people_are_sitting_at_this_table">Quante persone sono sedute a questo tavolo?</string>
+    <string name="number_of_people">Numero di persone</string>
+    <string name="confirm">Conferma</string>
+    <string name="cancel">Annulla</string>
+    <string name="remove">Rimuovi</string>
+    <string name="add">Aggiungi</string>
+    <string name="edit_menu_item">Modifica elemento del menu</string>
+    <string name="add_menu_item">Aggiungi elemento del menu</string>
+    <string name="name">Nome</string>
+    <string name="description">Descrizione</string>
+    <string name="price">Prezzo</string>
+    <string name="available">Disponibile</string>
+    <string name="save">Salva</string>
+    <string name="add_new_printer">Aggiungi nuova stampante</string>
+    <string name="printer_name">Nome stampante</string>
+    <string name="printer">Stampante</string>
+    <string name="name_is_required">Il nome è obbligatorio</string>
+    <string name="ip_address">Indirizzo IP</string>
+    <string name="address_is_required">L\'indirizzo è obbligatorio</string>
+    <string name="port">Porta</string>
+    <string name="invalid_port_number">Numero di porta non valido</string>
+    <string name="add_printer">Aggiungi stampante</string>
+    <string name="edit_printer">Modifica stampante</string>
+    <string name="update_printer">Aggiorna stampante</string>
+    <string name="menu">Menu</string>
+    <string name="add_table">Aggiungi tavolo</string>
+    <string name="occupied">Occupato</string>
+    <string name="all">Tutti</string>
+    <string name="sign_in">Accedi</string>
+    <string name="employee_id">ID dipendente</string>
+    <string name="password">Password</string>
+    <string name="configure_server">Configura server</string>
+    <string name="printers">Stampanti</string>
+    <string name="settings_to_be_implemented">Impostazioni (da implementare)</string>
+    <string name="logout">Esci</string>
+    <string name="table_number">Tavolo %1$d</string>
+    <string name="take_order">Prendi ordinazione</string>
+    <string name="modify_order">Modifica ordinazione</string>
+    <string name="port_number">Porta: %1$d</string>
+    <string name="delete_printer">Elimina stampante</string>
+    <string name="login_title">Comanda</string>
+    <string name="login_subtitle">Portale cameriere</string>
+    <string name="login_welcome_back">Bentornato</string>
+    <string name="login_server_configuration_title">Configurazione del server</string>
+    <string name="login_base_url_label">URL di base</string>
+    <string name="settings">Impostazioni</string>
+    <string name="back">Indietro</string>
+
+    <!-- Manage Users Screen -->
+    <string name="manage_users">Gestisci utenti</string>
+    <string name="add_user">Aggiungi utente</string>
+    <string name="edit_user">Modifica utente</string>
+    <string name="delete_user">Elimina utente</string>
+    <string name="no_users_found">Nessun utente trovato</string>
+    <string name="add_user_prompt">Tocca il pulsante + per aggiungere un nuovo utente</string>
+    <string name="add_new_user">Aggiungi nuovo utente</string>
+    <string name="waiter">Cameriere</string>
+    <string name="admin">Amministratore</string>
+    <string name="create">Crea</string>
+    <string name="new_password">Nuova password</string>
+    <string name="update">Aggiorna</string>
+    <string name="delete_user_confirmation">Sei sicuro di voler eliminare questo utente?</string>
+    <string name="delete">Elimina</string>
+
+    <!-- Settings Screen -->
+    <string name="appearance">Aspetto</string>
+    <string name="theme">Tema</string>
+    <string name="choose_your_preferred_theme">Scegli il tuo tema preferito</string>
+    <string name="language">Lingua</string>
+    <string name="select_your_language">Seleziona la tua lingua</string>
+    <string name="notifications">Notifiche</string>
+    <string name="enable_notifications">Abilita notifiche</string>
+    <string name="receive_alerts_and_updates">Ricevi avvisi e aggiornamenti</string>
+    <string name="account">Account</string>
+    <string name="manage_users_subtitle">Aggiungi, rimuovi o modifica account utente</string>
+    <string name="edit_profile">Modifica profilo</string>
+    <string name="edit_profile_subtitle">Cambia il tuo nome o la tua password</string>
+    <string name="logout_subtitle">Verrai riportato alla schermata di accesso</string>
+</resources>
