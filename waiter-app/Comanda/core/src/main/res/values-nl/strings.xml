@@ -1,0 +1,20 @@
+<resources>
+    <string name="confirm">Bevestigen</string>
+    <string name="cancel">Annuleren</string>
+    <string name="remove">Verwijderen</string>
+    <string name="add">Toevoegen</string>
+    <string name="save">Opslaan</string>
+    <string name="back">Terug</string>
+    <string name="name">Naam</string>
+    <string name="description">Omschrijving</string>
+    <string name="price">Prijs</string>
+    <string name="available">Beschikbaar</string>
+    <string name="name_is_required">Naam is verplicht</string>
+    <string name="employee_id">Werknemer ID</string>
+    <string name="password">Wachtwoord</string>
+    <string name="menu">Menu</string>
+    <string name="dismiss">Negeren</string>
+    <string name="printers">Printers</string>
+    <string name="settings">Instellingen</string>
+    <string name="logout">Uitloggen</string>
+</resources>

@@ -25,7 +25,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.giuseppedarro.comanda.core.presentation.ComandaTopAppBar
 import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
-import dev.giuseppedarro.comanda.features.settings.R
+import dev.giuseppedarro.comanda.core.R
+import dev.giuseppedarro.comanda.features.settings.R as SettingsR
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -55,7 +56,7 @@ fun ThemeSettingsContent(
     Scaffold(
         topBar = {
             ComandaTopAppBar(
-                title = stringResource(R.string.theme),
+                title = stringResource(SettingsR.string.theme),
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -73,19 +74,19 @@ fun ThemeSettingsContent(
                 .padding(paddingValues)
         ) {
             Spacer(modifier = Modifier.height(16.dp))
-            SettingsGroup(title = stringResource(R.string.theme_options)) {
+            SettingsGroup(title = stringResource(SettingsR.string.theme_options)) {
                 SettingItem(
-                    icon = { Icon(Icons.Default.Tonality, stringResource(R.string.use_system_theme), tint = MaterialTheme.colorScheme.primary) },
-                    title = stringResource(R.string.use_system_theme),
-                    subtitle = stringResource(R.string.follow_system_theme),
+                    icon = { Icon(Icons.Default.Tonality, stringResource(SettingsR.string.use_system_theme), tint = MaterialTheme.colorScheme.primary) },
+                    title = stringResource(SettingsR.string.use_system_theme),
+                    subtitle = stringResource(SettingsR.string.follow_system_theme),
                     onClick = { onUseSystemThemeChange(!useSystemTheme) },
                     control = { Switch(checked = useSystemTheme, onCheckedChange = onUseSystemThemeChange) }
                 )
                 Divider(modifier = Modifier.padding(horizontal = 16.dp))
                 SettingItem(
-                    icon = { Icon(Icons.Default.DarkMode, stringResource(R.string.dark_mode), tint = MaterialTheme.colorScheme.primary) },
-                    title = stringResource(R.string.dark_mode),
-                    subtitle = stringResource(R.string.enable_dark_mode),
+                    icon = { Icon(Icons.Default.DarkMode, stringResource(SettingsR.string.dark_mode), tint = MaterialTheme.colorScheme.primary) },
+                    title = stringResource(SettingsR.string.dark_mode),
+                    subtitle = stringResource(SettingsR.string.enable_dark_mode),
                     onClick = { onDarkModeChange(!isDarkMode) },
                     control = { Switch(checked = isDarkMode, onCheckedChange = onDarkModeChange, enabled = !useSystemTheme) }
                 )

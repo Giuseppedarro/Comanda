@@ -12,7 +12,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import dev.giuseppedarro.comanda.features.printers.R
+import dev.giuseppedarro.comanda.core.R
+import dev.giuseppedarro.comanda.features.printers.R as PrintersR
 import dev.giuseppedarro.comanda.features.printers.domain.model.Printer
 
 @Composable
@@ -39,7 +40,7 @@ fun EditPrinterDialog(
                     .padding(24.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.edit_printer),
+                    text = stringResource(PrintersR.string.edit_printer),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = MaterialTheme.typography.headlineSmall.fontWeight
                 )
@@ -53,11 +54,11 @@ fun EditPrinterDialog(
                         name = it
                         hasError = false
                     },
-                    label = { Text(stringResource(R.string.printer_name)) },
+                    label = { Text(stringResource(PrintersR.string.printer_name)) },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Print,
-                            contentDescription = stringResource(R.string.printer)
+                            contentDescription = stringResource(PrintersR.string.printer)
                         )
                     },
                     modifier = Modifier.fillMaxWidth(),
@@ -76,17 +77,17 @@ fun EditPrinterDialog(
                         address = it
                         hasError = false
                     },
-                    label = { Text(stringResource(R.string.ip_address)) },
+                    label = { Text(stringResource(PrintersR.string.ip_address)) },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Wifi,
-                            contentDescription = stringResource(R.string.ip_address)
+                            contentDescription = stringResource(PrintersR.string.ip_address)
                         )
                     },
                     modifier = Modifier.fillMaxWidth(),
                     isError = hasError && address.isBlank(),
                     supportingText = if (hasError && address.isBlank()) {
-                        { Text(stringResource(R.string.address_is_required)) }
+                        { Text(stringResource(PrintersR.string.address_is_required)) }
                     } else null
                 )
 
@@ -99,11 +100,11 @@ fun EditPrinterDialog(
                         port = it.filter { it.isDigit() }
                         hasError = false
                     },
-                    label = { Text(stringResource(R.string.port)) },
+                    label = { Text(stringResource(PrintersR.string.port)) },
                     modifier = Modifier.fillMaxWidth(),
                     isError = hasError && (port.isBlank() || port.toIntOrNull() == null),
                     supportingText = if (hasError) {
-                        { Text(stringResource(R.string.invalid_port_number)) }
+                        { Text(stringResource(PrintersR.string.invalid_port_number)) }
                     } else null,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
@@ -129,7 +130,7 @@ fun EditPrinterDialog(
                             onConfirm(printer.id, name, address, port.toInt())
                         }
                     ) {
-                        Text(stringResource(R.string.update_printer))
+                        Text(stringResource(PrintersR.string.update_printer))
                     }
                 }
             }

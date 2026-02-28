@@ -1,0 +1,17 @@
+<resources>
+    <string name="add_new_printer">Nieuwe printer toevoegen</string>
+    <string name="printer_name">Printernaam</string>
+    <string name="printer">Printer</string>
+    <string name="ip_address">IP-adres</string>
+    <string name="address_is_required">Adres is verplicht</string>
+    <string name="port">Poort</string>
+    <string name="invalid_port_number">Ongeldig poortnummer</string>
+    <string name="add_printer">Printer toevoegen</string>
+    <string name="edit_printer">Printer bewerken</string>
+    <string name="update_printer">Printer bijwerken</string>
+    <string name="port_number">Poort: %1$d</string>
+    <string name="delete_printer">Printer verwijderen</string>
+    <string name="navigate_back">Navigeer terug</string>
+    <string name="no_printers_configured">Geen printers geconfigureerd</string>
+    <string name="add_printer_prompt">Tik op de +-knop om een nieuwe printer toe te voegen</string>
+</resources>

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
@@ -20,7 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.giuseppedarro.comanda.core.presentation.ComandaTopAppBar
 import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
-import dev.giuseppedarro.comanda.features.settings.R
+import dev.giuseppedarro.comanda.core.R
+import dev.giuseppedarro.comanda.features.settings.R as SettingsR
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -46,7 +48,7 @@ fun LanguageSettingsContent(
     Scaffold(
         topBar = {
             ComandaTopAppBar(
-                title = stringResource(R.string.language),
+                title = stringResource(SettingsR.string.language),
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -64,22 +66,24 @@ fun LanguageSettingsContent(
                 .padding(paddingValues)
         ) {
             Spacer(modifier = Modifier.height(16.dp))
-            SettingsGroup(title = stringResource(R.string.select_your_language)) {
+            SettingsGroup(title = stringResource(SettingsR.string.select_your_language)) {
                 SettingItem(
                     icon = { RadioButton(selected = currentLanguage == "en", onClick = { onLanguageChange("en") }) },
-                    title = stringResource(R.string.language_english),
+                    title = stringResource(SettingsR.string.language_english),
                     subtitle = "English",
                     onClick = { onLanguageChange("en") }
                 )
+                Divider()
                 SettingItem(
                     icon = { RadioButton(selected = currentLanguage == "it", onClick = { onLanguageChange("it") }) },
-                    title = stringResource(R.string.language_italian),
+                    title = stringResource(SettingsR.string.language_italian),
                     subtitle = "Italiano",
                     onClick = { onLanguageChange("it") }
                 )
+                Divider()
                 SettingItem(
                     icon = { RadioButton(selected = currentLanguage == "nl", onClick = { onLanguageChange("nl") }) },
-                    title = stringResource(R.string.language_dutch),
+                    title = stringResource(SettingsR.string.language_dutch),
                     subtitle = "Nederlands",
                     onClick = { onLanguageChange("nl") }
                 )

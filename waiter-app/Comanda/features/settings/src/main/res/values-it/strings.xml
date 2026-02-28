@@ -1,4 +1,46 @@
 <resources>
+    <string name="settings">Impostazioni</string>
+    <string name="logout">Esci</string>
+
+    <!-- Manage Users Screen -->
+    <string name="manage_users">Gestisci utenti</string>
+    <string name="add_user">Aggiungi utente</string>
+    <string name="edit_user">Modifica utente</string>
+    <string name="delete_user">Elimina utente</string>
+    <string name="no_users_found">Nessun utente trovato</string>
+    <string name="add_user_prompt">Tocca il pulsante + per aggiungere un nuovo utente</string>
+    <string name="add_new_user">Aggiungi nuovo utente</string>
+    <string name="waiter">Cameriere</string>
+    <string name="admin">Amministratore</string>
+    <string name="create">Crea</string>
+    <string name="new_password">Nuova password</string>
+    <string name="update">Aggiorna</string>
+    <string name="delete_user_confirmation">Sei sicuro di voler eliminare questo utente?</string>
+    <string name="delete">Elimina</string>
+
+    <!-- Settings Screen -->
+    <string name="appearance">Aspetto</string>
+    <string name="theme">Tema</string>
+    <string name="choose_your_preferred_theme">Scegli il tuo tema preferito</string>
+    <string name="language">Lingua</string>
+    <string name="select_your_language">Seleziona la tua lingua</string>
+    <string name="notifications">Notifiche</string>
+    <string name="enable_notifications">Abilita notifiche</string>
+    <string name="receive_alerts_and_updates">Ricevi avvisi e aggiornamenti</string>
+    <string name="account">Account</string>
+    <string name="manage_users_subtitle">Aggiungi, rimuovi o modifica account utente</string>
+    <string name="edit_profile">Modifica profilo</string>
+    <string name="edit_profile_subtitle">Cambia il tuo nome o la tua password</string>
+    <string name="logout_subtitle">Verrai riportato alla schermata di accesso</string>
+
+    <!-- Theme Settings Screen -->
+    <string name="theme_options">Opzioni del tema</string>
+    <string name="use_system_theme">Usa il tema di sistema</string>
+    <string name="follow_system_theme">Segui il tema del sistema</string>
+    <string name="dark_mode">Modalità scura</string>
+    <string name="enable_dark_mode">Abilita la modalità scura</string>
+
+    <!-- Language Settings Screen -->
     <string name="language_english">Inglese</string>
     <string name="language_italian">Italiano</string>
     <string name="language_dutch">Olandese</string>

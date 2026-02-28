@@ -1,0 +1,11 @@
+<resources>
+    <string name="sign_in">Accedi</string>
+    <string name="employee_id">ID Dipendente</string>
+    <string name="password">Password</string>
+    <string name="configure_server">Configura server</string>
+    <string name="login_title">Comanda</string>
+    <string name="login_subtitle">Portale Cameriere</string>
+    <string name="login_welcome_back">Bentornato</string>
+    <string name="login_server_configuration_title">Configurazione Server</string>
+    <string name="login_base_url_label">URL Base</string>
+</resources>

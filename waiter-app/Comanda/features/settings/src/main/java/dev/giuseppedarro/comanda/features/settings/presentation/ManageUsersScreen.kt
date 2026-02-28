@@ -52,7 +52,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.giuseppedarro.comanda.features.settings.R
+import dev.giuseppedarro.comanda.core.R
+import dev.giuseppedarro.comanda.features.settings.R as SettingsR
 import dev.giuseppedarro.comanda.core.presentation.ComandaTopAppBar
 import dev.giuseppedarro.comanda.features.settings.domain.model.User
 import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
@@ -132,7 +133,7 @@ private fun ManageUsersContent(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             ComandaTopAppBar(
-                title = stringResource(R.string.manage_users),
+                title = stringResource(SettingsR.string.manage_users),
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -145,7 +146,7 @@ private fun ManageUsersContent(
         },
         floatingActionButton = {
             FloatingActionButton(onClick = onAddUserClick) {
-                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_user))
+                Icon(Icons.Default.Add, contentDescription = stringResource(SettingsR.string.add_user))
             }
         }
     ) { paddingValues ->
@@ -165,13 +166,13 @@ private fun ManageUsersContent(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = stringResource(R.string.no_users_found),
+                            text = stringResource(SettingsR.string.no_users_found),
                             style = MaterialTheme.typography.titleLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = stringResource(R.string.add_user_prompt),
+                            text = stringResource(SettingsR.string.add_user_prompt),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -234,13 +235,13 @@ private fun UserItem(
             }
             IconButton(onClick = onEdit) {
                 Icon(
-                    imageVector = Icons.Default.Edit, contentDescription = stringResource(R.string.edit_user),
+                    imageVector = Icons.Default.Edit, contentDescription = stringResource(SettingsR.string.edit_user),
                     tint = MaterialTheme.colorScheme.primary
                     )
             }
             IconButton(onClick = onDelete) {
                 Icon(
-                    imageVector = Icons.Default.Delete, contentDescription = stringResource(R.string.delete_user),
+                    imageVector = Icons.Default.Delete, contentDescription = stringResource(SettingsR.string.delete_user),
                     tint = MaterialTheme.colorScheme.primary
                     )
             }
@@ -259,7 +260,7 @@ private fun AddUserDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
-        title = { Text(stringResource(R.string.add_new_user)) },
+        title = { Text(stringResource(SettingsR.string.add_new_user)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (isLoading) {
@@ -289,12 +290,12 @@ private fun AddUserDialog(
                         FilterChip(
                             selected = state.role == "WAITER",
                             onClick = { onStateChange(state.copy(role = "WAITER")) },
-                            label = { Text(stringResource(R.string.waiter)) }
+                            label = { Text(stringResource(SettingsR.string.waiter)) }
                         )
                         FilterChip(
                             selected = state.role == "ADMIN",
                             onClick = { onStateChange(state.copy(role = "ADMIN")) },
-                            label = { Text(stringResource(R.string.admin)) }
+                            label = { Text(stringResource(SettingsR.string.admin)) }
                         )
                     }
                 }
@@ -305,7 +306,7 @@ private fun AddUserDialog(
                 onClick = onConfirm,
                 enabled = !isLoading
             ) {
-                Text(stringResource(R.string.create))
+                Text(stringResource(SettingsR.string.create))
             }
         },
         dismissButton = {
@@ -327,7 +328,7 @@ private fun EditUserDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
-        title = { Text(stringResource(R.string.edit_user)) },
+        title = { Text(stringResource(SettingsR.string.edit_user)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (isLoading) {
@@ -348,7 +349,7 @@ private fun EditUserDialog(
                     OutlinedTextField(
                         value = state.password,
                         onValueChange = { onStateChange(state.copy(password = it)) },
-                        label = { Text(stringResource(R.string.new_password)) },
+                        label = { Text(stringResource(SettingsR.string.new_password)) },
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         singleLine = true
@@ -357,12 +358,12 @@ private fun EditUserDialog(
                         FilterChip(
                             selected = state.role == "WAITER",
                             onClick = { onStateChange(state.copy(role = "WAITER")) },
-                            label = { Text(stringResource(R.string.waiter)) }
+                            label = { Text(stringResource(SettingsR.string.waiter)) }
                         )
                         FilterChip(
                             selected = state.role == "ADMIN",
                             onClick = { onStateChange(state.copy(role = "ADMIN")) },
-                            label = { Text(stringResource(R.string.admin)) }
+                            label = { Text(stringResource(SettingsR.string.admin)) }
                         )
                     }
                 }
@@ -373,7 +374,7 @@ private fun EditUserDialog(
                 onClick = onConfirm,
                 enabled = !isLoading
             ) {
-                Text(stringResource(R.string.update))
+                Text(stringResource(SettingsR.string.update))
             }
         },
         dismissButton = {
@@ -392,14 +393,14 @@ private fun DeleteUserDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
-        title = { Text(stringResource(R.string.delete_user)) },
-        text = { Text(stringResource(R.string.delete_user_confirmation)) },
+        title = { Text(stringResource(SettingsR.string.delete_user)) },
+        text = { Text(stringResource(SettingsR.string.delete_user_confirmation)) },
         confirmButton = {
             TextButton(
                 onClick = onConfirm,
                 enabled = !isLoading
             ) {
-                Text(stringResource(R.string.delete))
+                Text(stringResource(SettingsR.string.delete))
             }
         },
         dismissButton = {

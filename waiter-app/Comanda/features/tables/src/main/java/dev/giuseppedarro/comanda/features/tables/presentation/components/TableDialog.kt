@@ -19,7 +19,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.giuseppedarro.comanda.features.tables.R
+import dev.giuseppedarro.comanda.core.R
+import dev.giuseppedarro.comanda.features.tables.R as TablesR
 import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
 
 @Composable
@@ -34,10 +35,10 @@ fun TableDialog(
     AlertDialog(
         modifier = modifier,
         onDismissRequest = onDismissRequest,
-        title = { Text(text = stringResource(R.string.open_table)) },
+        title = { Text(text = stringResource(TablesR.string.open_table)) },
         text = {
             Column {
-                Text(text = stringResource(R.string.how_many_people_are_sitting_at_this_table))
+                Text(text = stringResource(TablesR.string.how_many_people_are_sitting_at_this_table))
                 Spacer(modifier = Modifier.height(16.dp))
                 OutlinedTextField(
                     value = numberOfPeople,
@@ -47,7 +48,7 @@ fun TableDialog(
                             numberOfPeople = newValue
                         }
                     },
-                    label = { Text(stringResource(R.string.number_of_people)) },
+                    label = { Text(stringResource(TablesR.string.number_of_people)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )

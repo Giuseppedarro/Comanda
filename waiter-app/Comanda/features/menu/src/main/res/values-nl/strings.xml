@@ -1,0 +1,4 @@
+<resources>
+    <string name="edit_menu_item">Menukaartitem bewerken</string>
+    <string name="add_menu_item">Menukaartitem toevoegen</string>
+</resources>

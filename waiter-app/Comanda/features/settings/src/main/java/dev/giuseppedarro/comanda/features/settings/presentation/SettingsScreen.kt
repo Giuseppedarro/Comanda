@@ -36,7 +36,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.giuseppedarro.comanda.features.settings.R
+import dev.giuseppedarro.comanda.core.R
+import dev.giuseppedarro.comanda.features.settings.R as SettingsR
 import dev.giuseppedarro.comanda.core.presentation.ComandaTopAppBar
 import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
 
@@ -74,7 +75,7 @@ fun SettingsContent(
     Scaffold(
         topBar = {
             ComandaTopAppBar(
-                title = stringResource(R.string.settings),
+                title = stringResource(SettingsR.string.settings),
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -93,51 +94,51 @@ fun SettingsContent(
                 .verticalScroll(rememberScrollState())
         ) {
             Spacer(modifier = Modifier.height(16.dp))
-            SettingsGroup(title = stringResource(R.string.appearance)) {
+            SettingsGroup(title = stringResource(SettingsR.string.appearance)) {
                 SettingItem(
-                    icon = { Icon(Icons.Default.Palette, stringResource(R.string.theme), tint = MaterialTheme.colorScheme.primary) },
-                    title = stringResource(R.string.theme),
-                    subtitle = stringResource(R.string.choose_your_preferred_theme),
+                    icon = { Icon(Icons.Default.Palette, stringResource(SettingsR.string.theme), tint = MaterialTheme.colorScheme.primary) },
+                    title = stringResource(SettingsR.string.theme),
+                    subtitle = stringResource(SettingsR.string.choose_your_preferred_theme),
                     onClick = onThemeSettingsClick
                 )
                 Divider(modifier = Modifier.padding(horizontal = 16.dp))
                 SettingItem(
-                    icon = { Icon(Icons.Default.Language, stringResource(R.string.language), tint = MaterialTheme.colorScheme.primary) },
-                    title = stringResource(R.string.language),
-                    subtitle = stringResource(R.string.select_your_language),
+                    icon = { Icon(Icons.Default.Language, stringResource(SettingsR.string.language), tint = MaterialTheme.colorScheme.primary) },
+                    title = stringResource(SettingsR.string.language),
+                    subtitle = stringResource(SettingsR.string.select_your_language),
                     onClick = onLanguageSettingsClick
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))
-            SettingsGroup(title = stringResource(R.string.notifications)) {
+            SettingsGroup(title = stringResource(SettingsR.string.notifications)) {
                 SettingItem(
-                    icon = { Icon(Icons.Default.Notifications, stringResource(R.string.notifications), tint = MaterialTheme.colorScheme.primary) },
-                    title = stringResource(R.string.enable_notifications),
-                    subtitle = stringResource(R.string.receive_alerts_and_updates),
+                    icon = { Icon(Icons.Default.Notifications, stringResource(SettingsR.string.notifications), tint = MaterialTheme.colorScheme.primary) },
+                    title = stringResource(SettingsR.string.enable_notifications),
+                    subtitle = stringResource(SettingsR.string.receive_alerts_and_updates),
                     onClick = { onNotificationsToggle(!areNotificationsEnabled) },
                     control = { Switch(checked = areNotificationsEnabled, onCheckedChange = onNotificationsToggle) }
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))
-            SettingsGroup(title = stringResource(R.string.account)) {
+            SettingsGroup(title = stringResource(SettingsR.string.account)) {
                 SettingItem(
-                    icon = { Icon(Icons.Default.ManageAccounts, stringResource(R.string.manage_users), tint = MaterialTheme.colorScheme.primary) },
-                    title = stringResource(R.string.manage_users),
-                    subtitle = stringResource(R.string.manage_users_subtitle),
+                    icon = { Icon(Icons.Default.ManageAccounts, stringResource(SettingsR.string.manage_users), tint = MaterialTheme.colorScheme.primary) },
+                    title = stringResource(SettingsR.string.manage_users),
+                    subtitle = stringResource(SettingsR.string.manage_users_subtitle),
                     onClick = onManageUsersClick
                 )
                 Divider(modifier = Modifier.padding(horizontal = 16.dp))
                 SettingItem(
-                    icon = { Icon(Icons.Default.Edit, stringResource(R.string.edit_profile), tint = MaterialTheme.colorScheme.primary) },
-                    title = stringResource(R.string.edit_profile),
-                    subtitle = stringResource(R.string.edit_profile_subtitle),
+                    icon = { Icon(Icons.Default.Edit, stringResource(SettingsR.string.edit_profile), tint = MaterialTheme.colorScheme.primary) },
+                    title = stringResource(SettingsR.string.edit_profile),
+                    subtitle = stringResource(SettingsR.string.edit_profile_subtitle),
                     onClick = { /* TODO */ }
                 )
                 Divider(modifier = Modifier.padding(horizontal = 16.dp))
                 SettingItem(
-                    icon = { Icon(Icons.AutoMirrored.Filled.Logout, stringResource(R.string.logout), tint = MaterialTheme.colorScheme.primary) },
-                    title = stringResource(R.string.logout),
-                    subtitle = stringResource(R.string.logout_subtitle),
+                    icon = { Icon(Icons.AutoMirrored.Filled.Logout, stringResource(SettingsR.string.logout), tint = MaterialTheme.colorScheme.primary) },
+                    title = stringResource(SettingsR.string.logout),
+                    subtitle = stringResource(SettingsR.string.logout_subtitle),
                     onClick = onLogout
                 )
             }
