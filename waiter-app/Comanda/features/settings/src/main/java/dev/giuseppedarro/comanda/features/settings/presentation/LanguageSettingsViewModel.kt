@@ -17,13 +17,32 @@ class LanguageSettingsViewModel(
 
     init {
         val currentLanguage = getLanguageUseCase()
-        _uiState.update { it.copy(currentLanguage = currentLanguage) }
+        _uiState.update {
+            it.copy(
+                currentLanguage = currentLanguage,
+                useSystemLanguage = currentLanguage.isEmpty()
+            )
+        }
     }
 
     fun onLanguageChange(language: String) {
         setLanguageUseCase(language)
         _uiState.update { it.copy(currentLanguage = language) }
     }
+
+    fun onUseSystemLanguageChange(useSystem: Boolean) {
+        if (useSystem) {
+            setLanguageUseCase("")
+            _uiState.update { it.copy(useSystemLanguage = true, currentLanguage = "") }
+        } else {
+            val defaultLanguage = "en"
+            setLanguageUseCase(defaultLanguage)
+            _uiState.update { it.copy(useSystemLanguage = false, currentLanguage = defaultLanguage) }
+        }
+    }
 }
 
-data class LanguageSettingsUiState(val currentLanguage: String = "")
+data class LanguageSettingsUiState(
+    val currentLanguage: String = "",
+    val useSystemLanguage: Boolean = false
+)

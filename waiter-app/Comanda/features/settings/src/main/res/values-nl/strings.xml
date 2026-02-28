@@ -44,4 +44,6 @@
     <string name="language_english">Engels</string>
     <string name="language_italian">Italiaans</string>
     <string name="language_dutch">Nederlands</string>
+    <string name="use_system_language">Systeemtaal gebruiken</string>
+    <string name="follow_system_language">Volg de systeemtaal</string>
 </resources>

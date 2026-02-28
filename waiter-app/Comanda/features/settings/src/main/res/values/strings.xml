@@ -44,4 +44,6 @@
     <string name="language_english">English</string>
     <string name="language_italian">Italian</string>
     <string name="language_dutch">Dutch</string>
+    <string name="use_system_language">Use system language</string>
+    <string name="follow_system_language">Follow the system\'s language</string>
 </resources>

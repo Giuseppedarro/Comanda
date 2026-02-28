@@ -12,6 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -35,7 +36,9 @@ fun LanguageSettingsScreen(
     LanguageSettingsContent(
         onBackClick = onBackClick,
         currentLanguage = uiState.currentLanguage,
-        onLanguageChange = viewModel::onLanguageChange
+        useSystemLanguage = uiState.useSystemLanguage,
+        onLanguageChange = viewModel::onLanguageChange,
+        onUseSystemLanguageChange = viewModel::onUseSystemLanguageChange
     )
 }
 
@@ -43,7 +46,9 @@ fun LanguageSettingsScreen(
 fun LanguageSettingsContent(
     onBackClick: () -> Unit,
     currentLanguage: String,
-    onLanguageChange: (String) -> Unit
+    useSystemLanguage: Boolean,
+    onLanguageChange: (String) -> Unit,
+    onUseSystemLanguageChange: (Boolean) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -68,24 +73,31 @@ fun LanguageSettingsContent(
             Spacer(modifier = Modifier.height(16.dp))
             SettingsGroup(title = stringResource(SettingsR.string.select_your_language)) {
                 SettingItem(
-                    icon = { RadioButton(selected = currentLanguage == "en", onClick = { onLanguageChange("en") }) },
+                    icon = { Switch(checked = useSystemLanguage, onCheckedChange = onUseSystemLanguageChange) },
+                    title = stringResource(SettingsR.string.use_system_language),
+                    subtitle = stringResource(SettingsR.string.follow_system_language),
+                    onClick = { onUseSystemLanguageChange(!useSystemLanguage) }
+                )
+                Divider()
+                SettingItem(
+                    icon = { RadioButton(selected = currentLanguage == "en", onClick = { onLanguageChange("en") }, enabled = !useSystemLanguage) },
                     title = stringResource(SettingsR.string.language_english),
-                    subtitle = "English",
-                    onClick = { onLanguageChange("en") }
+                    subtitle = stringResource(SettingsR.string.language_english),
+                    onClick = { if (!useSystemLanguage) onLanguageChange("en") }
                 )
                 Divider()
                 SettingItem(
-                    icon = { RadioButton(selected = currentLanguage == "it", onClick = { onLanguageChange("it") }) },
+                    icon = { RadioButton(selected = currentLanguage == "it", onClick = { onLanguageChange("it") }, enabled = !useSystemLanguage) },
                     title = stringResource(SettingsR.string.language_italian),
-                    subtitle = "Italiano",
-                    onClick = { onLanguageChange("it") }
+                    subtitle = stringResource(SettingsR.string.language_italian),
+                    onClick = { if (!useSystemLanguage) onLanguageChange("it") }
                 )
                 Divider()
                 SettingItem(
-                    icon = { RadioButton(selected = currentLanguage == "nl", onClick = { onLanguageChange("nl") }) },
+                    icon = { RadioButton(selected = currentLanguage == "nl", onClick = { onLanguageChange("nl") }, enabled = !useSystemLanguage) },
                     title = stringResource(SettingsR.string.language_dutch),
-                    subtitle = "Nederlands",
-                    onClick = { onLanguageChange("nl") }
+                    subtitle = stringResource(SettingsR.string.language_dutch),
+                    onClick = { if (!useSystemLanguage) onLanguageChange("nl") }
                 )
             }
         }
@@ -99,7 +111,9 @@ private fun LanguageSettingsContentPreview() {
         LanguageSettingsContent(
             onBackClick = {},
             currentLanguage = "en",
-            onLanguageChange = {}
+            useSystemLanguage = false,
+            onLanguageChange = {},
+            onUseSystemLanguageChange = {}
         )
     }
 }
