@@ -22,6 +22,7 @@ This package is responsible for the secure persistence of shared data.
 
 - **`TokenRepositoryImpl.kt`**: The concrete implementation of `TokenRepository`. It uses a named Jetpack `DataStore` to save tokens to disk.
 - **`ThemeRepositoryImpl.kt`**: The concrete implementation of `ThemeRepository`. It uses a separate, named Jetpack `DataStore` to persist the user's chosen theme preferences.
+- **`LanguageRepositoryImpl.kt`**: The concrete implementation of `LanguageRepository`. It uses `AppCompatDelegate` to set the app's language.
 - **`CryptoManager.kt`**: A robust encryption utility that uses `AES/GCM` backed by the `AndroidKeyStore`. It ensures that authentication tokens are always stored securely on the device, never in plain text.
 
 ### `domain` Package
@@ -30,8 +31,10 @@ This layer defines the contracts and business logic for shared data.
 
 - **`TokenRepository.kt`**: The interface (contract) for storing and retrieving authentication tokens.
 - **`ThemeRepository.kt`**: The interface (contract) for storing and retrieving the application's theme preferences.
+- **`LanguageRepository.kt`**: The interface (contract) for setting and getting the app's language.
 - **`use_case/LogoutUseCase.kt`**: A simple, reusable use case that encapsulates the logic for logging out a user by clearing their stored tokens.
 - **`use_case/GetThemePreferencesUseCase.kt` & `SaveThemePreferencesUseCase.kt`**: Use cases for retrieving and saving the app theme preferences.
+- **`use_case/GetLanguageUseCase.kt` & `SetLanguageUseCase.kt`**: Use cases for retrieving and saving the app language.
 
 ### `ui` & `presentation` Packages
 
