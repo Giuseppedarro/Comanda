@@ -46,7 +46,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.giuseppedarro.comanda.features.login.R
+import dev.giuseppedarro.comanda.core.R
+import dev.giuseppedarro.comanda.features.login.R as LoginR
 import dev.giuseppedarro.comanda.core.ui.theme.BrandedTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -116,12 +117,12 @@ fun LoginContent(
                 tint = MaterialTheme.colorScheme.onBackground // White
             )
             Text(
-                text = stringResource(R.string.login_title),
+                text = stringResource(LoginR.string.login_title),
                 style = MaterialTheme.typography.headlineLarge,
                 color = MaterialTheme.colorScheme.onBackground // White
             )
             Text(
-                text = stringResource(R.string.login_subtitle),
+                text = stringResource(LoginR.string.login_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onBackground // White
             )
@@ -142,7 +143,7 @@ fun LoginContent(
                     modifier = Modifier.padding(24.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.login_welcome_back),
+                        text = stringResource(LoginR.string.login_welcome_back),
                         style = MaterialTheme.typography.headlineSmall,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth(),
@@ -211,7 +212,7 @@ fun LoginContent(
                                 )
                             } else {
                                 Text(
-                                    text = stringResource(R.string.sign_in),
+                                    text = stringResource(LoginR.string.sign_in),
                                     modifier = Modifier.padding(8.dp)
                                 )
                             }
@@ -231,7 +232,7 @@ fun LoginContent(
         ) {
             Icon(
                 imageVector = Icons.Default.Wifi,
-                contentDescription = stringResource(R.string.configure_server),
+                contentDescription = stringResource(LoginR.string.configure_server),
                 tint = MaterialTheme.colorScheme.onBackground
             )
         }
@@ -239,12 +240,12 @@ fun LoginContent(
         if (showDialog.value) {
             AlertDialog(
                 onDismissRequest = { showDialog.value = false },
-                title = { Text(stringResource(R.string.login_server_configuration_title)) },
+                title = { Text(stringResource(LoginR.string.login_server_configuration_title)) },
                 text = {
                     OutlinedTextField(
                         value = baseUrlText.value,
                         onValueChange = { baseUrlText.value = it },
-                        label = { Text(stringResource(R.string.login_base_url_label)) },
+                        label = { Text(stringResource(LoginR.string.login_base_url_label)) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )

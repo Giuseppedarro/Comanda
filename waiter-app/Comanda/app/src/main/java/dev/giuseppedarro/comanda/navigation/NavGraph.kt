@@ -12,6 +12,7 @@ import dev.giuseppedarro.comanda.features.orders.presentation.navigation.MenuOrd
 import dev.giuseppedarro.comanda.features.orders.presentation.navigation.ordersGraph
 import dev.giuseppedarro.comanda.features.printers.presentation.navigation.Printers
 import dev.giuseppedarro.comanda.features.printers.presentation.navigation.printersGraph
+import dev.giuseppedarro.comanda.features.settings.presentation.navigation.LanguageSettingsRoute
 import dev.giuseppedarro.comanda.features.settings.presentation.navigation.ManageUsersRoute
 import dev.giuseppedarro.comanda.features.settings.presentation.navigation.Settings
 import dev.giuseppedarro.comanda.features.settings.presentation.navigation.ThemeSettingsRoute
@@ -62,7 +63,8 @@ fun NavGraph() {
                 }
             },
             onManageUsersClick = { navController.navigate(ManageUsersRoute) },
-            onThemeSettingsClick = { navController.navigate(ThemeSettingsRoute)}
+            onThemeSettingsClick = { navController.navigate(ThemeSettingsRoute) },
+            onLanguageSettingsClick = { navController.navigate(LanguageSettingsRoute) }
         )
     }
 }

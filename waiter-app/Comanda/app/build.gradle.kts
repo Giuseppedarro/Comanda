@@ -20,6 +20,11 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["mockk.agent.android.factory"] = "io.mockk.proxy.android.AndroidMockKAgentFactory"
+        resourceConfigurations += listOf("en", "it", "nl")
+    }
+
+    androidResources {
+        generateLocaleConfig = true
     }
 
     buildTypes {

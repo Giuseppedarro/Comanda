@@ -1,0 +1,49 @@
+<resources>
+    <string name="settings">Instellingen</string>
+    <string name="logout">Uitloggen</string>
+
+    <!-- Manage Users Screen -->
+    <string name="manage_users">Gebruikers beheren</string>
+    <string name="add_user">Gebruiker toevoegen</string>
+    <string name="edit_user">Gebruiker bewerken</string>
+    <string name="delete_user">Gebruiker verwijderen</string>
+    <string name="no_users_found">Geen gebruikers gevonden</string>
+    <string name="add_user_prompt">Tik op de +-knop om een nieuwe gebruiker toe te voegen</string>
+    <string name="add_new_user">Nieuwe gebruiker toevoegen</string>
+    <string name="waiter">Ober</string>
+    <string name="admin">Beheerder</string>
+    <string name="create">Aanmaken</string>
+    <string name="new_password">Nieuw wachtwoord</string>
+    <string name="update">Bijwerken</string>
+    <string name="delete_user_confirmation">Weet u zeker dat u deze gebruiker wilt verwijderen?</string>
+    <string name="delete">Verwijderen</string>
+
+    <!-- Settings Screen -->
+    <string name="appearance">Uiterlijk</string>
+    <string name="theme">Thema</string>
+    <string name="choose_your_preferred_theme">Kies uw voorkeursthema</string>
+    <string name="language">Taal</string>
+    <string name="select_your_language">Selecteer uw taal</string>
+    <string name="notifications">Meldingen</string>
+    <string name="enable_notifications">Meldingen inschakelen</string>
+    <string name="receive_alerts_and_updates">Waarschuwingen en updates ontvangen</string>
+    <string name="account">Account</string>
+    <string name="manage_users_subtitle">Gebruikersaccounts toevoegen, verwijderen of bewerken</string>
+    <string name="edit_profile">Profiel bewerken</string>
+    <string name="edit_profile_subtitle">Uw naam of wachtwoord wijzigen</string>
+    <string name="logout_subtitle">U wordt teruggestuurd naar het inlogscherm</string>
+
+    <!-- Theme Settings Screen -->
+    <string name="theme_options">Thema-opties</string>
+    <string name="use_system_theme">Systeemthema gebruiken</string>
+    <string name="follow_system_theme">Volg het thema van het systeem</string>
+    <string name="dark_mode">Donkere modus</string>
+    <string name="enable_dark_mode">Donkere modus inschakelen</string>
+
+    <!-- Language Settings Screen -->
+    <string name="language_english">Engels</string>
+    <string name="language_italian">Italiaans</string>
+    <string name="language_dutch">Nederlands</string>
+    <string name="use_system_language">Systeemtaal gebruiken</string>
+    <string name="follow_system_language">Volg de systeemtaal</string>
+</resources>

@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Comanda</string>
+    <string name="open_table">Apri Tavolo</string>
+    <string name="how_many_people_are_sitting_at_this_table">Quante persone sono sedute a questo tavolo?</string>
+    <string name="number_of_people">Numero di persone</string>
+    <string name="add_table">Aggiungi Tavolo</string>
+    <string name="occupied">Occupato</string>
+    <string name="all">Tutti</string>
+    <string name="table_number">Tavolo %1$d</string>
+    <string name="take_order">Prendi Ordine</string>
+    <string name="modify_order">Modifica Ordine</string>
+</resources>

@@ -1,9 +1,9 @@
 package dev.giuseppedarro.comanda
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -18,7 +18,7 @@ import dev.giuseppedarro.comanda.navigation.NavGraph
 import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
 import org.koin.android.ext.android.inject
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     private val getThemePreferencesUseCase: GetThemePreferencesUseCase by inject()
 

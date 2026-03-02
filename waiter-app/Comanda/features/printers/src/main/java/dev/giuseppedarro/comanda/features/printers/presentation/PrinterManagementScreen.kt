@@ -10,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -23,6 +24,8 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.ExperimentalMaterialApi
+import dev.giuseppedarro.comanda.core.R
+import dev.giuseppedarro.comanda.features.printers.R as PrintersR
 import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -89,12 +92,12 @@ fun PrinterManagementContent(
         modifier = modifier,
         topBar = {
             ComandaTopAppBar(
-                title = "Printers",
+                title = stringResource(R.string.printers),
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Navigate back"
+                            contentDescription = stringResource(PrintersR.string.navigate_back)
                         )
                     }
                 }
@@ -106,7 +109,7 @@ fun PrinterManagementContent(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Add Printer"
+                    contentDescription = stringResource(PrintersR.string.add_printer)
                 )
             }
         }
@@ -127,13 +130,13 @@ fun PrinterManagementContent(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "No printers configured",
+                            text = stringResource(PrintersR.string.no_printers_configured),
                             style = MaterialTheme.typography.titleLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Tap the + button to add a new printer",
+                            text = stringResource(PrintersR.string.add_printer_prompt),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -175,7 +178,7 @@ fun PrinterManagementContent(
                         .padding(16.dp),
                     action = {
                         TextButton(onClick = onClearError) {
-                            Text("Dismiss")
+                            Text(stringResource(R.string.dismiss))
                         }
                     }
                 ) {

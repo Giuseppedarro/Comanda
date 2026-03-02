@@ -1,0 +1,20 @@
+<resources>
+    <string name="confirm">Conferma</string>
+    <string name="cancel">Annulla</string>
+    <string name="remove">Rimuovi</string>
+    <string name="add">Aggiungi</string>
+    <string name="save">Salva</string>
+    <string name="back">Indietro</string>
+    <string name="name">Nome</string>
+    <string name="description">Descrizione</string>
+    <string name="price">Prezzo</string>
+    <string name="available">Disponibile</string>
+    <string name="name_is_required">Il nome è obbligatorio</string>
+    <string name="employee_id">ID Dipendente</string>
+    <string name="password">Password</string>
+    <string name="menu">Menu</string>
+    <string name="dismiss">Ignora</string>
+    <string name="printers">Stampanti</string>
+    <string name="settings">Impostazioni</string>
+    <string name="logout">Esci</string>
+</resources>

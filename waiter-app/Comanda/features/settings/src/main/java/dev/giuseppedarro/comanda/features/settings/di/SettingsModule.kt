@@ -7,6 +7,7 @@ import dev.giuseppedarro.comanda.features.settings.domain.use_case.CreateUserUse
 import dev.giuseppedarro.comanda.features.settings.domain.use_case.DeleteUserUseCase
 import dev.giuseppedarro.comanda.features.settings.domain.use_case.GetUsersUseCase
 import dev.giuseppedarro.comanda.features.settings.domain.use_case.UpdateUserUseCase
+import dev.giuseppedarro.comanda.features.settings.presentation.LanguageSettingsViewModel
 import dev.giuseppedarro.comanda.features.settings.presentation.ManageUsersViewModel
 import dev.giuseppedarro.comanda.features.settings.presentation.ThemeSettingsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -22,4 +23,5 @@ val settingsModule = module {
     factory { DeleteUserUseCase(get()) }
     viewModel { ManageUsersViewModel(get(), get(), get(), get()) }
     viewModel { ThemeSettingsViewModel(get(), get()) }
+    viewModel { LanguageSettingsViewModel(get(), get()) }
 }

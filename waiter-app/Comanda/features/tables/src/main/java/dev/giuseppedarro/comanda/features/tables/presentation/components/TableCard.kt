@@ -14,9 +14,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.giuseppedarro.comanda.features.tables.R
+import dev.giuseppedarro.comanda.core.R
+import dev.giuseppedarro.comanda.features.tables.R as TablesR
 import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
 import dev.giuseppedarro.comanda.core.ui.theme.Green
 import dev.giuseppedarro.comanda.core.ui.theme.Orange
@@ -43,18 +45,18 @@ fun TableCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = "Table $tableNumber")
+                Text(text = stringResource(TablesR.string.table_number, tableNumber))
                 Icon(
-                    painter = if (isOccupied) painterResource(R.drawable.ic_occupied)
-                    else painterResource(R.drawable.ic_available),
+                    painter = if (isOccupied) painterResource(TablesR.drawable.ic_occupied)
+                    else painterResource(TablesR.drawable.ic_available),
                     contentDescription = null,
                     tint = if (isOccupied) Orange else Green
                 )
             }
 
-            Text(text = if (isOccupied) "Occupied" else "Available")
+            Text(text = if (isOccupied) stringResource(TablesR.string.occupied) else stringResource(R.string.available))
             Button(onClick = onButtonClick) {
-                Text(text = if (isOccupied) "Modify Order" else "Take Order")
+                Text(text = if (isOccupied) stringResource(TablesR.string.modify_order) else stringResource(TablesR.string.take_order))
             }
         }
     }

@@ -42,9 +42,10 @@ The main application module. Its primary responsibilities are:
 This is the foundational library module for the entire application. It contains shared code, components, and utilities that are used by all feature modules. Its key responsibilities include:
 
 - **Networking**: Providing a robust, auto-refreshing Ktor `HttpClient` (`authClient`) for authenticated calls and a separate `basicClient` for unauthenticated calls.
-- **Data Persistence**: Securely persisting authentication tokens and user theme preferences using Jetpack `DataStore`.
-- **Domain Logic**: Defining contracts (`TokenRepository`, `ThemeRepository`) and shared business logic (`LogoutUseCase`, `GetThemePreferencesUseCase`, `SaveThemePreferencesUseCase`).
+- **Data Persistence**: Securely persisting authentication tokens, user theme preferences and user language preferences using Jetpack `DataStore` and `AppCompatDelegate`.
+- **Domain Logic**: Defining contracts (`TokenRepository`, `ThemeRepository`, `LanguageRepository`) and shared business logic (`LogoutUseCase`, `GetThemePreferencesUseCase`, `SaveThemePreferencesUseCase`, `GetLanguageUseCase`, `SetLanguageUseCase`).
 - **Shared UI**: Providing the application's visual identity (`ComandaTheme`), shared components like `ComandaTopAppBar`, and utility functions for price formatting.
+- **String Resources**: Contains all shared string resources for the application, with translations for Italian and Dutch.
 
 ### `:features`
 
@@ -62,4 +63,5 @@ This directory contains all the independent feature modules. Each feature is a s
 
 - **`:features:settings`**: Contains the main settings screen for the app.
     - **Theme Management**: A sub-feature allowing the user to choose between a light theme, a dark theme, or following the system's theme setting. The choice is persisted on the device.
+    - **Language Management**: A sub-feature allowing the user to choose between following the system language or manually selecting a language (English, Italian, or Dutch).
     - **User Management**: A dedicated sub-feature for managing staff accounts, including full CRUD functionality and role management.

@@ -14,7 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import dev.giuseppedarro.comanda.features.menu.R
+import dev.giuseppedarro.comanda.core.R
+import dev.giuseppedarro.comanda.features.menu.R as MenuR
 
 @Composable
 internal fun MenuItemDialog(
@@ -33,7 +34,7 @@ internal fun MenuItemDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text(if (isEditing) stringResource(R.string.edit_menu_item) else stringResource(R.string.add_menu_item))
+            Text(if (isEditing) stringResource(MenuR.string.edit_menu_item) else stringResource(MenuR.string.add_menu_item))
         },
         text = {
             Column(

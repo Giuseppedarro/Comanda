@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Comanda</string>
+    <string name="open_table">Tafel Openen</string>
+    <string name="how_many_people_are_sitting_at_this_table">Hoeveel mensen zitten er aan deze tafel?</string>
+    <string name="number_of_people">Aantal personen</string>
+    <string name="add_table">Tafel toevoegen</string>
+    <string name="occupied">Bezet</string>
+    <string name="all">Alle</string>
+    <string name="table_number">Tafel %1$d</string>
+    <string name="take_order">Bestelling opnemen</string>
+    <string name="modify_order">Bestelling wijzigen</string>
+</resources>

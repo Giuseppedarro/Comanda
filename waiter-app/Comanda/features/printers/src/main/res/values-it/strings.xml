@@ -1,0 +1,17 @@
+<resources>
+    <string name="add_new_printer">Aggiungi nuova stampante</string>
+    <string name="printer_name">Nome stampante</string>
+    <string name="printer">Stampante</string>
+    <string name="ip_address">Indirizzo IP</string>
+    <string name="address_is_required">L\'indirizzo è obbligatorio</string>
+    <string name="port">Porta</string>
+    <string name="invalid_port_number">Numero di porta non valido</string>
+    <string name="add_printer">Aggiungi stampante</string>
+    <string name="edit_printer">Modifica stampante</string>
+    <string name="update_printer">Aggiorna stampante</string>
+    <string name="port_number">Porta: %1$d</string>
+    <string name="delete_printer">Elimina stampante</string>
+    <string name="navigate_back">Torna indietro</string>
+    <string name="no_printers_configured">Nessuna stampante configurata</string>
+    <string name="add_printer_prompt">Tocca il pulsante + per aggiungere una nuova stampante</string>
+</resources>
