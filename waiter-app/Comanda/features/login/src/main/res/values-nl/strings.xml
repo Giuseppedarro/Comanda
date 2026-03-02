@@ -1,7 +1,5 @@
 <resources>
     <string name="sign_in">Inloggen</string>
-    <string name="employee_id">Werknemer ID</string>
-    <string name="password">Wachtwoord</string>
     <string name="configure_server">Server configureren</string>
     <string name="login_title">Comanda</string>
     <string name="login_subtitle">Ober Portaal</string>

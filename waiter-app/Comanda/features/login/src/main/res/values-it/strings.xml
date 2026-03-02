@@ -1,7 +1,5 @@
 <resources>
     <string name="sign_in">Accedi</string>
-    <string name="employee_id">ID Dipendente</string>
-    <string name="password">Password</string>
     <string name="configure_server">Configura server</string>
     <string name="login_title">Comanda</string>
     <string name="login_subtitle">Portale Cameriere</string>
