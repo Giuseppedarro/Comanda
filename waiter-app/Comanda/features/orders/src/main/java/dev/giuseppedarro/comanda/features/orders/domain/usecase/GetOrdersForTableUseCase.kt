@@ -1,0 +1,12 @@
+package dev.giuseppedarro.comanda.features.orders.domain.usecase
+
+import dev.giuseppedarro.comanda.features.orders.domain.model.Order
+import dev.giuseppedarro.comanda.features.orders.domain.repository.OrderRepository
+import kotlinx.coroutines.flow.Flow
+
+class GetOrdersForTableUseCase(private val repository: OrderRepository) {
+
+    operator fun invoke(tableNumber: Int): Flow<Result<Order?>> {
+        return repository.getOrdersForTable(tableNumber)
+    }
+}

@@ -6,6 +6,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
+import dev.giuseppedarro.comanda.core.R as CoreR
 import dev.giuseppedarro.comanda.features.tables.R
 import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
 import org.junit.Assert.assertTrue
@@ -28,7 +29,7 @@ class TableCardTest {
         }
 
         composeTestRule.onNodeWithText(context.getString(R.string.table_number, 1)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(context.getString(R.string.available)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(CoreR.string.available)).assertIsDisplayed()
         composeTestRule.onNodeWithText(context.getString(R.string.take_order)).assertIsDisplayed()
     }
 

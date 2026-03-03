@@ -1,7 +1,7 @@
 package dev.giuseppedarro.comanda.core.network
 
 import com.google.common.truth.Truth.assertThat
-import dev.giuseppedarro.comanda.core.domain.TokenRepository
+import dev.giuseppedarro.comanda.core.domain.repository.TokenRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond

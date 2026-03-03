@@ -3,10 +3,10 @@ package dev.giuseppedarro.comanda.features.settings.di
 import dev.giuseppedarro.comanda.features.settings.data.remote.UserApi
 import dev.giuseppedarro.comanda.features.settings.data.repository.UserRepositoryImpl
 import dev.giuseppedarro.comanda.features.settings.domain.repository.UserRepository
-import dev.giuseppedarro.comanda.features.settings.domain.use_case.CreateUserUseCase
-import dev.giuseppedarro.comanda.features.settings.domain.use_case.DeleteUserUseCase
-import dev.giuseppedarro.comanda.features.settings.domain.use_case.GetUsersUseCase
-import dev.giuseppedarro.comanda.features.settings.domain.use_case.UpdateUserUseCase
+import dev.giuseppedarro.comanda.features.settings.domain.usecase.CreateUserUseCase
+import dev.giuseppedarro.comanda.features.settings.domain.usecase.DeleteUserUseCase
+import dev.giuseppedarro.comanda.features.settings.domain.usecase.GetUsersUseCase
+import dev.giuseppedarro.comanda.features.settings.domain.usecase.UpdateUserUseCase
 import dev.giuseppedarro.comanda.features.settings.presentation.LanguageSettingsViewModel
 import dev.giuseppedarro.comanda.features.settings.presentation.ManageUsersViewModel
 import dev.giuseppedarro.comanda.features.settings.presentation.ThemeSettingsViewModel

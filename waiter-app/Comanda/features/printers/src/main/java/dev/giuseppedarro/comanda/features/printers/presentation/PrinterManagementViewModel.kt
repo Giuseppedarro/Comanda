@@ -3,10 +3,10 @@ package dev.giuseppedarro.comanda.features.printers.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.giuseppedarro.comanda.features.printers.domain.model.Printer
-import dev.giuseppedarro.comanda.features.printers.domain.use_case.CreatePrinterUseCase
-import dev.giuseppedarro.comanda.features.printers.domain.use_case.DeletePrinterUseCase
-import dev.giuseppedarro.comanda.features.printers.domain.use_case.GetAllPrintersUseCase
-import dev.giuseppedarro.comanda.features.printers.domain.use_case.UpdatePrinterUseCase
+import dev.giuseppedarro.comanda.features.printers.domain.usecase.CreatePrinterUseCase
+import dev.giuseppedarro.comanda.features.printers.domain.usecase.DeletePrinterUseCase
+import dev.giuseppedarro.comanda.features.printers.domain.usecase.GetAllPrintersUseCase
+import dev.giuseppedarro.comanda.features.printers.domain.usecase.UpdatePrinterUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

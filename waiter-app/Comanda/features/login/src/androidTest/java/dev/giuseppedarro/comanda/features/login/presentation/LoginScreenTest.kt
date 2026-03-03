@@ -12,8 +12,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.core.app.ApplicationProvider
+import dev.giuseppedarro.comanda.core.R as CoreR
 import dev.giuseppedarro.comanda.features.login.R
-import dev.giuseppedarro.comanda.features.login.domain.use_case.LoginUseCase
+import dev.giuseppedarro.comanda.features.login.domain.usecase.LoginUseCase
 import dev.giuseppedarro.comanda.core.ui.theme.BrandedTheme
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -80,8 +81,8 @@ class LoginScreenTest {
         }
 
         composeTestRule.onNodeWithTag("loading_indicator").assertIsDisplayed()
-        composeTestRule.onNodeWithText(context.getString(R.string.employee_id)).assertIsNotEnabled()
-        composeTestRule.onNodeWithText(context.getString(R.string.password)).assertIsNotEnabled()
+        composeTestRule.onNodeWithText(context.getString(CoreR.string.employee_id)).assertIsNotEnabled()
+        composeTestRule.onNodeWithText(context.getString(CoreR.string.password)).assertIsNotEnabled()
     }
 
     @Test
@@ -107,8 +108,8 @@ class LoginScreenTest {
         }
 
         // Act: Simulate user input and a click.
-        composeTestRule.onNodeWithText(context.getString(R.string.employee_id)).performTextInput("id")
-        composeTestRule.onNodeWithText(context.getString(R.string.password)).performTextInput("password")
+        composeTestRule.onNodeWithText(context.getString(CoreR.string.employee_id)).performTextInput("id")
+        composeTestRule.onNodeWithText(context.getString(CoreR.string.password)).performTextInput("password")
         composeTestRule.onNodeWithText(context.getString(R.string.sign_in)).performClick()
 
         composeTestRule.waitForIdle()
@@ -141,7 +142,7 @@ class LoginScreenTest {
         }
 
         composeTestRule.onNodeWithContentDescription(context.getString(R.string.configure_server)).performClick()
-        composeTestRule.onNodeWithText(context.getString(R.string.save)).performClick()
+        composeTestRule.onNodeWithText(context.getString(CoreR.string.save)).performClick()
 
         assertTrue(onSaveBaseUrlCalled)
     }

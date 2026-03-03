@@ -1,0 +1,12 @@
+package dev.giuseppedarro.comanda.features.orders.domain.usecase
+
+import dev.giuseppedarro.comanda.features.orders.domain.model.MenuCategory
+import dev.giuseppedarro.comanda.features.orders.domain.repository.OrderRepository
+import kotlinx.coroutines.flow.Flow
+
+class GetMenuUseCase(private val repository: OrderRepository) {
+
+    operator fun invoke(): Flow<Result<List<MenuCategory>>> {
+        return repository.getMenu()
+    }
+}

@@ -4,8 +4,8 @@ package dev.giuseppedarro.comanda.features.settings.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.giuseppedarro.comanda.core.domain.model.ThemePreferences
-import dev.giuseppedarro.comanda.core.domain.use_case.GetThemePreferencesUseCase
-import dev.giuseppedarro.comanda.core.domain.use_case.SaveThemePreferencesUseCase
+import dev.giuseppedarro.comanda.core.domain.usecase.GetThemePreferencesUseCase
+import dev.giuseppedarro.comanda.core.domain.usecase.SaveThemePreferencesUseCase
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map

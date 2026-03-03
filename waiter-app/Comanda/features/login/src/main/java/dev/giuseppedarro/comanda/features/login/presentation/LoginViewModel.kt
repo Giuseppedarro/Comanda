@@ -2,9 +2,9 @@ package dev.giuseppedarro.comanda.features.login.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.giuseppedarro.comanda.features.login.domain.use_case.GetBaseUrlUseCase
-import dev.giuseppedarro.comanda.features.login.domain.use_case.LoginUseCase
-import dev.giuseppedarro.comanda.features.login.domain.use_case.SetBaseUrlUseCase
+import dev.giuseppedarro.comanda.features.login.domain.usecase.GetBaseUrlUseCase
+import dev.giuseppedarro.comanda.features.login.domain.usecase.LoginUseCase
+import dev.giuseppedarro.comanda.features.login.domain.usecase.SetBaseUrlUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

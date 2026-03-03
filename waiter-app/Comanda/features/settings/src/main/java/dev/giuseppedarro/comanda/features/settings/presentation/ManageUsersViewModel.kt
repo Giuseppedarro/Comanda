@@ -5,10 +5,10 @@ import androidx.lifecycle.viewModelScope
 import dev.giuseppedarro.comanda.features.settings.data.remote.dto.CreateUserRequest
 import dev.giuseppedarro.comanda.features.settings.data.remote.dto.UpdateUserRequest
 import dev.giuseppedarro.comanda.features.settings.domain.model.User
-import dev.giuseppedarro.comanda.features.settings.domain.use_case.CreateUserUseCase
-import dev.giuseppedarro.comanda.features.settings.domain.use_case.DeleteUserUseCase
-import dev.giuseppedarro.comanda.features.settings.domain.use_case.GetUsersUseCase
-import dev.giuseppedarro.comanda.features.settings.domain.use_case.UpdateUserUseCase
+import dev.giuseppedarro.comanda.features.settings.domain.usecase.CreateUserUseCase
+import dev.giuseppedarro.comanda.features.settings.domain.usecase.DeleteUserUseCase
+import dev.giuseppedarro.comanda.features.settings.domain.usecase.GetUsersUseCase
+import dev.giuseppedarro.comanda.features.settings.domain.usecase.UpdateUserUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

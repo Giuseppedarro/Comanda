@@ -1,0 +1,11 @@
+package dev.giuseppedarro.comanda.features.printers.domain.usecase
+
+import dev.giuseppedarro.comanda.features.printers.domain.model.Printer
+import dev.giuseppedarro.comanda.features.printers.domain.repository.PrinterRepository
+
+class GetAllPrintersUseCase(private val repository: PrinterRepository) {
+
+    suspend operator fun invoke(): Result<List<Printer>> {
+        return repository.getAllPrinters()
+    }
+}

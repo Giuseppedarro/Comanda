@@ -4,8 +4,8 @@ package dev.giuseppedarro.comanda.features.settings.presentation
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import dev.giuseppedarro.comanda.core.domain.model.ThemePreferences
-import dev.giuseppedarro.comanda.core.domain.use_case.GetThemePreferencesUseCase
-import dev.giuseppedarro.comanda.core.domain.use_case.SaveThemePreferencesUseCase
+import dev.giuseppedarro.comanda.core.domain.usecase.GetThemePreferencesUseCase
+import dev.giuseppedarro.comanda.core.domain.usecase.SaveThemePreferencesUseCase
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk

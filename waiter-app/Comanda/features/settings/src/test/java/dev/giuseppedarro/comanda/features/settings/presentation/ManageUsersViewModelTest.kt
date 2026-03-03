@@ -3,10 +3,10 @@ package dev.giuseppedarro.comanda.features.settings.presentation
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import dev.giuseppedarro.comanda.features.settings.domain.model.User
-import dev.giuseppedarro.comanda.features.settings.domain.use_case.CreateUserUseCase
-import dev.giuseppedarro.comanda.features.settings.domain.use_case.DeleteUserUseCase
-import dev.giuseppedarro.comanda.features.settings.domain.use_case.GetUsersUseCase
-import dev.giuseppedarro.comanda.features.settings.domain.use_case.UpdateUserUseCase
+import dev.giuseppedarro.comanda.features.settings.domain.usecase.CreateUserUseCase
+import dev.giuseppedarro.comanda.features.settings.domain.usecase.DeleteUserUseCase
+import dev.giuseppedarro.comanda.features.settings.domain.usecase.GetUsersUseCase
+import dev.giuseppedarro.comanda.features.settings.domain.usecase.UpdateUserUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk

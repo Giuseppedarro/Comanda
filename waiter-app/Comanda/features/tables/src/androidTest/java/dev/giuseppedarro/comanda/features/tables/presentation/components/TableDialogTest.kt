@@ -9,6 +9,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.test.core.app.ApplicationProvider
+import dev.giuseppedarro.comanda.core.R as CoreR
 import dev.giuseppedarro.comanda.features.tables.R
 import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
 import org.junit.Assert.assertEquals
@@ -50,7 +51,7 @@ class TableDialogTest {
             }
         }
 
-        composeTestRule.onNodeWithText(context.getString(R.string.confirm)).assertIsNotEnabled()
+        composeTestRule.onNodeWithText(context.getString(CoreR.string.confirm)).assertIsNotEnabled()
     }
 
     @Test
@@ -69,7 +70,7 @@ class TableDialogTest {
         composeTestRule.onNodeWithText(context.getString(R.string.number_of_people))
             .performTextInput("3")
 
-        composeTestRule.onNodeWithText(context.getString(R.string.confirm)).performClick()
+        composeTestRule.onNodeWithText(context.getString(CoreR.string.confirm)).performClick()
 
         assertEquals(3, clickedValue)
     }
@@ -87,7 +88,7 @@ class TableDialogTest {
             }
         }
 
-        composeTestRule.onNodeWithText(context.getString(R.string.cancel)).performClick()
+        composeTestRule.onNodeWithText(context.getString(CoreR.string.cancel)).performClick()
 
         assertTrue(dismissCalled)
     }
@@ -110,6 +111,6 @@ class TableDialogTest {
 
         textNode.performTextInput("a")
 
-        composeTestRule.onNodeWithText(context.getString(R.string.confirm)).assertIsNotEnabled()
+        composeTestRule.onNodeWithText(context.getString(CoreR.string.confirm)).assertIsNotEnabled()
     }
 }

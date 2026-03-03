@@ -7,7 +7,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
-import dev.giuseppedarro.comanda.features.tables.R
+import dev.giuseppedarro.comanda.core.R as CoreR
 import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
 import org.junit.Rule
 import org.junit.Test
@@ -33,10 +33,10 @@ class AppDrawerTest {
             }
         }
 
-        composeTestRule.onNodeWithText(context.getString(R.string.printers)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(context.getString(R.string.menu)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(context.getString(R.string.settings)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(context.getString(R.string.logout)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(CoreR.string.printers)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(CoreR.string.menu)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(CoreR.string.settings)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(CoreR.string.logout)).assertIsDisplayed()
     }
 
     @Test
@@ -59,7 +59,7 @@ class AppDrawerTest {
             }
         }
 
-        composeTestRule.onNodeWithText(context.getString(R.string.printers)).performClick()
+        composeTestRule.onNodeWithText(context.getString(CoreR.string.printers)).performClick()
 
         assertThat(printersClicked).isTrue()
         assertThat(drawerClosed).isTrue()

@@ -1,6 +1,6 @@
 package dev.giuseppedarro.comanda.features.login.repository
 
-import dev.giuseppedarro.comanda.core.domain.TokenRepository
+import dev.giuseppedarro.comanda.core.domain.repository.TokenRepository
 import dev.giuseppedarro.comanda.features.login.data.repository.LoginRepositoryImpl
 import dev.giuseppedarro.comanda.features.login.domain.repository.LoginRepository
 import io.ktor.client.HttpClient

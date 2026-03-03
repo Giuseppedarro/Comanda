@@ -1,6 +1,6 @@
 package dev.giuseppedarro.comanda.features.login.data.repository
 
-import dev.giuseppedarro.comanda.core.domain.TokenRepository
+import dev.giuseppedarro.comanda.core.domain.repository.TokenRepository
 import dev.giuseppedarro.comanda.core.network.dto.LoginResponse
 import dev.giuseppedarro.comanda.features.login.data.dto.LoginRequest
 import dev.giuseppedarro.comanda.features.login.domain.repository.LoginRepository
