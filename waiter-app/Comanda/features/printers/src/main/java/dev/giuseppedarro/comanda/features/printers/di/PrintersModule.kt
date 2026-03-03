@@ -3,10 +3,10 @@ package dev.giuseppedarro.comanda.features.printers.di
 import dev.giuseppedarro.comanda.features.printers.data.remote.PrinterApi
 import dev.giuseppedarro.comanda.features.printers.data.repository.PrinterRepositoryImpl
 import dev.giuseppedarro.comanda.features.printers.domain.repository.PrinterRepository
-import dev.giuseppedarro.comanda.features.printers.domain.use_case.CreatePrinterUseCase
-import dev.giuseppedarro.comanda.features.printers.domain.use_case.DeletePrinterUseCase
-import dev.giuseppedarro.comanda.features.printers.domain.use_case.GetAllPrintersUseCase
-import dev.giuseppedarro.comanda.features.printers.domain.use_case.UpdatePrinterUseCase
+import dev.giuseppedarro.comanda.features.printers.domain.usecase.CreatePrinterUseCase
+import dev.giuseppedarro.comanda.features.printers.domain.usecase.DeletePrinterUseCase
+import dev.giuseppedarro.comanda.features.printers.domain.usecase.GetAllPrintersUseCase
+import dev.giuseppedarro.comanda.features.printers.domain.usecase.UpdatePrinterUseCase
 import dev.giuseppedarro.comanda.features.printers.presentation.PrinterManagementViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.qualifier.named

@@ -7,7 +7,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
-import dev.giuseppedarro.comanda.features.orders.R
+import dev.giuseppedarro.comanda.core.R as CoreR
 import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -55,7 +55,7 @@ class MenuItemRowTest {
             }
         }
 
-        composeTestRule.onNodeWithContentDescription(context.getString(R.string.add)).performClick()
+        composeTestRule.onNodeWithContentDescription(context.getString(CoreR.string.add)).performClick()
 
         assertEquals(2, newQuantity)
     }
@@ -77,7 +77,7 @@ class MenuItemRowTest {
             }
         }
 
-        composeTestRule.onNodeWithContentDescription(context.getString(R.string.remove)).performClick()
+        composeTestRule.onNodeWithContentDescription(context.getString(CoreR.string.remove)).performClick()
 
         assertEquals(4, newQuantity)
     }

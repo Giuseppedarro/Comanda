@@ -1,6 +1,6 @@
 package dev.giuseppedarro.comanda.core.network
 
-import dev.giuseppedarro.comanda.core.domain.TokenRepository
+import dev.giuseppedarro.comanda.core.domain.repository.TokenRepository
 import dev.giuseppedarro.comanda.core.network.dto.LoginResponse
 import dev.giuseppedarro.comanda.core.network.dto.RefreshTokenRequest
 import io.ktor.client.HttpClient

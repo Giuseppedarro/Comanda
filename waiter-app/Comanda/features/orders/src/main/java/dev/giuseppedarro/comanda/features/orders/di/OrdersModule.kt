@@ -4,10 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import dev.giuseppedarro.comanda.features.orders.data.remote.OrderApi
 import dev.giuseppedarro.comanda.features.orders.data.repository.OrderRepositoryImpl
 import dev.giuseppedarro.comanda.features.orders.domain.repository.OrderRepository
-import dev.giuseppedarro.comanda.features.orders.domain.use_case.GetMenuUseCase
-import dev.giuseppedarro.comanda.features.orders.domain.use_case.GetOrdersForTableUseCase
-import dev.giuseppedarro.comanda.features.orders.domain.use_case.PrintBillUseCase
-import dev.giuseppedarro.comanda.features.orders.domain.use_case.SubmitOrderUseCase
+import dev.giuseppedarro.comanda.features.orders.domain.usecase.GetMenuUseCase
+import dev.giuseppedarro.comanda.features.orders.domain.usecase.GetOrdersForTableUseCase
+import dev.giuseppedarro.comanda.features.orders.domain.usecase.PrintBillUseCase
+import dev.giuseppedarro.comanda.features.orders.domain.usecase.SubmitOrderUseCase
 import dev.giuseppedarro.comanda.features.orders.presentation.MenuOrderViewModel
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.viewModel

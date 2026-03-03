@@ -1,8 +1,8 @@
 package dev.giuseppedarro.comanda.features.login.presentation
 
-import dev.giuseppedarro.comanda.features.login.domain.use_case.GetBaseUrlUseCase
-import dev.giuseppedarro.comanda.features.login.domain.use_case.LoginUseCase
-import dev.giuseppedarro.comanda.features.login.domain.use_case.SetBaseUrlUseCase
+import dev.giuseppedarro.comanda.features.login.domain.usecase.GetBaseUrlUseCase
+import dev.giuseppedarro.comanda.features.login.domain.usecase.LoginUseCase
+import dev.giuseppedarro.comanda.features.login.domain.usecase.SetBaseUrlUseCase
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk

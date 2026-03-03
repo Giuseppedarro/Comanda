@@ -1,8 +1,11 @@
 package dev.giuseppedarro.comanda.features.tables.presentation
 
+import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.test.core.app.ApplicationProvider
+import dev.giuseppedarro.comanda.features.tables.R
 import dev.giuseppedarro.comanda.features.tables.domain.model.Table
 import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
 import org.junit.Rule
@@ -12,6 +15,8 @@ class TableOverViewScreenTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
+
+    private val context: Context = ApplicationProvider.getApplicationContext()
 
     @Test
     fun whenTablesAreLoaded_displaysTablesInGrid() {
@@ -37,9 +42,9 @@ class TableOverViewScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithText("Table 1").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Table 5").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Table 8").assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.table_number, 1)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.table_number, 5)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.table_number, 8)).assertIsDisplayed()
     }
 
     @Test
@@ -60,7 +65,7 @@ class TableOverViewScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithText("Table 1").assertDoesNotExist()
+        composeTestRule.onNodeWithText(context.getString(R.string.table_number, 1)).assertDoesNotExist()
     }
 
     @Test
@@ -87,8 +92,8 @@ class TableOverViewScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithText("Table 1").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Table 3").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Table 2").assertDoesNotExist()
+        composeTestRule.onNodeWithText(context.getString(R.string.table_number, 1)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.table_number, 3)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.table_number, 2)).assertDoesNotExist()
     }
 }

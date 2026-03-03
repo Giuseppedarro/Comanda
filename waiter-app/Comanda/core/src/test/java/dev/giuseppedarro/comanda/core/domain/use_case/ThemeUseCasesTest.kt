@@ -3,6 +3,8 @@ package dev.giuseppedarro.comanda.core.domain.use_case
 
 import dev.giuseppedarro.comanda.core.domain.model.ThemePreferences
 import dev.giuseppedarro.comanda.core.domain.repository.ThemeRepository
+import dev.giuseppedarro.comanda.core.domain.usecase.GetThemePreferencesUseCase
+import dev.giuseppedarro.comanda.core.domain.usecase.SaveThemePreferencesUseCase
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk

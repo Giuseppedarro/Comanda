@@ -2,10 +2,10 @@ package dev.giuseppedarro.comanda.features.tables.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.giuseppedarro.comanda.core.domain.use_case.LogoutUseCase
+import dev.giuseppedarro.comanda.core.domain.usecase.LogoutUseCase
 import dev.giuseppedarro.comanda.features.tables.domain.model.Table
-import dev.giuseppedarro.comanda.features.tables.domain.use_case.AddTableUseCase
-import dev.giuseppedarro.comanda.features.tables.domain.use_case.GetTablesUseCase
+import dev.giuseppedarro.comanda.features.tables.domain.usecase.AddTableUseCase
+import dev.giuseppedarro.comanda.features.tables.domain.usecase.GetTablesUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

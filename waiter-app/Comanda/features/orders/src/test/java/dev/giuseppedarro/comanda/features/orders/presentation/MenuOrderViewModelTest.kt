@@ -7,10 +7,10 @@ import dev.giuseppedarro.comanda.features.orders.domain.model.MenuItem
 import dev.giuseppedarro.comanda.features.orders.domain.model.Order
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderItem
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderStatus
-import dev.giuseppedarro.comanda.features.orders.domain.use_case.GetMenuUseCase
-import dev.giuseppedarro.comanda.features.orders.domain.use_case.GetOrdersForTableUseCase
-import dev.giuseppedarro.comanda.features.orders.domain.use_case.PrintBillUseCase
-import dev.giuseppedarro.comanda.features.orders.domain.use_case.SubmitOrderUseCase
+import dev.giuseppedarro.comanda.features.orders.domain.usecase.GetMenuUseCase
+import dev.giuseppedarro.comanda.features.orders.domain.usecase.GetOrdersForTableUseCase
+import dev.giuseppedarro.comanda.features.orders.domain.usecase.PrintBillUseCase
+import dev.giuseppedarro.comanda.features.orders.domain.usecase.SubmitOrderUseCase
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers

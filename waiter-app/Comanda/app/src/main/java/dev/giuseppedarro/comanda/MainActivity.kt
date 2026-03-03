@@ -13,7 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import dev.giuseppedarro.comanda.core.domain.model.ThemePreferences
-import dev.giuseppedarro.comanda.core.domain.use_case.GetThemePreferencesUseCase
+import dev.giuseppedarro.comanda.core.domain.usecase.GetThemePreferencesUseCase
 import dev.giuseppedarro.comanda.navigation.NavGraph
 import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
 import org.koin.android.ext.android.inject
