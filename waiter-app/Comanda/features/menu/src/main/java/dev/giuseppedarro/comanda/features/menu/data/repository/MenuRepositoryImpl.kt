@@ -1,6 +1,6 @@
 package dev.giuseppedarro.comanda.features.menu.data.repository
 
-import dev.giuseppedarro.comanda.features.menu.data.remote.MenuApi
+import dev.giuseppedarro.comanda.core.network.MenuApi
 import dev.giuseppedarro.comanda.features.menu.data.remote.dto.toCreateRequest
 import dev.giuseppedarro.comanda.features.menu.data.remote.dto.toDomain
 import dev.giuseppedarro.comanda.features.menu.data.remote.dto.toDto

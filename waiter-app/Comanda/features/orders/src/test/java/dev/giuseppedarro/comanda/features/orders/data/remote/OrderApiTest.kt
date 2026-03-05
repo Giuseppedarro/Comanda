@@ -1,4 +1,3 @@
-
 package dev.giuseppedarro.comanda.features.orders.data.remote
 
 import com.google.common.truth.Truth.assertThat
@@ -18,31 +17,6 @@ import kotlinx.serialization.json.Json
 import org.junit.Test
 
 class OrderApiTest {
-
-    @Test
-    fun getMenu_success() = runTest {
-        // Given
-        val jsonBody = """[ { "name": "Pizzas", "items": [ { "id": "margherita", "name": "Margherita", "price": 1000 } ] } ]"""
-        val mockEngine = MockEngine { request ->
-            respond(
-                content = jsonBody,
-                status = HttpStatusCode.OK,
-                headers = headersOf(HttpHeaders.ContentType, "application/json")
-            )
-        }
-        val client = createClient(mockEngine)
-        val orderApi = OrderApi(client)
-
-        // When
-        val menu = orderApi.getMenu()
-
-        // Then
-        assertThat(menu).isNotNull()
-        assertThat(menu.size).isEqualTo(1)
-        assertThat(menu.first().name).isEqualTo("Pizzas")
-        val executedRequest = mockEngine.requestHistory.first()
-        assertThat(executedRequest.url.encodedPath).isEqualTo("/menu")
-    }
 
     @Test
     fun getOrdersForTable_success() = runTest {
@@ -89,8 +63,6 @@ class OrderApiTest {
         val executedRequest = mockEngine.requestHistory.first()
         assertThat(executedRequest.method).isEqualTo(HttpMethod.Post)
         assertThat(executedRequest.url.encodedPath).isEqualTo("/orders")
-        // Note: Ktor's mock request body is not as straightforward to inspect as MockWebServer's
-        // This is a known limitation, but we can still verify the method and URL.
     }
 
     private fun createClient(mockEngine: MockEngine): HttpClient {
@@ -102,7 +74,6 @@ class OrderApiTest {
                     isLenient = true
                 })
             }
-            // We configure a base URL here to make the API calls cleaner
             defaultRequest {
                 url("http://localhost/")
             }

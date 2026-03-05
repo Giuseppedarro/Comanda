@@ -1,8 +1,8 @@
-package dev.giuseppedarro.comanda.features.menu.data.remote
+package dev.giuseppedarro.comanda.core.network
 
+import dev.giuseppedarro.comanda.core.network.dto.CreateMenuItemRequest
 import dev.giuseppedarro.comanda.core.network.dto.MenuCategoryDto
-import dev.giuseppedarro.comanda.features.menu.data.remote.dto.CreateMenuItemRequest
-import dev.giuseppedarro.comanda.features.menu.data.remote.dto.UpdateMenuItemRequest
+import dev.giuseppedarro.comanda.core.network.dto.UpdateMenuItemRequest
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
