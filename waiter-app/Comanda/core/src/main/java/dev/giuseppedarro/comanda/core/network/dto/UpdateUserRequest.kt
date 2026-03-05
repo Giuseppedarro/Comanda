@@ -1,4 +1,4 @@
-package dev.giuseppedarro.comanda.features.settings.data.remote.dto
+package dev.giuseppedarro.comanda.core.network.dto
 
 import kotlinx.serialization.Serializable
 

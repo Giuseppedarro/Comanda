@@ -2,8 +2,8 @@ package dev.giuseppedarro.comanda.features.settings.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.giuseppedarro.comanda.features.settings.data.remote.dto.CreateUserRequest
-import dev.giuseppedarro.comanda.features.settings.data.remote.dto.UpdateUserRequest
+import dev.giuseppedarro.comanda.core.network.dto.CreateUserRequest
+import dev.giuseppedarro.comanda.core.network.dto.UpdateUserRequest
 import dev.giuseppedarro.comanda.features.settings.domain.model.User
 import dev.giuseppedarro.comanda.features.settings.domain.usecase.CreateUserUseCase
 import dev.giuseppedarro.comanda.features.settings.domain.usecase.DeleteUserUseCase

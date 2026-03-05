@@ -1,7 +1,7 @@
 package dev.giuseppedarro.comanda.features.settings.domain.repository
 
-import dev.giuseppedarro.comanda.features.settings.data.remote.dto.CreateUserRequest
-import dev.giuseppedarro.comanda.features.settings.data.remote.dto.UpdateUserRequest
+import dev.giuseppedarro.comanda.core.network.dto.CreateUserRequest
+import dev.giuseppedarro.comanda.core.network.dto.UpdateUserRequest
 import dev.giuseppedarro.comanda.features.settings.domain.model.User
 import kotlinx.coroutines.flow.Flow
 

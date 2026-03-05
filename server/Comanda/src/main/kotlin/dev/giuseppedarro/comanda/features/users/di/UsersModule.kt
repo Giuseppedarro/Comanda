@@ -4,6 +4,7 @@ import dev.giuseppedarro.comanda.features.users.data.repository.UsersRepositoryI
 import dev.giuseppedarro.comanda.features.users.domain.repository.UsersRepository
 import dev.giuseppedarro.comanda.features.users.domain.usecase.CreateUserUseCase
 import dev.giuseppedarro.comanda.features.users.domain.usecase.DeleteUserUseCase
+import dev.giuseppedarro.comanda.features.users.domain.usecase.GetUserByIdUseCase
 import dev.giuseppedarro.comanda.features.users.domain.usecase.GetUsersUseCase
 import dev.giuseppedarro.comanda.features.users.domain.usecase.UpdateUserUseCase
 import org.koin.dsl.module
@@ -12,6 +13,7 @@ val usersModule = module {
     single<UsersRepository> { UsersRepositoryImpl() }
     single { CreateUserUseCase(get()) }
     single { GetUsersUseCase(get()) }
+    single { GetUserByIdUseCase(get()) }
     single { UpdateUserUseCase(get()) }
     single { DeleteUserUseCase(get()) }
 }

@@ -37,11 +37,12 @@ class AuthDataSource(
             }
 
             if (isPasswordValid) {
+                val id = userRow[Users.id]
                 val employeeId = userRow[Users.employeeId]
                 val role = userRow[Users.role]
                 val name = userRow[Users.name]
                 
-                val accessToken = generateAccessToken(employeeId, role, name)
+                val accessToken = generateAccessToken(id, employeeId, role, name)
                 val refreshToken = generateRefreshToken(employeeId)
                 return Result.success(LoginResponse(accessToken, refreshToken))
             }
@@ -59,10 +60,11 @@ class AuthDataSource(
         }
 
         if (userRow != null) {
+            val id = userRow[Users.id]
             val role = userRow[Users.role]
             val name = userRow[Users.name]
             
-            val newAccessToken = generateAccessToken(employeeId, role, name)
+            val newAccessToken = generateAccessToken(id, employeeId, role, name)
             val newRefreshToken = generateRefreshToken(employeeId)
             return Result.success(TokenResponse(newAccessToken, newRefreshToken))
         } else {
@@ -70,10 +72,11 @@ class AuthDataSource(
         }
     }
 
-    private fun generateAccessToken(employeeId: String, role: String, name: String): String {
+    private fun generateAccessToken(id: Int, employeeId: String, role: String, name: String): String {
         return JWT.create()
             .withAudience(jwtAudience)
             .withIssuer(jwtDomain)
+            .withClaim("id", id)
             .withClaim("userId", employeeId)
             .withClaim("name", name)
             .withClaim("role", role)

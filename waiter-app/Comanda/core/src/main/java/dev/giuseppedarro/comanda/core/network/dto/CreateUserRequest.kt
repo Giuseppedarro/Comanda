@@ -1,11 +1,11 @@
-package dev.giuseppedarro.comanda.features.settings.data.remote.dto
+package dev.giuseppedarro.comanda.core.network.dto
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UserResponse(
-    val id: Int,
+data class CreateUserRequest(
     val employeeId: String,
     val name: String,
+    val password: String,
     val role: String
 )

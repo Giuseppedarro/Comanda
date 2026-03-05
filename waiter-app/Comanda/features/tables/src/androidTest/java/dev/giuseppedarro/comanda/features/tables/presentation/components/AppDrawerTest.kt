@@ -24,6 +24,7 @@ class AppDrawerTest {
         composeTestRule.setContent {
             ComandaTheme {
                 AppDrawer(
+                    userName = "John Doe",
                     onNavigateToPrinters = {},
                     onNavigateToMenu = {},
                     onNavigateToSettings = {},
@@ -50,6 +51,7 @@ class AppDrawerTest {
         composeTestRule.setContent {
             ComandaTheme {
                 AppDrawer(
+                    userName = "John Doe",
                     onNavigateToPrinters = onNavigateToPrinters,
                     onNavigateToMenu = {},
                     onNavigateToSettings = {},

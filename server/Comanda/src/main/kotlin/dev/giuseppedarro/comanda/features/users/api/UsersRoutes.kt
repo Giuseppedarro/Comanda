@@ -1,11 +1,6 @@
 package dev.giuseppedarro.comanda.features.users.api
 
-import dev.giuseppedarro.comanda.features.users.domain.usecase.CreateUserParams
-import dev.giuseppedarro.comanda.features.users.domain.usecase.CreateUserUseCase
-import dev.giuseppedarro.comanda.features.users.domain.usecase.DeleteUserUseCase
-import dev.giuseppedarro.comanda.features.users.domain.usecase.GetUsersUseCase
-import dev.giuseppedarro.comanda.features.users.domain.usecase.UpdateUserParams
-import dev.giuseppedarro.comanda.features.users.domain.usecase.UpdateUserUseCase
+import dev.giuseppedarro.comanda.features.users.domain.usecase.*
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -41,6 +36,7 @@ data class UserResponse(
 fun Route.usersRoutes(
     createUserUseCase: CreateUserUseCase,
     getUsersUseCase: GetUsersUseCase,
+    getUserByIdUseCase: GetUserByIdUseCase,
     updateUserUseCase: UpdateUserUseCase,
     deleteUserUseCase: DeleteUserUseCase
 ) {
@@ -74,6 +70,21 @@ fun Route.usersRoutes(
                     call.respond(HttpStatusCode.OK, response)
                 }.onFailure { error ->
                     call.respond(HttpStatusCode.InternalServerError, mapOf("error" to (error.message ?: "Unknown error")))
+                }
+            }
+
+            get("/{id}") {
+                val id = call.parameters["id"]?.toIntOrNull()
+                if (id == null) {
+                    call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Invalid user ID"))
+                    return@get
+                }
+
+                val result = getUserByIdUseCase(id)
+                result.onSuccess { user ->
+                    call.respond(HttpStatusCode.OK, UserResponse(user.id, user.employeeId, user.name, user.role))
+                }.onFailure { error ->
+                    call.respond(HttpStatusCode.NotFound, mapOf("error" to (error.message ?: "User not found")))
                 }
             }
 

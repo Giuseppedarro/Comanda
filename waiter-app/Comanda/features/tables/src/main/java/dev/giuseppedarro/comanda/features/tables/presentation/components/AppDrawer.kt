@@ -26,6 +26,7 @@ import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,12 +39,25 @@ import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppDrawer(
+    userName: String?,
     onNavigateToPrinters: () -> Unit,
     onNavigateToMenu: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onLogout: () -> Unit,
     onCloseDrawer: () -> Unit
 ) {
+    val initial = remember(userName) {
+        if (!userName.isNullOrBlank()) {
+            userName.split(" ")
+                .filter { it.isNotBlank() }
+                .take(2)
+                .map { it.first().uppercase() }
+                .joinToString("")
+        } else {
+            "?"
+        }
+    }
+
     ModalDrawerSheet(
         modifier = Modifier.width(280.dp),
         windowInsets = WindowInsets(0.dp)
@@ -63,14 +77,14 @@ fun AppDrawer(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        "GD",
+                        text = initial,
                         style = MaterialTheme.typography.headlineMedium,
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    "Giuseppe D'Arrò",
+                    text = userName ?: "...",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onTertiaryContainer
                 )
@@ -120,6 +134,7 @@ fun AppDrawer(
 fun AppDrawerPreview() {
     ComandaTheme {
         AppDrawer(
+            userName = "John Doe",
             onNavigateToPrinters = {},
             onNavigateToMenu = {},
             onNavigateToSettings = {},

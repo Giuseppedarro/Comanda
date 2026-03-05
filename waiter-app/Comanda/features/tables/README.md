@@ -27,10 +27,10 @@ Contains the core business logic and models for the feature.
 
 The UI-facing layer, built with Jetpack Compose.
 
-- **`TableOverviewViewModel.kt`**: The ViewModel for the main screen. It manages the `TableOverviewUiState`, handles business logic by calling use cases, provides filtering logic for the table list, and exposes events for one-time actions like navigation.
+- **`TableOverviewViewModel.kt`**: The ViewModel for the main screen. It manages the `TableOverviewUiState`, handles business logic by calling use cases, provides filtering logic for the table list, and exposes events for one-time actions like navigation. It also fetches the current user's name to be displayed in the `AppDrawer`.
 - **`TableOverviewScreen.kt`**: A sophisticated, reactive screen that serves as the app's main dashboard. It uses a `ModalNavigationDrawer` for top-level navigation, a `LazyVerticalGrid` for displaying tables, `FilterChip`s for filtering, and a `pull-to-refresh` mechanism. It is highly decoupled, delegating all navigation actions to lambda functions.
 - **`components/`**: This package contains smaller, reusable UI components that make up the main screen:
-    - **`AppDrawer.kt`**: The content for the main navigation drawer.
+    - **`AppDrawer.kt`**: The content for the main navigation drawer, which displays the logged-in user's name and initials.
     - **`TableCard.kt`**: A card that displays a single table, changing its appearance based on the table's status.
     - **`TableDialog.kt`**: An alert dialog to prompt the user for the number of people when opening a new table.
 - **`navigation/TablesNavGraph.kt`**: Encapsulates the navigation for this feature. It defines a `tablesGraph` extension function that can be easily plugged into the main app's navigation graph, and it uses lambda parameters to signal navigation requests, keeping the feature decoupled.

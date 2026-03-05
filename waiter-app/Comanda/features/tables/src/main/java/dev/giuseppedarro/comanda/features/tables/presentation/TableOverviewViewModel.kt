@@ -2,7 +2,12 @@ package dev.giuseppedarro.comanda.features.tables.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.giuseppedarro.comanda.core.domain.model.UserProfile
+import dev.giuseppedarro.comanda.core.domain.repository.TokenRepository
+import dev.giuseppedarro.comanda.core.domain.usecase.FetchUserProfileUseCase
+import dev.giuseppedarro.comanda.core.domain.usecase.GetCurrentUserUseCase
 import dev.giuseppedarro.comanda.core.domain.usecase.LogoutUseCase
+import dev.giuseppedarro.comanda.core.utils.JwtDecoder
 import dev.giuseppedarro.comanda.features.tables.domain.model.Table
 import dev.giuseppedarro.comanda.features.tables.domain.usecase.AddTableUseCase
 import dev.giuseppedarro.comanda.features.tables.domain.usecase.GetTablesUseCase
@@ -29,7 +34,8 @@ data class TableOverviewUiState(
     val isDialogShown: Boolean = false,
     val selectedTable: Table? = null,
     val isRefreshing: Boolean = false,
-    val filter: TableFilter = TableFilter.ALL
+    val filter: TableFilter = TableFilter.ALL,
+    val userName: String? = null
 ) {
     val filteredTables: List<Table>
         get() = when (filter) {
@@ -42,7 +48,11 @@ data class TableOverviewUiState(
 class TableOverviewViewModel(
     private val getTablesUseCase: GetTablesUseCase,
     private val addTableUseCase: AddTableUseCase,
-    private val logoutUseCase: LogoutUseCase
+    private val logoutUseCase: LogoutUseCase,
+    private val getCurrentUserUseCase: GetCurrentUserUseCase,
+    private val fetchUserProfileUseCase: FetchUserProfileUseCase,
+    private val tokenRepository: TokenRepository,
+    private val jwtDecoder: JwtDecoder
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TableOverviewUiState())
@@ -53,6 +63,22 @@ class TableOverviewViewModel(
 
     init {
         loadTables()
+        observeUser()
+        fetchUser()
+    }
+
+    private fun fetchUser() {
+        viewModelScope.launch {
+            val token = tokenRepository.getAccessToken() ?: return@launch
+            val userId = jwtDecoder.getUserId(token) ?: return@launch
+            fetchUserProfileUseCase(userId)
+        }
+    }
+
+    private fun observeUser() {
+        getCurrentUserUseCase().onEach { userProfile ->
+            _uiState.update { it.copy(userName = userProfile?.name) }
+        }.launchIn(viewModelScope)
     }
 
     fun loadTables() {

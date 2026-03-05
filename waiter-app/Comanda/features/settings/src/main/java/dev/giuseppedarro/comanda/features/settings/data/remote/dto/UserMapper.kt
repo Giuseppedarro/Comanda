@@ -1,8 +1,9 @@
 package dev.giuseppedarro.comanda.features.settings.data.remote.dto
 
+import dev.giuseppedarro.comanda.core.domain.model.UserProfile
 import dev.giuseppedarro.comanda.features.settings.domain.model.User
 
-fun UserResponse.toDomain(): User = User(
+fun UserProfile.toDomain(): User = User(
     id = id.toString(),
     employeeId = employeeId,
     name = name,

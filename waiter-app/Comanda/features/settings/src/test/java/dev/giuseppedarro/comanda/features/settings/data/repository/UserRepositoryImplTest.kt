@@ -2,10 +2,10 @@ package dev.giuseppedarro.comanda.features.settings.data.repository
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import dev.giuseppedarro.comanda.features.settings.data.remote.UserApi
-import dev.giuseppedarro.comanda.features.settings.data.remote.dto.CreateUserRequest
-import dev.giuseppedarro.comanda.features.settings.data.remote.dto.UpdateUserRequest
-import dev.giuseppedarro.comanda.features.settings.data.remote.dto.UserResponse
+import dev.giuseppedarro.comanda.core.domain.model.UserProfile
+import dev.giuseppedarro.comanda.core.network.UserApi
+import dev.giuseppedarro.comanda.core.network.dto.CreateUserRequest
+import dev.giuseppedarro.comanda.core.network.dto.UpdateUserRequest
 import dev.giuseppedarro.comanda.features.settings.domain.repository.UserRepository
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -27,15 +27,15 @@ class UserRepositoryImplTest {
     @Test
     fun `getUsers should return success when api is successful`() = runTest {
         // Given
-        val userResponses: List<UserResponse> = listOf(
-            UserResponse(
+        val userProfiles: List<UserProfile> = listOf(
+            UserProfile(
                 id = 1,
                 employeeId = "test-id",
                 name = "test-name",
                 role = "WAITER"
             )
         )
-        coEvery { userApi.getUsers() } returns Result.success(userResponses)
+        coEvery { userApi.getUsers() } returns userProfiles
 
         // When
         val result = userRepository.getUsers()
@@ -57,7 +57,7 @@ class UserRepositoryImplTest {
     fun `getUsers should return failure when api throws exception`() = runTest {
         // Given
         val exception = RuntimeException("Error")
-        coEvery { userApi.getUsers() } returns Result.failure(exception)
+        coEvery { userApi.getUsers() } throws exception
 
         // When
         val result = userRepository.getUsers()
@@ -74,9 +74,9 @@ class UserRepositoryImplTest {
     @Test
     fun `createUser should return success when api is successful`() = runTest {
         // Given
-        val userResponse = UserResponse(1, "test-id", "test-name", "WAITER")
+        val userProfile = UserProfile(1, "test-id", "test-name", "WAITER")
         val request = CreateUserRequest("test-id", "test-name", "password", "WAITER")
-        coEvery { userApi.createUser(request) } returns Result.success(userResponse)
+        coEvery { userApi.createUser(request) } returns userProfile
 
         // When
         val result = userRepository.createUser(request)
@@ -94,7 +94,7 @@ class UserRepositoryImplTest {
         // Given
         val exception = RuntimeException("Error")
         val request = CreateUserRequest("test-id", "test-name", "password", "WAITER")
-        coEvery { userApi.createUser(request) } returns Result.failure(exception)
+        coEvery { userApi.createUser(request) } throws exception
 
         // When
         val result = userRepository.createUser(request)
@@ -107,9 +107,9 @@ class UserRepositoryImplTest {
     @Test
     fun `updateUser should return success when api is successful`() = runTest {
         // Given
-        val userResponse = UserResponse(1, "test-id", "test-name", "WAITER")
+        val userProfile = UserProfile(1, "test-id", "test-name", "WAITER")
         val request = UpdateUserRequest(name = "test-name", password = "password", role = "WAITER", employeeId = "test-id")
-        coEvery { userApi.updateUser("1", request) } returns Result.success(userResponse)
+        coEvery { userApi.updateUser(1, request) } returns userProfile
 
         // When
         val result = userRepository.updateUser("1", request)
@@ -127,7 +127,7 @@ class UserRepositoryImplTest {
         // Given
         val exception = RuntimeException("Error")
         val request = UpdateUserRequest(name = "test-name", password = "password", role = "WAITER", employeeId = "test-id")
-        coEvery { userApi.updateUser("1", request) } returns Result.failure(exception)
+        coEvery { userApi.updateUser(1, request) } throws exception
 
         // When
         val result = userRepository.updateUser("1", request)
@@ -140,7 +140,7 @@ class UserRepositoryImplTest {
     @Test
     fun `deleteUser should return success when api is successful`() = runTest {
         // Given
-        coEvery { userApi.deleteUser("1") } returns Result.success(Unit)
+        coEvery { userApi.deleteUser(1) } returns Unit
 
         // When
         val result = userRepository.deleteUser("1")
@@ -153,7 +153,7 @@ class UserRepositoryImplTest {
     fun `deleteUser should return failure when api throws exception`() = runTest {
         // Given
         val exception = RuntimeException("Error")
-        coEvery { userApi.deleteUser("1") } returns Result.failure(exception)
+        coEvery { userApi.deleteUser(1) } throws exception
 
         // When
         val result = userRepository.deleteUser("1")

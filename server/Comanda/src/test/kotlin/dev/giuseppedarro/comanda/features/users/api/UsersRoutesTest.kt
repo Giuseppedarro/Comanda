@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm
 import dev.giuseppedarro.comanda.features.users.domain.model.User
 import dev.giuseppedarro.comanda.features.users.domain.usecase.CreateUserUseCase
 import dev.giuseppedarro.comanda.features.users.domain.usecase.DeleteUserUseCase
+import dev.giuseppedarro.comanda.features.users.domain.usecase.GetUserByIdUseCase
 import dev.giuseppedarro.comanda.features.users.domain.usecase.GetUsersUseCase
 import dev.giuseppedarro.comanda.features.users.domain.usecase.UpdateUserUseCase
 import io.ktor.client.request.*
@@ -32,6 +33,7 @@ class UsersRoutesTest {
     private fun Application.setupTestApp(
         createUserUseCase: CreateUserUseCase = mockk(),
         getUsersUseCase: GetUsersUseCase = mockk(),
+        getUserByIdUseCase: GetUserByIdUseCase = mockk(),
         updateUserUseCase: UpdateUserUseCase = mockk(),
         deleteUserUseCase: DeleteUserUseCase = mockk()
     ) {
@@ -57,13 +59,14 @@ class UsersRoutesTest {
             modules(module {
                 single { createUserUseCase }
                 single { getUsersUseCase }
+                single { getUserByIdUseCase }
                 single { updateUserUseCase }
                 single { deleteUserUseCase }
             })
         }
         
         this.routing {
-            usersRoutes(createUserUseCase, getUsersUseCase, updateUserUseCase, deleteUserUseCase)
+            usersRoutes(createUserUseCase, getUsersUseCase, getUserByIdUseCase, updateUserUseCase, deleteUserUseCase)
         }
     }
 
@@ -103,6 +106,23 @@ class UsersRoutesTest {
         }
 
         val response = client.get("/users") {
+            header(HttpHeaders.Authorization, "Bearer ${generateToken()}")
+        }
+
+        assertEquals(HttpStatusCode.OK, response.status)
+    }
+
+    @Test
+    fun `GET user by id should return 200 OK`() = testApplication {
+        val getUserByIdUseCase = mockk<GetUserByIdUseCase>()
+        val expectedUser = User(1, "john.doe", "John Doe", "waiter")
+        coEvery { getUserByIdUseCase(1) } returns Result.success(expectedUser)
+
+        application {
+            setupTestApp(getUserByIdUseCase = getUserByIdUseCase)
+        }
+
+        val response = client.get("/users/1") {
             header(HttpHeaders.Authorization, "Bearer ${generateToken()}")
         }
 
