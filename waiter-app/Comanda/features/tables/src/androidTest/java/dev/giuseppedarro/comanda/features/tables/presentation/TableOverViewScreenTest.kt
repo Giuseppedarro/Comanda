@@ -30,6 +30,7 @@ class TableOverViewScreenTest {
             ComandaTheme {
                 TableOverviewContent(
                     uiState = TableOverviewUiState(tables = tables),
+                    userName = "John Doe",
                     onTableClick = {},
                     onNavigateToPrinters = {},
                     onNavigateToMenu = {},
@@ -53,6 +54,7 @@ class TableOverViewScreenTest {
             ComandaTheme {
                 TableOverviewContent(
                     uiState = TableOverviewUiState(tables = emptyList()),
+                    userName = "John Doe",
                     onTableClick = {},
                     onNavigateToPrinters = {},
                     onNavigateToMenu = {},
@@ -80,6 +82,7 @@ class TableOverViewScreenTest {
             ComandaTheme {
                 TableOverviewContent(
                     uiState = TableOverviewUiState(tables = tables, filter = TableFilter.OCCUPIED),
+                    userName = "John Doe",
                     onTableClick = {},
                     onNavigateToPrinters = {},
                     onNavigateToMenu = {},

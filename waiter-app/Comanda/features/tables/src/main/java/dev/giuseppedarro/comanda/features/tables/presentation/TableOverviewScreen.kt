@@ -103,6 +103,7 @@ fun TableOverviewScreen(
 
     TableOverviewContent(
         uiState = uiState,
+        userName = uiState.userName,
         onTableClick = onTableClick,
         onNavigateToPrinters = onNavigateToPrinters,
         onNavigateToMenu = onNavigateToMenu,
@@ -119,6 +120,7 @@ fun TableOverviewScreen(
 @Composable
 fun TableOverviewContent(
     uiState: TableOverviewUiState,
+    userName: String?,
     onTableClick: (Table) -> Unit,
     onNavigateToPrinters: () -> Unit,
     onNavigateToMenu: () -> Unit,
@@ -143,6 +145,7 @@ fun TableOverviewContent(
         drawerState = drawerState,
         drawerContent = {
             AppDrawer(
+                userName = userName,
                 onNavigateToPrinters = onNavigateToPrinters,
                 onNavigateToMenu = onNavigateToMenu,
                 onNavigateToSettings = onNavigateToSettings,
@@ -274,6 +277,7 @@ fun TableOverviewScreenPreview() {
         )
         TableOverviewContent(
             uiState = uiState,
+            userName = "John Doe",
             onTableClick = {},
             onNavigateToPrinters = {},
             onNavigateToMenu = {},

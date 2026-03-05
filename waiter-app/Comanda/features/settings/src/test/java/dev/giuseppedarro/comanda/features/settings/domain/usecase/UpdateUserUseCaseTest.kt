@@ -1,7 +1,7 @@
 package dev.giuseppedarro.comanda.features.settings.domain.usecase
 
 import com.google.common.truth.Truth.assertThat
-import dev.giuseppedarro.comanda.features.settings.data.remote.dto.UpdateUserRequest
+import dev.giuseppedarro.comanda.core.network.dto.UpdateUserRequest
 import dev.giuseppedarro.comanda.features.settings.domain.model.User
 import dev.giuseppedarro.comanda.features.settings.domain.repository.UserRepository
 import io.mockk.coEvery

@@ -2,10 +2,15 @@ package dev.giuseppedarro.comanda.features.tables.presentation
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import dev.giuseppedarro.comanda.core.domain.repository.TokenRepository
+import dev.giuseppedarro.comanda.core.domain.usecase.FetchUserProfileUseCase
+import dev.giuseppedarro.comanda.core.domain.usecase.GetCurrentUserUseCase
 import dev.giuseppedarro.comanda.core.domain.usecase.LogoutUseCase
+import dev.giuseppedarro.comanda.core.utils.JwtDecoder
 import dev.giuseppedarro.comanda.features.tables.domain.model.Table
 import dev.giuseppedarro.comanda.features.tables.domain.usecase.AddTableUseCase
 import dev.giuseppedarro.comanda.features.tables.domain.usecase.GetTablesUseCase
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +31,10 @@ class TableOverviewViewModelTest {
     private val getTablesUseCase: GetTablesUseCase = mockk()
     private val addTableUseCase: AddTableUseCase = mockk()
     private val logoutUseCase: LogoutUseCase = mockk()
+    private val getCurrentUserUseCase: GetCurrentUserUseCase = mockk()
+    private val fetchUserProfileUseCase: FetchUserProfileUseCase = mockk()
+    private val tokenRepository: TokenRepository = mockk()
+    private val jwtDecoder: JwtDecoder = mockk()
 
     private val testDispatcher = StandardTestDispatcher()
 
@@ -33,7 +42,17 @@ class TableOverviewViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         every { getTablesUseCase() } returns flowOf(emptyList()) // Default mock
-        viewModel = TableOverviewViewModel(getTablesUseCase, addTableUseCase, logoutUseCase)
+        every { getCurrentUserUseCase() } returns flowOf(null)
+        coEvery { tokenRepository.getAccessToken() } returns null
+        viewModel = TableOverviewViewModel(
+            getTablesUseCase,
+            addTableUseCase,
+            logoutUseCase,
+            getCurrentUserUseCase,
+            fetchUserProfileUseCase,
+            tokenRepository,
+            jwtDecoder
+        )
     }
 
     @After

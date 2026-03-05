@@ -1,7 +1,7 @@
 package dev.giuseppedarro.comanda.features.settings.domain.usecase
 
 import com.google.common.truth.Truth.assertThat
-import dev.giuseppedarro.comanda.features.settings.data.remote.dto.CreateUserRequest
+import dev.giuseppedarro.comanda.core.network.dto.CreateUserRequest
 import dev.giuseppedarro.comanda.features.settings.domain.model.User
 import dev.giuseppedarro.comanda.features.settings.domain.repository.UserRepository
 import io.mockk.coEvery
@@ -22,17 +22,17 @@ class CreateUserUseCaseTest {
     }
 
     @Test
-    fun `invoke should call createUser on repository`() = runTest {
+    fun `invoke should call repository and return result`() = runTest {
         // Given
-        val user = User("1", "test", "test","waiter")
-        val request = CreateUserRequest("test", "test", "password", "WAITER")
-        coEvery { userRepository.createUser(request) } returns Result.success(user)
+        val request = CreateUserRequest("test-id", "test-name", "password", "WAITER")
+        val expectedUser = User("1", "test-id", "test-name", "WAITER")
+        coEvery { userRepository.createUser(request) } returns Result.success(expectedUser)
 
         // When
         val result = createUserUseCase(request)
 
         // Then
         assertThat(result.isSuccess).isTrue()
-        assertThat(result.getOrNull()).isEqualTo(user)
+        assertThat(result.getOrNull()).isEqualTo(expectedUser)
     }
 }

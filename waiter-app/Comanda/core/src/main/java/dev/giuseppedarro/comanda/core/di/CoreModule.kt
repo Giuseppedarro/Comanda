@@ -8,9 +8,13 @@ import dev.giuseppedarro.comanda.core.data.CryptoManager
 import dev.giuseppedarro.comanda.core.data.repository.TokenRepositoryImpl
 import dev.giuseppedarro.comanda.core.data.repository.LanguageRepositoryImpl
 import dev.giuseppedarro.comanda.core.data.repository.ThemeRepositoryImpl
+import dev.giuseppedarro.comanda.core.data.repository.UserRepositoryImpl
 import dev.giuseppedarro.comanda.core.domain.repository.TokenRepository
 import dev.giuseppedarro.comanda.core.domain.repository.LanguageRepository
 import dev.giuseppedarro.comanda.core.domain.repository.ThemeRepository
+import dev.giuseppedarro.comanda.core.domain.repository.UserRepository
+import dev.giuseppedarro.comanda.core.domain.usecase.FetchUserProfileUseCase
+import dev.giuseppedarro.comanda.core.domain.usecase.GetCurrentUserUseCase
 import dev.giuseppedarro.comanda.core.domain.usecase.GetLanguageUseCase
 import dev.giuseppedarro.comanda.core.domain.usecase.GetThemePreferencesUseCase
 import dev.giuseppedarro.comanda.core.domain.usecase.SetLanguageUseCase
@@ -20,10 +24,14 @@ import dev.giuseppedarro.comanda.core.network.BaseUrlProvider
 import dev.giuseppedarro.comanda.core.network.HttpClientConfig
 import dev.giuseppedarro.comanda.core.network.KtorLogger
 import dev.giuseppedarro.comanda.core.network.MenuApi
+import dev.giuseppedarro.comanda.core.network.UserApi
 import dev.giuseppedarro.comanda.core.network.createBasicHttpClient
 import dev.giuseppedarro.comanda.core.network.createHttpClient
+import dev.giuseppedarro.comanda.core.utils.JwtDecoder
 import io.ktor.client.HttpClient
+import kotlinx.serialization.json.Json
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.dsl.factoryOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
@@ -54,12 +62,19 @@ val coreModule = module {
     factory { GetLanguageUseCase(get()) }
     factory { SetLanguageUseCase(get()) }
 
+    // User Profile
+    single<UserRepository> { UserRepositoryImpl(get()) }
+    factoryOf(::GetCurrentUserUseCase)
+    factoryOf(::FetchUserProfileUseCase)
+
     // Base URL provider for dynamic configuration
     single { BaseUrlProvider("http://10.0.2.2:8080/") }
 
     // Networking configuration
     single<KtorLogger> { AndroidKtorLogger() }
     single { HttpClientConfig() }
+    single { Json { ignoreUnknownKeys = true } }
+    single { JwtDecoder(get()) }
 
     // Basic HTTP client (without Auth) - for login and token refresh
     single<HttpClient>(named("basicClient")) {
@@ -83,4 +98,5 @@ val coreModule = module {
 
     // Shared APIs
     single { MenuApi(get(named("authClient"))) }
+    single { UserApi(get(named("authClient"))) }
 }
