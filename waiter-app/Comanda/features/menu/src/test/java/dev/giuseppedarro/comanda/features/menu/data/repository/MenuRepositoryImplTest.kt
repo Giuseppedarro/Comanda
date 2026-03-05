@@ -2,9 +2,9 @@ package dev.giuseppedarro.comanda.features.menu.data.repository
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import dev.giuseppedarro.comanda.core.network.MenuApi
 import dev.giuseppedarro.comanda.core.network.dto.MenuCategoryDto
 import dev.giuseppedarro.comanda.core.network.dto.MenuItemDto
-import dev.giuseppedarro.comanda.features.menu.data.remote.MenuApi
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuItem
 import dev.giuseppedarro.comanda.features.menu.domain.repository.MenuRepository

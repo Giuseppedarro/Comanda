@@ -1,6 +1,6 @@
 package dev.giuseppedarro.comanda.features.menu.di
 
-import dev.giuseppedarro.comanda.features.menu.data.remote.MenuApi
+import dev.giuseppedarro.comanda.core.network.MenuApi
 import dev.giuseppedarro.comanda.features.menu.data.repository.MenuRepositoryImpl
 import dev.giuseppedarro.comanda.features.menu.domain.repository.MenuRepository
 import dev.giuseppedarro.comanda.features.menu.domain.usecase.AddMenuItemUseCase
@@ -14,12 +14,10 @@ import dev.giuseppedarro.comanda.features.menu.presentation.CategoryViewModel
 import dev.giuseppedarro.comanda.features.menu.presentation.MenuViewModel
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.viewModel
-import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val menuModule = module {
-    single { MenuApi(get(named("authClient"))) }
-    single<MenuRepository> { MenuRepositoryImpl(get()) }
+    single<MenuRepository> { MenuRepositoryImpl(get<MenuApi>()) }
 
     factoryOf(::GetMenuUseCase)
     factoryOf(::CreateCategoryUseCase)

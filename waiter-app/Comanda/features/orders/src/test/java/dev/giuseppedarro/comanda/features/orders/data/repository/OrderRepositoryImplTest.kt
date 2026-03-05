@@ -2,6 +2,7 @@ package dev.giuseppedarro.comanda.features.orders.data.repository
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import dev.giuseppedarro.comanda.core.network.MenuApi
 import dev.giuseppedarro.comanda.core.network.dto.MenuCategoryDto
 import dev.giuseppedarro.comanda.core.network.dto.MenuItemDto
 import dev.giuseppedarro.comanda.features.orders.data.remote.OrderApi
@@ -18,18 +19,20 @@ class OrderRepositoryImplTest {
 
     private lateinit var orderRepository: OrderRepositoryImpl
     private lateinit var orderApi: OrderApi
+    private lateinit var menuApi: MenuApi
 
     @Before
     fun setUp() {
         orderApi = mockk()
-        orderRepository = OrderRepositoryImpl(orderApi)
+        menuApi = mockk()
+        orderRepository = OrderRepositoryImpl(orderApi, menuApi)
     }
 
     @Test
     fun getMenu_should_emit_success() = runTest {
         // Given
         val menuDto = listOf(MenuCategoryDto("Pizzas", listOf(MenuItemDto(id = "margherita", name = "Margherita", price = 1000))))
-        coEvery { orderApi.getMenu() } returns menuDto
+        coEvery { menuApi.getMenu() } returns menuDto
 
         // When
         val result = orderRepository.getMenu()
@@ -46,7 +49,7 @@ class OrderRepositoryImplTest {
     @Test
     fun getMenu_should_emit_error_when_api_throws_exception() = runTest {
         // Given
-        coEvery { orderApi.getMenu() } throws RuntimeException("Error")
+        coEvery { menuApi.getMenu() } throws RuntimeException("Error")
 
         // When
         val result = orderRepository.getMenu()
@@ -74,7 +77,7 @@ class OrderRepositoryImplTest {
         )
         val menuDto = listOf(MenuCategoryDto("Pizzas", listOf(MenuItemDto(id = "margherita", name = "Margherita", price = 1000))))
         coEvery { orderApi.getOrdersForTable(tableNumber) } returns orderResponse
-        coEvery { orderApi.getMenu() } returns menuDto
+        coEvery { menuApi.getMenu() } returns menuDto
 
         // When
         val result = orderRepository.getOrdersForTable(tableNumber)

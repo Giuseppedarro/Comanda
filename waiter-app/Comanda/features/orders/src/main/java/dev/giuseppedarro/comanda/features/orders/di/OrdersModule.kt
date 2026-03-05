@@ -21,7 +21,7 @@ val ordersModule = module {
     }
 
     // Repository
-    single<OrderRepository> { OrderRepositoryImpl(get()) }
+    single<OrderRepository> { OrderRepositoryImpl(get(), get()) }
 
     // Use cases
     factoryOf(::GetMenuUseCase)

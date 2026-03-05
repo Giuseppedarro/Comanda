@@ -1,5 +1,6 @@
 package dev.giuseppedarro.comanda.features.orders.data.repository
 
+import dev.giuseppedarro.comanda.core.network.MenuApi
 import dev.giuseppedarro.comanda.features.orders.data.remote.OrderApi
 import dev.giuseppedarro.comanda.features.orders.data.remote.dto.OrderItemRequest
 import dev.giuseppedarro.comanda.features.orders.data.remote.dto.SubmitOrderRequest
@@ -13,12 +14,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class OrderRepositoryImpl(
-    private val api: OrderApi
+    private val orderApi: OrderApi,
+    private val menuApi: MenuApi
 ) : OrderRepository {
 
     override fun getMenu(): Flow<Result<List<MenuCategory>>> = flow {
         try {
-            val remoteMenu = api.getMenu()
+            val remoteMenu = menuApi.getMenu()
             val mapped = remoteMenu.map { categoryDto ->
                 MenuCategory(
                     name = categoryDto.name,
@@ -40,7 +42,7 @@ class OrderRepositoryImpl(
     override fun getOrdersForTable(tableNumber: Int): Flow<Result<Order?>> = flow {
         try {
             // Token is automatically injected by Ktor Auth plugin
-            val orderResponse = api.getOrdersForTable(tableNumber)
+            val orderResponse = orderApi.getOrdersForTable(tableNumber)
 
             // If orderResponse is null, it means no order exists for this table (404 from backend)
             if (orderResponse == null) {
@@ -50,7 +52,7 @@ class OrderRepositoryImpl(
 
             // We need the full menu to find the price and other details of the menu items.
             // Fetch the menu fresh to avoid race conditions with the menu flow.
-            val remoteMenu = api.getMenu()
+            val remoteMenu = menuApi.getMenu()
             val allMenuItems = remoteMenu.flatMap { categoryDto ->
                 categoryDto.items.map { itemDto ->
                     MenuItem(
@@ -107,7 +109,7 @@ class OrderRepositoryImpl(
                 items = orderItemsRequest
             )
 
-            api.submitOrder(request)
+            orderApi.submitOrder(request)
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -130,7 +132,7 @@ class OrderRepositoryImpl(
                 items = orderItemsRequest
             )
 
-            api.printBill(request)
+            orderApi.printBill(request)
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)

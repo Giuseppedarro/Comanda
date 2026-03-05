@@ -19,6 +19,7 @@ import dev.giuseppedarro.comanda.core.network.AndroidKtorLogger
 import dev.giuseppedarro.comanda.core.network.BaseUrlProvider
 import dev.giuseppedarro.comanda.core.network.HttpClientConfig
 import dev.giuseppedarro.comanda.core.network.KtorLogger
+import dev.giuseppedarro.comanda.core.network.MenuApi
 import dev.giuseppedarro.comanda.core.network.createBasicHttpClient
 import dev.giuseppedarro.comanda.core.network.createHttpClient
 import io.ktor.client.HttpClient
@@ -79,4 +80,7 @@ val coreModule = module {
             basicClient = get(named("basicClient"))
         )
     }
+
+    // Shared APIs
+    single { MenuApi(get(named("authClient"))) }
 }

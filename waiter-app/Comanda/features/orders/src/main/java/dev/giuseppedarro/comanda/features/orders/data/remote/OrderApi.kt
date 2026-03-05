@@ -1,6 +1,5 @@
 package dev.giuseppedarro.comanda.features.orders.data.remote
 
-import dev.giuseppedarro.comanda.core.network.dto.MenuCategoryDto
 import dev.giuseppedarro.comanda.features.orders.data.remote.dto.GetOrderResponse
 import dev.giuseppedarro.comanda.features.orders.data.remote.dto.SubmitOrderRequest
 import io.ktor.client.HttpClient
@@ -14,10 +13,6 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 
 class OrderApi(private val client: HttpClient) {
-
-    suspend fun getMenu(): List<MenuCategoryDto> {
-        return client.get("menu").body()
-    }
 
     suspend fun getOrdersForTable(tableNumber: Int): GetOrderResponse? {
         return try {

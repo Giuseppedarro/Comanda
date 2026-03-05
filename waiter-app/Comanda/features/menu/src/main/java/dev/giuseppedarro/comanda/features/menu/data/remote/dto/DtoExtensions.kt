@@ -1,7 +1,9 @@
 package dev.giuseppedarro.comanda.features.menu.data.remote.dto
 
+import dev.giuseppedarro.comanda.core.network.dto.CreateMenuItemRequest
 import dev.giuseppedarro.comanda.core.network.dto.MenuCategoryDto
 import dev.giuseppedarro.comanda.core.network.dto.MenuItemDto
+import dev.giuseppedarro.comanda.core.network.dto.UpdateMenuItemRequest
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuItem
 
