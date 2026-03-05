@@ -23,6 +23,7 @@ import dev.giuseppedarro.comanda.features.tables.api.tablesRoutes
 import dev.giuseppedarro.comanda.features.users.api.usersRoutes
 import dev.giuseppedarro.comanda.features.users.domain.usecase.CreateUserUseCase
 import dev.giuseppedarro.comanda.features.users.domain.usecase.DeleteUserUseCase
+import dev.giuseppedarro.comanda.features.users.domain.usecase.GetUserByIdUseCase
 import dev.giuseppedarro.comanda.features.users.domain.usecase.GetUsersUseCase
 import dev.giuseppedarro.comanda.features.users.domain.usecase.UpdateUserUseCase
 import io.ktor.server.application.*
@@ -62,6 +63,7 @@ fun Application.configureRouting() {
 
     val createUserUseCase by inject<CreateUserUseCase>()
     val getUsersUseCase by inject<GetUsersUseCase>()
+    val getUserByIdUseCase by inject<GetUserByIdUseCase>()
     val updateUserUseCase by inject<UpdateUserUseCase>()
     val deleteUserUseCase by inject<DeleteUserUseCase>()
 
@@ -98,6 +100,7 @@ fun Application.configureRouting() {
         usersRoutes(
             createUserUseCase, 
             getUsersUseCase,
+            getUserByIdUseCase,
             updateUserUseCase,
             deleteUserUseCase
         )

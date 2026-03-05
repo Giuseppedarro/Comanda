@@ -60,6 +60,30 @@ class UsersRepositoryImpl : UsersRepository {
         }
     }
 
+    override suspend fun getUserById(id: Int): Result<User> {
+        return try {
+            val user = transaction {
+                Users.select { Users.id eq id }
+                    .map {
+                        User(
+                            id = it[Users.id],
+                            employeeId = it[Users.employeeId],
+                            name = it[Users.name],
+                            role = it[Users.role]
+                        )
+                    }
+                    .singleOrNull()
+            }
+            if (user != null) {
+                Result.success(user)
+            } else {
+                Result.failure(Exception("User not found"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     override suspend fun getUsers(): Result<List<User>> {
         return try {
             val users = transaction {
