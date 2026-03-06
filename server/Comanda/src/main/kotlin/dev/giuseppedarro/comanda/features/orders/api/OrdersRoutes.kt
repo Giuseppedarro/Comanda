@@ -33,7 +33,7 @@ fun Route.ordersRoutes(
         route("/orders") {
             post {
                 val request = call.receive<SubmitOrderRequest>()
-                println(request)
+                
                 // Basic validation
                 val validationError = validateOrderRequest(request)
 
@@ -58,7 +58,6 @@ fun Route.ordersRoutes(
 
             post("/print") {
                 val request = call.receive<SubmitOrderRequest>()
-                println("Received print order request: $request")
                 
                 val validationError = validateOrderRequest(request)
                 if (validationError != null) {

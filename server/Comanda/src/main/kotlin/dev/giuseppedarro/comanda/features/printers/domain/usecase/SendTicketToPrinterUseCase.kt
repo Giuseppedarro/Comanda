@@ -1,7 +1,7 @@
 package dev.giuseppedarro.comanda.features.printers.domain.usecase
 
-import dev.giuseppedarro.comanda.features.printers.domain.model.Printer
 import dev.giuseppedarro.comanda.features.printers.domain.repository.PrintersRepository
+import dev.giuseppedarro.comanda.features.printers.domain.service.PrinterService
 
 /**
  * Sends a formatted ticket text to a specific printer.
@@ -12,7 +12,8 @@ import dev.giuseppedarro.comanda.features.printers.domain.repository.PrintersRep
  * @return Result containing success/failure information
  */
 class SendTicketToPrinterUseCase(
-    private val printersRepository: PrintersRepository
+    private val printersRepository: PrintersRepository,
+    private val printerService: PrinterService
 ) {
     suspend operator fun invoke(printerId: Int, ticketContent: String): Result<Unit> {
         return try {
@@ -20,22 +21,10 @@ class SendTicketToPrinterUseCase(
             val printer = printersRepository.getPrinterById(printerId)
                 ?: return Result.failure(IllegalArgumentException("Printer not found with ID: $printerId"))
 
-            // TODO: Send actual ticket to printer via socket/ESC/POS
-            // This will be implemented in the data layer
-            sendToPrinter(printer, ticketContent)
-
-            Result.success(Unit)
+            // Send ticket using the service
+            printerService.printTicket(printer.address, printer.port, ticketContent)
         } catch (e: Exception) {
             Result.failure(e)
         }
-    }
-
-    private suspend fun sendToPrinter(printer: Printer, ticketContent: String) {
-        // Placeholder - actual implementation will use socket communication
-        // This will be moved to a printer client in the data layer
-        println("Sending ticket to printer:")
-        println("  Printer: ${printer.name} (${printer.address}:${printer.port})")
-        println("  Content:")
-        println(ticketContent)
     }
 }

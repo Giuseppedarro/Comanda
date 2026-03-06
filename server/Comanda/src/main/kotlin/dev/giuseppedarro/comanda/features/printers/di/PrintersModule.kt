@@ -1,7 +1,9 @@
 package dev.giuseppedarro.comanda.features.printers.di
 
 import dev.giuseppedarro.comanda.features.printers.data.repository.PrintersRepositoryImpl
+import dev.giuseppedarro.comanda.features.printers.data.service.EscPosPrinterService
 import dev.giuseppedarro.comanda.features.printers.domain.repository.PrintersRepository
+import dev.giuseppedarro.comanda.features.printers.domain.service.PrinterService
 import dev.giuseppedarro.comanda.features.printers.domain.usecase.CreatePrinterUseCase
 import dev.giuseppedarro.comanda.features.printers.domain.usecase.DeletePrinterUseCase
 import dev.giuseppedarro.comanda.features.printers.domain.usecase.GetAllPrintersUseCase
@@ -11,9 +13,11 @@ import org.koin.dsl.module
 
 val printersModule = module {
     single<PrintersRepository> { PrintersRepositoryImpl() }
+    single<PrinterService> { EscPosPrinterService() }
+    
     single { GetAllPrintersUseCase(get()) }
     single { CreatePrinterUseCase(get()) }
     single { UpdatePrinterUseCase(get()) }
     single { DeletePrinterUseCase(get()) }
-    single { SendTicketToPrinterUseCase(get()) }
+    single { SendTicketToPrinterUseCase(get(), get()) }
 }
