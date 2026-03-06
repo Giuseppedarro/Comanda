@@ -8,10 +8,10 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.giuseppedarro.comanda.core.domain.model.ThemePreferences
 import dev.giuseppedarro.comanda.core.domain.usecase.GetThemePreferencesUseCase
 import dev.giuseppedarro.comanda.navigation.NavGraph
@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val themePreferences by getThemePreferencesUseCase().collectAsState(initial = ThemePreferences(false, false))
+            val themePreferences by getThemePreferencesUseCase().collectAsStateWithLifecycle(initialValue = ThemePreferences(false, false))
             val useDarkTheme = when {
                 themePreferences.useSystemTheme -> isSystemInDarkTheme()
                 else -> themePreferences.isDarkMode

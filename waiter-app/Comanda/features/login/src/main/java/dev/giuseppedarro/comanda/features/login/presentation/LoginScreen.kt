@@ -33,7 +33,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,6 +45,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.giuseppedarro.comanda.core.R
 import dev.giuseppedarro.comanda.features.login.R as LoginR
 import dev.giuseppedarro.comanda.core.ui.theme.BrandedTheme
@@ -57,7 +57,7 @@ fun LoginScreen(
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = koinViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     if (uiState.isLoginSuccessful) {
         // Perform navigation and notify the ViewModel
@@ -251,6 +251,7 @@ fun LoginContent(
                     )
                 },
                 confirmButton = {
+                    @Suppress("DEPRECATION")
                     TextButton(onClick = {
                         onBaseUrlChange(baseUrlText.value)
                         onSaveBaseUrl()
@@ -260,6 +261,7 @@ fun LoginContent(
                     }
                 },
                 dismissButton = {
+                    @Suppress("DEPRECATION")
                     TextButton(onClick = { showDialog.value = false }) {
                         Text(stringResource(R.string.cancel))
                     }
