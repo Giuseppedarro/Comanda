@@ -66,7 +66,7 @@ class OrdersRepositoryImpl(
 
         return try {
             // 1) Compute deltas inside transaction for DB access
-            val deltas = transaction {
+            val (addedItems, removedItems) = transaction {
                 // Find previous order for this table (if any)
                 val existingOrder = Orders
                     .select { Orders.tableNumber eq request.tableNumber }
@@ -84,36 +84,57 @@ class OrdersRepositoryImpl(
                     .groupBy { it.menuItemId }
                     .mapValues { entry -> entry.value.sumOf { it.quantity } }
 
-                // Compute positive deltas (newly added items compared to previous order)
-                currentQtyByItem.mapNotNull { (itemId, qtyNow) ->
+                // Compute positive deltas (newly added items)
+                val added = currentQtyByItem.mapNotNull { (itemId, qtyNow) ->
                     val qtyPrev = previousQtyByItem[itemId] ?: 0
                     val diff = qtyNow - qtyPrev
                     if (diff > 0) itemId to diff else null
                 }
+
+                // Compute negative deltas (removed items)
+                val removed = previousQtyByItem.mapNotNull { (itemId, qtyPrev) ->
+                    val qtyNow = currentQtyByItem[itemId] ?: 0
+                    val diff = qtyPrev - qtyNow
+                    if (diff > 0) itemId to diff else null
+                }
+
+                Pair(added, removed)
             }
 
             // 2) Process and print tickets (outside transaction for suspend function support)
-            if (deltas.isNotEmpty()) {
+            if (addedItems.isNotEmpty() || removedItems.isNotEmpty()) {
                 // Build ticket content
                 val ticketContent = buildString {
-                    append("\n================== NEW ITEMS TICKET ==================\n")
-                    append("Table: ${request.tableNumber}    People: ${request.numberOfPeople}    At: $creationTime\n")
-                    append("----------------------------------------------------\n")
-                    deltas.forEach { (itemId, qty) ->
-                        append(String.format("%2dx  %s\n", qty, getMenuItemName(itemId)))
-                    }
-                    // If there are notes in the current request, list them under their items
-                    val notesByItem = request.items.filter { !it.notes.isNullOrBlank() }
-                        .groupBy { it.menuItemId }
-                        .mapValues { (_, list) -> list.mapNotNull { it.notes }.distinct() }
-                    if (notesByItem.isNotEmpty()) {
+                    if (addedItems.isNotEmpty()) {
+                        append("\n================== NEW ITEMS TICKET ==================\n")
+                        append("Table: ${request.tableNumber}    People: ${request.numberOfPeople}    At: $creationTime\n")
                         append("----------------------------------------------------\n")
-                        append("Notes:\n")
-                        notesByItem.forEach { (itemId, notes) ->
-                            notes.forEach { note -> append(" - ${getMenuItemName(itemId)}: $note\n") }
+                        addedItems.forEach { (itemId, qty) ->
+                            append(String.format("%2dx  %s\n", qty, getMenuItemName(itemId)))
                         }
+                        // If there are notes in the current request, list them under their items
+                        val notesByItem = request.items.filter { !it.notes.isNullOrBlank() }
+                            .groupBy { it.menuItemId }
+                            .mapValues { (_, list) -> list.mapNotNull { it.notes }.distinct() }
+                        if (notesByItem.isNotEmpty()) {
+                            append("----------------------------------------------------\n")
+                            append("Notes:\n")
+                            notesByItem.forEach { (itemId, notes) ->
+                                notes.forEach { note -> append(" - ${getMenuItemName(itemId)}: $note\n") }
+                            }
+                        }
+                        append("====================================================\n")
                     }
-                    append("====================================================\n")
+
+                    if (removedItems.isNotEmpty()) {
+                        append("\n!!!!!!!!!!!!!!!!!!! CANCEL !!!!!!!!!!!!!!!!!!!!\n")
+                        append("Table: ${request.tableNumber}    People: ${request.numberOfPeople}    At: $creationTime\n")
+                        append("----------------------------------------------------\n")
+                        removedItems.forEach { (itemId, qty) ->
+                            append(String.format("%2dx  %s\n", qty, getMenuItemName(itemId)))
+                        }
+                        append("====================================================\n")
+                    }
                 }
 
                 // Print to terminal
@@ -142,7 +163,7 @@ class OrdersRepositoryImpl(
                     println("[FALLBACK] Ticket printed to terminal above")
                 }
             } else {
-                println("[INFO] Table ${request.tableNumber}: no new items compared to previous order.")
+                println("[INFO] Table ${request.tableNumber}: no changes compared to previous order.")
             }
 
             // 3) Save order to database
