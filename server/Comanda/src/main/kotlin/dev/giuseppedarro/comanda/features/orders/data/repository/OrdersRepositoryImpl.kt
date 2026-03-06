@@ -157,17 +157,20 @@ class OrdersRepositoryImpl(
                             val sendResult = sendTicketToPrinterUseCase(printer.id, ticketContent)
                             if (sendResult.isFailure) {
                                 println("[ERROR] Printer '${printer.name}' (${printer.address}:${printer.port}) is not connected")
-                                println("[FALLBACK] Ticket printed to terminal above")
+                                println("[FALLBACK] Printing ticket to terminal:")
+                                println(ticketContent)
                             } else {
                                 println("[SUCCESS] Ticket sent to '${printer.name}' printer")
                             }
                         } catch (e: Exception) {
                             println("[ERROR] Exception communicating with printer '${printer.name}': ${e.message}")
-                            println("[FALLBACK] Ticket printed to terminal above")
+                            println("[FALLBACK] Printing ticket to terminal:")
+                            println(ticketContent)
                         }
                     } else {
                         println("[WARN] Printer named '$printerName' not found in database")
-                        println("[FALLBACK] Ticket printed to terminal above")
+                        println("[FALLBACK] Printing ticket to terminal:")
+                        println(ticketContent)
                     }
                 }
             } else {

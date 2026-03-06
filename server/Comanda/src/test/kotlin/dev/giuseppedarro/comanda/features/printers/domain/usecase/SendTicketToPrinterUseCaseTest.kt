@@ -2,6 +2,7 @@ package dev.giuseppedarro.comanda.features.printers.domain.usecase
 
 import dev.giuseppedarro.comanda.features.printers.domain.model.Printer
 import dev.giuseppedarro.comanda.features.printers.domain.repository.PrintersRepository
+import dev.giuseppedarro.comanda.features.printers.domain.service.PrinterService
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -17,9 +18,12 @@ class SendTicketToPrinterUseCaseTest {
         // Given
         val printer = Printer(1, "Kitchen", "192.168.1.100", 9100)
         val mockRepository = mockk<PrintersRepository>()
+        val mockService = mockk<PrinterService>()
+        
         coEvery { mockRepository.getPrinterById(1) } returns printer
+        coEvery { mockService.printTicket(any(), any(), any()) } returns Result.success(Unit)
 
-        val useCase = SendTicketToPrinterUseCase(mockRepository)
+        val useCase = SendTicketToPrinterUseCase(mockRepository, mockService)
 
         // When
         val result = useCase(1, "Table 5\nPizza x2\nCola x1")
@@ -32,9 +36,11 @@ class SendTicketToPrinterUseCaseTest {
     fun `should return failure when printer not found`() = runTest {
         // Given
         val mockRepository = mockk<PrintersRepository>()
+        val mockService = mockk<PrinterService>()
+        
         coEvery { mockRepository.getPrinterById(999) } returns null
 
-        val useCase = SendTicketToPrinterUseCase(mockRepository)
+        val useCase = SendTicketToPrinterUseCase(mockRepository, mockService)
 
         // When
         val result = useCase(999, "Table 5\nPizza x2")
@@ -57,9 +63,12 @@ class SendTicketToPrinterUseCaseTest {
 
         val printer = Printer(1, "Kitchen", "192.168.1.100", 9100)
         val mockRepository = mockk<PrintersRepository>()
+        val mockService = mockk<PrinterService>()
+        
         coEvery { mockRepository.getPrinterById(1) } returns printer
+        coEvery { mockService.printTicket(any(), any(), any()) } returns Result.success(Unit)
 
-        val useCase = SendTicketToPrinterUseCase(mockRepository)
+        val useCase = SendTicketToPrinterUseCase(mockRepository, mockService)
 
         // When
         val result = useCase(1, ticketContent)

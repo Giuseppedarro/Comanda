@@ -12,7 +12,6 @@ import io.ktor.server.routing.*
 fun Route.authRoutes(loginUseCase: LoginUseCase, refreshTokenUseCase: RefreshTokenUseCase) {
     route("/auth") {
         post("/login") {
-            println("post auth/login is called")
             val request = call.receive<LoginRequest>()
             loginUseCase(request)
                 .onSuccess {
@@ -24,7 +23,6 @@ fun Route.authRoutes(loginUseCase: LoginUseCase, refreshTokenUseCase: RefreshTok
         }
 
         post("/refresh") {
-            println("post auth/refresh is called")
             val request = call.receive<RefreshTokenRequest>()
             refreshTokenUseCase(request)
                 .onSuccess {
