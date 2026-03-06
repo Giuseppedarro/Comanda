@@ -107,6 +107,7 @@ fun Application.configureDatabase() {
                         .split("_")
                         .joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } }
                     it[MenuItems.price] = price
+                    it[MenuItems.description] = "Kitchen" // Set printer
                     it[MenuItems.displayOrder] = index
                 }
             }
@@ -124,6 +125,7 @@ fun Application.configureDatabase() {
                         .split("_")
                         .joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } }
                     it[MenuItems.price] = price
+                    it[MenuItems.description] = "Kitchen" // Set printer
                     it[MenuItems.displayOrder] = index
                 }
             }
@@ -140,6 +142,7 @@ fun Application.configureDatabase() {
                     it[MenuItems.name] = id.removePrefix("dess_")
                         .replaceFirstChar { char -> char.uppercaseChar() }
                     it[MenuItems.price] = price
+                    it[MenuItems.description] = "Kitchen" // Set printer
                     it[MenuItems.displayOrder] = index
                 }
             }
@@ -167,6 +170,7 @@ fun Application.configureDatabase() {
                         .split("_")
                         .joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } }
                     it[MenuItems.price] = price
+                    it[MenuItems.description] = "Bar" // Set printer
                     it[MenuItems.displayOrder] = index
                 }
             }
