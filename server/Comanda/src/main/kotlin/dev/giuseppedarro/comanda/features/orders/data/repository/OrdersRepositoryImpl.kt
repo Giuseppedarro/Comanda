@@ -1,5 +1,6 @@
 package dev.giuseppedarro.comanda.features.orders.data.repository
 
+import dev.giuseppedarro.comanda.features.menu.data.MenuItems
 import dev.giuseppedarro.comanda.features.orders.data.OrderItems
 import dev.giuseppedarro.comanda.features.orders.data.Orders
 import dev.giuseppedarro.comanda.features.orders.data.model.SubmitOrderRequest
@@ -7,16 +8,10 @@ import dev.giuseppedarro.comanda.features.orders.domain.model.Order
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderItem
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderStatus
 import dev.giuseppedarro.comanda.features.orders.domain.repository.OrdersRepository
-import dev.giuseppedarro.comanda.features.printers.domain.model.Printer
 import dev.giuseppedarro.comanda.features.printers.domain.repository.PrintersRepository
 import dev.giuseppedarro.comanda.features.printers.domain.usecase.SendTicketToPrinterUseCase
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.replace
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.Instant
 import java.time.format.DateTimeFormatter
@@ -65,8 +60,8 @@ class OrdersRepositoryImpl(
         val creationTime = DateTimeFormatter.ISO_INSTANT.format(Instant.now())
 
         return try {
-            // 1) Compute deltas inside transaction for DB access
-            val (addedItems, removedItems) = transaction {
+            // 1) Compute deltas and group by printer
+            val (addedByPrinter, removedByPrinter) = transaction {
                 // Find previous order for this table (if any)
                 val existingOrder = Orders
                     .select { Orders.tableNumber eq request.tableNumber }
@@ -84,83 +79,96 @@ class OrdersRepositoryImpl(
                     .groupBy { it.menuItemId }
                     .mapValues { entry -> entry.value.sumOf { it.quantity } }
 
-                // Compute positive deltas (newly added items)
+                // Get all item IDs to fetch their descriptions
+                val allItemIds = (previousQtyByItem.keys + currentQtyByItem.keys).distinct()
+                
+                val itemPrinters = if (allItemIds.isNotEmpty()) {
+                    MenuItems
+                        .slice(MenuItems.id, MenuItems.description)
+                        .select { MenuItems.id inList allItemIds }
+                        .associate { it[MenuItems.id] to (it[MenuItems.description] ?: "Kitchen") } // Default to Kitchen
+                } else {
+                    emptyMap()
+                }
+
+                // Compute positive deltas (newly added items) and group by printer
                 val added = currentQtyByItem.mapNotNull { (itemId, qtyNow) ->
                     val qtyPrev = previousQtyByItem[itemId] ?: 0
                     val diff = qtyNow - qtyPrev
-                    if (diff > 0) itemId to diff else null
-                }
+                    if (diff > 0) Triple(itemId, diff, itemPrinters[itemId] ?: "Kitchen") else null
+                }.groupBy({ it.third }, { it.first to it.second })
 
-                // Compute negative deltas (removed items)
+                // Compute negative deltas (removed items) and group by printer
                 val removed = previousQtyByItem.mapNotNull { (itemId, qtyPrev) ->
                     val qtyNow = currentQtyByItem[itemId] ?: 0
                     val diff = qtyPrev - qtyNow
-                    if (diff > 0) itemId to diff else null
-                }
+                    if (diff > 0) Triple(itemId, diff, itemPrinters[itemId] ?: "Kitchen") else null
+                }.groupBy({ it.third }, { it.first to it.second })
 
                 Pair(added, removed)
             }
 
-            // 2) Process and print tickets (outside transaction for suspend function support)
-            if (addedItems.isNotEmpty() || removedItems.isNotEmpty()) {
-                // Build ticket content
-                val ticketContent = buildString {
-                    if (addedItems.isNotEmpty()) {
-                        append("\n================== NEW ITEMS TICKET ==================\n")
-                        append("Table: ${request.tableNumber}    People: ${request.numberOfPeople}    At: $creationTime\n")
-                        append("----------------------------------------------------\n")
-                        addedItems.forEach { (itemId, qty) ->
-                            append(String.format("%2dx  %s\n", qty, getMenuItemName(itemId)))
-                        }
-                        // If there are notes in the current request, list them under their items
-                        val notesByItem = request.items.filter { !it.notes.isNullOrBlank() }
-                            .groupBy { it.menuItemId }
-                            .mapValues { (_, list) -> list.mapNotNull { it.notes }.distinct() }
-                        if (notesByItem.isNotEmpty()) {
+            // 2) Process and print tickets for each printer
+            val allPrinters = (addedByPrinter.keys + removedByPrinter.keys).distinct()
+            if (allPrinters.isNotEmpty()) {
+                allPrinters.forEach { printerName ->
+                    val addedItems = addedByPrinter[printerName] ?: emptyList()
+                    val removedItems = removedByPrinter[printerName] ?: emptyList()
+
+                    // Build ticket content for this printer
+                    val ticketContent = buildString {
+                        if (addedItems.isNotEmpty()) {
+                            append("\n================== NEW ORDER: ${printerName.uppercase()} ==================\n")
+                            append("Table: ${request.tableNumber}    People: ${request.numberOfPeople}    At: $creationTime\n")
                             append("----------------------------------------------------\n")
-                            append("Notes:\n")
-                            notesByItem.forEach { (itemId, notes) ->
-                                notes.forEach { note -> append(" - ${getMenuItemName(itemId)}: $note\n") }
+                            addedItems.forEach { (itemId, qty) ->
+                                append(String.format("%2dx  %s\n", qty, getMenuItemName(itemId)))
                             }
+                            // If there are notes in the current request, list them under their items
+                            val notesByItem = request.items.filter { !it.notes.isNullOrBlank() }
+                                .groupBy { it.menuItemId }
+                                .mapValues { (_, list) -> list.mapNotNull { it.notes }.distinct() }
+                            if (notesByItem.isNotEmpty()) {
+                                append("----------------------------------------------------\n")
+                                append("Notes:\n")
+                                notesByItem.forEach { (itemId, notes) ->
+                                    notes.forEach { note -> append(" - ${getMenuItemName(itemId)}: $note\n") }
+                                }
+                            }
+                            append("====================================================\n")
                         }
-                        append("====================================================\n")
+
+                        if (removedItems.isNotEmpty()) {
+                            append("\n!!!!!!!!!!!!!!!!!!! CANCEL: ${printerName.uppercase()} !!!!!!!!!!!!!!!!!!!!\n")
+                            append("Table: ${request.tableNumber}    People: ${request.numberOfPeople}    At: $creationTime\n")
+                            append("----------------------------------------------------\n")
+                            removedItems.forEach { (itemId, qty) ->
+                                append(String.format("%2dx  %s\n", qty, getMenuItemName(itemId)))
+                            }
+                            append("====================================================\n")
+                        }
                     }
 
-                    if (removedItems.isNotEmpty()) {
-                        append("\n!!!!!!!!!!!!!!!!!!! CANCEL !!!!!!!!!!!!!!!!!!!!\n")
-                        append("Table: ${request.tableNumber}    People: ${request.numberOfPeople}    At: $creationTime\n")
-                        append("----------------------------------------------------\n")
-                        removedItems.forEach { (itemId, qty) ->
-                            append(String.format("%2dx  %s\n", qty, getMenuItemName(itemId)))
-                        }
-                        append("====================================================\n")
-                    }
-                }
+                    // Find printer by name (case-insensitive)
+                    val printer = printersRepository.getPrinterByName(printerName)
 
-                // Print to terminal
-                println(ticketContent)
-
-                // Send to Kitchen printer (id=1) by default
-                // TODO: Later, determine printer based on item categories
-                val kitchenPrinterId = 1
-                val kitchenPrinter = printersRepository.getPrinterById(kitchenPrinterId)
-
-                if (kitchenPrinter != null) {
-                    try {
-                        val sendResult = sendTicketToPrinterUseCase(kitchenPrinterId, ticketContent)
-                        if (sendResult.isFailure) {
-                            println("[ERROR] Printer '${kitchenPrinter.name}' (${kitchenPrinter.address}:${kitchenPrinter.port}) is not connected")
+                    if (printer != null) {
+                        try {
+                            val sendResult = sendTicketToPrinterUseCase(printer.id, ticketContent)
+                            if (sendResult.isFailure) {
+                                println("[ERROR] Printer '${printer.name}' (${printer.address}:${printer.port}) is not connected")
+                                println("[FALLBACK] Ticket printed to terminal above")
+                            } else {
+                                println("[SUCCESS] Ticket sent to '${printer.name}' printer")
+                            }
+                        } catch (e: Exception) {
+                            println("[ERROR] Exception communicating with printer '${printer.name}': ${e.message}")
                             println("[FALLBACK] Ticket printed to terminal above")
-                        } else {
-                            println("[SUCCESS] Ticket sent to '${kitchenPrinter.name}' printer")
                         }
-                    } catch (e: Exception) {
-                        println("[ERROR] Exception communicating with printer '${kitchenPrinter.name}': ${e.message}")
+                    } else {
+                        println("[WARN] Printer named '$printerName' not found in database")
                         println("[FALLBACK] Ticket printed to terminal above")
                     }
-                } else {
-                    println("[WARN] Kitchen printer (id=$kitchenPrinterId) not found in database")
-                    println("[FALLBACK] Ticket printed to terminal above")
                 }
             } else {
                 println("[INFO] Table ${request.tableNumber}: no changes compared to previous order.")

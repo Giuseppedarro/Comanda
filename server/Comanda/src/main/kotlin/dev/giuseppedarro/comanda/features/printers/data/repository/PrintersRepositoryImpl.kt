@@ -7,6 +7,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -30,6 +31,20 @@ class PrintersRepositoryImpl : PrintersRepository {
     override suspend fun getPrinterById(id: Int): Printer? = transaction {
         Printers
             .select { Printers.id eq id }
+            .singleOrNull()
+            ?.let { row ->
+                Printer(
+                    id = row[Printers.id],
+                    name = row[Printers.name],
+                    address = row[Printers.address],
+                    port = row[Printers.port]
+                )
+            }
+    }
+
+    override suspend fun getPrinterByName(name: String): Printer? = transaction {
+        Printers
+            .select { Printers.name.lowerCase() eq name.lowercase() }
             .singleOrNull()
             ?.let { row ->
                 Printer(
