@@ -39,7 +39,7 @@ fun Application.configureDatabase() {
                 it[employeeId] = "1234"
                 it[name] = "Default Waiter"
                 it[password] = "password"
-                it[role] = "WAITER"
+                it[role] = "ADMIN"
             }
         }
 

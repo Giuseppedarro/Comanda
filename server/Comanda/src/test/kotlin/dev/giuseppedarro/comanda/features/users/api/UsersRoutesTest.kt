@@ -70,10 +70,11 @@ class UsersRoutesTest {
         }
     }
 
-    private fun generateToken(): String {
+    private fun generateToken(role: String = "ADMIN"): String {
         return JWT.create()
             .withAudience(myAudience)
             .withIssuer(myIssuer)
+            .withClaim("role", role)
             .sign(Algorithm.HMAC256(mySecret))
     }
 
@@ -162,5 +163,18 @@ class UsersRoutesTest {
         }
 
         assertEquals(HttpStatusCode.NoContent, response.status)
+    }
+
+    @Test
+    fun `DELETE users should return 403 Forbidden when not admin`() = testApplication {
+        application {
+            setupTestApp()
+        }
+
+        val response = client.delete("/users/1") {
+            header(HttpHeaders.Authorization, "Bearer ${generateToken(role = "WAITER")}")
+        }
+
+        assertEquals(HttpStatusCode.Forbidden, response.status)
     }
 }
