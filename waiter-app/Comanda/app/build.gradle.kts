@@ -70,6 +70,7 @@ dependencies {
     implementation(project(":features:settings"))
 
     implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation(libs.androidx.lifecycle.runtime.compose)
 
     // Koin
     implementation(libs.koin.android)
