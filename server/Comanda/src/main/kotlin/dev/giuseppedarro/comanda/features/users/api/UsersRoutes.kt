@@ -4,6 +4,7 @@ import dev.giuseppedarro.comanda.features.users.domain.usecase.*
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -43,6 +44,18 @@ fun Route.usersRoutes(
     authenticate("auth-jwt") {
         route("/users") {
             post {
+                val principal = call.principal<JWTPrincipal>()
+                val role = principal?.payload?.getClaim("role")?.asString()
+                val userId = principal?.payload?.getClaim("userId")?.asString()
+
+                println("POST /users request from userId: $userId, role: $role")
+
+                if (role != "ADMIN") {
+                    println("Access denied for userId: $userId with role: $role")
+                    call.respond(HttpStatusCode.Forbidden, mapOf("error" to "Only admins can create users"))
+                    return@post
+                }
+
                 val request = call.receive<CreateUserRequest>()
                 
                 val params = CreateUserParams(
@@ -89,6 +102,18 @@ fun Route.usersRoutes(
             }
 
             put("/{id}") {
+                val principal = call.principal<JWTPrincipal>()
+                val role = principal?.payload?.getClaim("role")?.asString()
+                val userId = principal?.payload?.getClaim("userId")?.asString()
+
+                println("PUT /users/{id} request from userId: $userId, role: $role")
+
+                if (role != "ADMIN") {
+                    println("Access denied for userId: $userId with role: $role")
+                    call.respond(HttpStatusCode.Forbidden, mapOf("error" to "Only admins can update users"))
+                    return@put
+                }
+
                 val id = call.parameters["id"]?.toIntOrNull()
                 if (id == null) {
                     call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Invalid user ID"))
@@ -113,6 +138,18 @@ fun Route.usersRoutes(
             }
 
             delete("/{id}") {
+                val principal = call.principal<JWTPrincipal>()
+                val role = principal?.payload?.getClaim("role")?.asString()
+                val userId = principal?.payload?.getClaim("userId")?.asString()
+
+                println("DELETE /users/{id} request from userId: $userId, role: $role")
+
+                if (role != "ADMIN") {
+                    println("Access denied for userId: $userId with role: $role")
+                    call.respond(HttpStatusCode.Forbidden, mapOf("error" to "Only admins can delete users"))
+                    return@delete
+                }
+
                 val id = call.parameters["id"]?.toIntOrNull()
                 if (id == null) {
                     call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Invalid user ID"))
