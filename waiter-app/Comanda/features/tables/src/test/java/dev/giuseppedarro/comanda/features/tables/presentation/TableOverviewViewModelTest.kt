@@ -37,7 +37,7 @@ class TableOverviewViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        every { getTablesUseCase() } returns flowOf(emptyList()) // Default mock
+        every { getTablesUseCase() } returns flowOf(Result.success(emptyList())) // Updated mock
         every { getCurrentUserUseCase() } returns flowOf(null)
         coEvery { syncUserProfileUseCase() } returns Result.success(mockk())
         
@@ -61,7 +61,7 @@ class TableOverviewViewModelTest {
             Table(1, true),
             Table(2, false)
         )
-        every { getTablesUseCase() } returns flowOf(tables)
+        every { getTablesUseCase() } returns flowOf(Result.success(tables)) // Updated mock
 
         viewModel.loadTables()
         testDispatcher.scheduler.advanceUntilIdle()
@@ -80,7 +80,7 @@ class TableOverviewViewModelTest {
             Table(1, true),
             Table(2, false)
         )
-        every { getTablesUseCase() } returns flowOf(tables)
+        every { getTablesUseCase() } returns flowOf(Result.success(tables)) // Updated mock
 
         viewModel.loadTables()
         testDispatcher.scheduler.advanceUntilIdle()
@@ -100,7 +100,7 @@ class TableOverviewViewModelTest {
             Table(1, true),
             Table(2, false)
         )
-        every { getTablesUseCase() } returns flowOf(tables)
+        every { getTablesUseCase() } returns flowOf(Result.success(tables)) // Updated mock
 
         viewModel.loadTables()
         testDispatcher.scheduler.advanceUntilIdle()

@@ -32,6 +32,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -49,6 +51,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.giuseppedarro.comanda.core.R
 import dev.giuseppedarro.comanda.features.tables.R as TablesR
 import dev.giuseppedarro.comanda.core.presentation.ComandaTopAppBar
+import dev.giuseppedarro.comanda.core.presentation.UiText
 import dev.giuseppedarro.comanda.features.tables.domain.model.Table
 import dev.giuseppedarro.comanda.features.tables.presentation.components.AppDrawer
 import dev.giuseppedarro.comanda.features.tables.presentation.components.TableCard
@@ -104,6 +107,7 @@ fun TableOverviewScreen(
     TableOverviewContent(
         uiState = uiState,
         userName = uiState.userName,
+        error = uiState.error,
         onTableClick = onTableClick,
         onNavigateToPrinters = onNavigateToPrinters,
         onNavigateToMenu = onNavigateToMenu,
@@ -112,6 +116,7 @@ fun TableOverviewScreen(
         onRefresh = viewModel::loadTables,
         onAddTableClick = viewModel::onAddTableClicked,
         onFilterChanged = viewModel::onFilterChanged,
+        onErrorConsumed = viewModel::onErrorConsumed,
         modifier = modifier
     )
 }
@@ -121,6 +126,7 @@ fun TableOverviewScreen(
 fun TableOverviewContent(
     uiState: TableOverviewUiState,
     userName: String?,
+    error: UiText?,
     onTableClick: (Table) -> Unit,
     onNavigateToPrinters: () -> Unit,
     onNavigateToMenu: () -> Unit,
@@ -129,6 +135,7 @@ fun TableOverviewContent(
     onRefresh: () -> Unit,
     onAddTableClick: () -> Unit,
     onFilterChanged: (TableFilter) -> Unit,
+    onErrorConsumed: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val pullRefreshState = rememberPullRefreshState(refreshing = uiState.isRefreshing, onRefresh = onRefresh)
@@ -138,6 +145,15 @@ fun TableOverviewContent(
     val fabIsVisible by remember {
         derivedStateOf {
             gridState.firstVisibleItemIndex == 0
+        }
+    }
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    error?.let { uiText ->
+        val message = uiText.asString()
+        LaunchedEffect(uiText) {
+            snackbarHostState.showSnackbar(message)
+            onErrorConsumed()
         }
     }
 
@@ -166,6 +182,7 @@ fun TableOverviewContent(
                     }
                 )
             },
+            snackbarHost = { SnackbarHost(snackbarHostState) },
             floatingActionButton = {
                 AnimatedVisibility(
                     visible = fabIsVisible,
@@ -278,6 +295,7 @@ fun TableOverviewScreenPreview() {
         TableOverviewContent(
             uiState = uiState,
             userName = "John Doe",
+            error = null,
             onTableClick = {},
             onNavigateToPrinters = {},
             onNavigateToMenu = {},
@@ -285,7 +303,8 @@ fun TableOverviewScreenPreview() {
             onLogout = {},
             onRefresh = {},
             onAddTableClick = {},
-            onFilterChanged = {}
+            onFilterChanged = {},
+            onErrorConsumed = {}
         )
     }
 }

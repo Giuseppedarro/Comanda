@@ -9,6 +9,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -25,13 +26,14 @@ class GetTablesUseCaseTest {
     @Test
     fun when_repository_returns_tables_then_use_case_should_return_them() = runBlocking {
         // Arrange
-        val tables = listOf(Table(1, false,))
-        every { repository.getTables() } returns flowOf(tables)
+        val tables = listOf(Table(1, false))
+        every { repository.getTables() } returns flowOf(Result.success(tables))
 
         // Act & Assert
         getTablesUseCase().test {
-            val emittedTables = awaitItem()
-            assertEquals(tables, emittedTables)
+            val result = awaitItem()
+            assertTrue(result.isSuccess)
+            assertEquals(tables, result.getOrNull())
             awaitComplete()
         }
     }

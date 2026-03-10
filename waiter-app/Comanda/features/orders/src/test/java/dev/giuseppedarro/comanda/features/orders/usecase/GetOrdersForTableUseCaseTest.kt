@@ -2,6 +2,7 @@ package dev.giuseppedarro.comanda.features.orders.usecase
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import dev.giuseppedarro.comanda.core.domain.model.DomainException
 import dev.giuseppedarro.comanda.features.orders.domain.model.Order
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderItem
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderStatus
@@ -73,7 +74,8 @@ class GetOrdersForTableUseCaseTest {
         // Given
         val tableNumber = 1
         val errorMessage = "Error"
-        coEvery { orderRepository.getOrdersForTable(tableNumber) } returns flowOf(Result.failure(RuntimeException(errorMessage)))
+        val exception = DomainException.UnknownException(errorMessage)
+        coEvery { orderRepository.getOrdersForTable(tableNumber) } returns flowOf(Result.failure(exception))
 
         // When
         val result = getOrdersForTableUseCase(tableNumber)
@@ -82,7 +84,7 @@ class GetOrdersForTableUseCaseTest {
         result.test {
             val emission = awaitItem()
             assertThat(emission.isFailure).isTrue()
-            assertThat(emission.exceptionOrNull()?.message).isEqualTo(errorMessage)
+            assertThat(emission.exceptionOrNull()).isEqualTo(exception)
             awaitComplete()
         }
     }

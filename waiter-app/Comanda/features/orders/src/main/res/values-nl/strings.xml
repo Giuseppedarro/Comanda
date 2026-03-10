@@ -1,3 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="orders">Bestellingen</string>
+    <string name="new_order">Nieuwe Bestelling</string>
+    <string name="order_details">Besteldetails</string>
+    <string name="total">Totaal</string>
+    <string name="confirm_order">Bestelling Bevestigen</string>
+    <string name="send_to_kitchen">Naar Keuken Sturen</string>
+    <string name="items">Items</string>
+    <string name="no_items_in_order">Geen items in deze bestelling.</string>
+
+    <!-- Order Specifieke Fouten -->
+    <string name="error_order_not_found">De gevraagde bestelling kon niet worden gevonden.</string>
+    <string name="error_invalid_order_state">Kan deze actie niet uitvoeren in de huidige bestelstatus.</string>
+    <string name="error_empty_order">Kan een lege bestelling niet bevestigen.</string>
+    <string name="error_table_occupied">Deze tafel is al bezet door een andere actieve bestelling.</string>
 </resources>

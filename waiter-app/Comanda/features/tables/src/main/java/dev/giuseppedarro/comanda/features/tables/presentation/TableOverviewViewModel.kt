@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dev.giuseppedarro.comanda.core.domain.usecase.GetCurrentUserUseCase
 import dev.giuseppedarro.comanda.core.domain.usecase.LogoutUseCase
 import dev.giuseppedarro.comanda.core.domain.usecase.SyncUserProfileUseCase
+import dev.giuseppedarro.comanda.core.presentation.UiText
 import dev.giuseppedarro.comanda.features.tables.domain.model.Table
 import dev.giuseppedarro.comanda.features.tables.domain.usecase.AddTableUseCase
 import dev.giuseppedarro.comanda.features.tables.domain.usecase.GetTablesUseCase
@@ -32,7 +33,8 @@ data class TableOverviewUiState(
     val selectedTable: Table? = null,
     val isRefreshing: Boolean = false,
     val filter: TableFilter = TableFilter.ALL,
-    val userName: String? = null
+    val userName: String? = null,
+    val error: UiText? = null
 ) {
     val filteredTables: List<Table>
         get() = when (filter) {
@@ -75,9 +77,13 @@ class TableOverviewViewModel(
     }
 
     fun loadTables() {
-        _uiState.update { it.copy(isRefreshing = true) }
-        getTablesUseCase().onEach { tables ->
-            _uiState.update { it.copy(tables = tables, isRefreshing = false) }
+        _uiState.update { it.copy(isRefreshing = true, error = null) }
+        getTablesUseCase().onEach { result ->
+            result.onSuccess { tables ->
+                _uiState.update { it.copy(tables = tables, isRefreshing = false) }
+            }.onFailure { error ->
+                _uiState.update { it.copy(error = error.toTableUiText(), isRefreshing = false) }
+            }
         }.launchIn(viewModelScope)
     }
 
@@ -103,9 +109,10 @@ class TableOverviewViewModel(
 
     fun onAddTableClicked() {
         viewModelScope.launch {
+            _uiState.update { it.copy(error = null) }
             addTableUseCase().onSuccess { loadTables() }
-                .onFailure {
-                    // Handle error
+                .onFailure { error ->
+                    _uiState.update { it.copy(error = error.toTableUiText()) }
                 }
         }
     }
@@ -113,13 +120,17 @@ class TableOverviewViewModel(
     fun onLogout() {
         viewModelScope.launch {
             logoutUseCase().onSuccess { _event.value = TableOverviewEvent.LogoutSuccess }
-                .onFailure {
-                    // Handle error
+                .onFailure { error ->
+                    _uiState.update { it.copy(error = UiText.DynamicString(error.message ?: "Logout failed")) }
                 }
         }
     }
 
     fun onEventConsumed() {
         _event.value = null
+    }
+
+    fun onErrorConsumed() {
+        _uiState.update { it.copy(error = null) }
     }
 }

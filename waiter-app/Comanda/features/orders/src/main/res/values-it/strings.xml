@@ -1,3 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="orders">Ordini</string>
+    <string name="new_order">Nuovo Ordine</string>
+    <string name="order_details">Dettagli Ordine</string>
+    <string name="total">Totale</string>
+    <string name="confirm_order">Conferma Ordine</string>
+    <string name="send_to_kitchen">Invia in Cucina</string>
+    <string name="items">Elementi</string>
+    <string name="no_items_in_order">Nessun elemento in questo ordine.</string>
+
+    <!-- Errori Specifici Ordini -->
+    <string name="error_order_not_found">L\'ordine richiesto non è stato trovato.</string>
+    <string name="error_invalid_order_state">Impossibile eseguire questa azione nello stato attuale dell\'ordine.</string>
+    <string name="error_empty_order">Impossibile confermare un ordine vuoto.</string>
+    <string name="error_table_occupied">Questo tavolo è già occupato da un altro ordine attivo.</string>
 </resources>

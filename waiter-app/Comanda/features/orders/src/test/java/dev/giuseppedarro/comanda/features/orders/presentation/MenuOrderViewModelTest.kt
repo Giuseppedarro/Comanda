@@ -3,6 +3,7 @@ package dev.giuseppedarro.comanda.features.orders.presentation
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import dev.giuseppedarro.comanda.core.presentation.UiText
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuItem
 import dev.giuseppedarro.comanda.features.orders.domain.model.Order
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderItem
@@ -68,7 +69,8 @@ class MenuOrderViewModelTest {
     @Test
     fun `init fails to load menu`() = runTest {
         // Given
-        coEvery { getMenu() } returns flowOf(Result.failure(Exception("Failed to load menu")))
+        val errorMessage = "Failed to load menu"
+        coEvery { getMenu() } returns flowOf(Result.failure(Exception(errorMessage)))
         coEvery { getOrdersForTable(any()) } returns flowOf(Result.success(null))
 
         // When
@@ -78,7 +80,8 @@ class MenuOrderViewModelTest {
         // Then
         viewModel.uiState.test {
             val state = awaitItem()
-            assertThat(state.error).isEqualTo("Failed to load menu")
+            assertThat(state.error).isInstanceOf(UiText.DynamicString::class.java)
+            assertThat((state.error as UiText.DynamicString).value).isEqualTo(errorMessage)
         }
     }
 
@@ -190,17 +193,19 @@ class MenuOrderViewModelTest {
     @Test
     fun `onSendOrder fails`() = runTest {
         val savedStateHandle = SavedStateHandle(mapOf("tableNumber" to 1, "numberOfPeople" to 4))
+        val errorMessage = "Network Error"
         coEvery { getMenu() } returns flowOf(Result.success(emptyList()))
         coEvery { getOrdersForTable(any()) } returns flowOf(Result.success(null))
-        coEvery { submitOrder(any(), any(), any()) } returns Result.failure(Exception("Network Error"))
+        coEvery { submitOrder(any(), any(), any()) } returns Result.failure(Exception(errorMessage))
         val viewModel = MenuOrderViewModel(savedStateHandle, getMenu, getOrdersForTable, submitOrder, printBill)
         val menuItem = MenuItem(id = "1", name = "Pizza", price = 1000)
         viewModel.onMenuItemAdded(menuItem)
 
-        var errorMsg = ""
-        viewModel.onSendOrder(1, 4, onSuccess = {}, onError = { errorMsg = it })
+        var errorUiText: UiText? = null
+        viewModel.onSendOrder(1, 4, onSuccess = {}, onError = { errorUiText = it })
         testDispatcher.scheduler.advanceUntilIdle()
 
-        assertThat(errorMsg).isEqualTo("Network Error")
+        assertThat(errorUiText).isInstanceOf(UiText.DynamicString::class.java)
+        assertThat((errorUiText as UiText.DynamicString).value).isEqualTo(errorMessage)
     }
 }

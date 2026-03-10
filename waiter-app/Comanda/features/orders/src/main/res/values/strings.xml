@@ -1,3 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="orders">Orders</string>
+    <string name="new_order">New Order</string>
+    <string name="order_details">Order Details</string>
+    <string name="total">Total</string>
+    <string name="confirm_order">Confirm Order</string>
+    <string name="send_to_kitchen">Send to Kitchen</string>
+    <string name="items">Items</string>
+    <string name="no_items_in_order">No items in this order.</string>
+
+    <!-- Order Specific Errors -->
+    <string name="error_order_not_found">The requested order could not be found.</string>
+    <string name="error_invalid_order_state">Cannot perform this action in the current order state.</string>
+    <string name="error_empty_order">Cannot confirm an empty order.</string>
+    <string name="error_table_occupied">This table is already occupied by another active order.</string>
 </resources>

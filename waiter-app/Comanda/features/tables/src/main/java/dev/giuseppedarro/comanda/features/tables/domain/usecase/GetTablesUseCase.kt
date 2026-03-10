@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 class GetTablesUseCase(private val repository: TablesRepository) {
 
-    operator fun invoke(): Flow<List<Table>> {
+    operator fun invoke(): Flow<Result<List<Table>>> {
         return repository.getTables()
     }
 }
