@@ -2,12 +2,9 @@ package dev.giuseppedarro.comanda.features.tables.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.giuseppedarro.comanda.core.domain.model.UserProfile
-import dev.giuseppedarro.comanda.core.domain.repository.TokenRepository
-import dev.giuseppedarro.comanda.core.domain.usecase.FetchUserProfileUseCase
 import dev.giuseppedarro.comanda.core.domain.usecase.GetCurrentUserUseCase
 import dev.giuseppedarro.comanda.core.domain.usecase.LogoutUseCase
-import dev.giuseppedarro.comanda.core.utils.JwtDecoder
+import dev.giuseppedarro.comanda.core.domain.usecase.SyncUserProfileUseCase
 import dev.giuseppedarro.comanda.features.tables.domain.model.Table
 import dev.giuseppedarro.comanda.features.tables.domain.usecase.AddTableUseCase
 import dev.giuseppedarro.comanda.features.tables.domain.usecase.GetTablesUseCase
@@ -50,9 +47,7 @@ class TableOverviewViewModel(
     private val addTableUseCase: AddTableUseCase,
     private val logoutUseCase: LogoutUseCase,
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
-    private val fetchUserProfileUseCase: FetchUserProfileUseCase,
-    private val tokenRepository: TokenRepository,
-    private val jwtDecoder: JwtDecoder
+    private val syncUserProfileUseCase: SyncUserProfileUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TableOverviewUiState())
@@ -69,9 +64,7 @@ class TableOverviewViewModel(
 
     private fun fetchUser() {
         viewModelScope.launch {
-            val token = tokenRepository.getAccessToken() ?: return@launch
-            val userId = jwtDecoder.getUserId(token) ?: return@launch
-            fetchUserProfileUseCase(userId)
+            syncUserProfileUseCase()
         }
     }
 
