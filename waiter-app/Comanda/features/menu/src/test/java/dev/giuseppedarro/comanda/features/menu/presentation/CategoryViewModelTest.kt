@@ -3,6 +3,7 @@ package dev.giuseppedarro.comanda.features.menu.presentation
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import dev.giuseppedarro.comanda.core.presentation.UiText
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuItem
 import dev.giuseppedarro.comanda.features.menu.domain.usecase.AddMenuItemUseCase
@@ -87,8 +88,8 @@ class CategoryViewModelTest {
     @Test
     fun `state is updated with error when use case returns failure`() = runTest {
         // Given
-        val error = "Error"
-        coEvery { getMenuUseCase() } returns flowOf(Result.failure(RuntimeException(error)))
+        val errorMessage = "Error"
+        coEvery { getMenuUseCase() } returns flowOf(Result.failure(RuntimeException(errorMessage)))
 
         // When
         viewModel.loadCategory()
@@ -102,7 +103,8 @@ class CategoryViewModelTest {
             val errorState = awaitItem()
             assertThat(errorState.isLoading).isFalse()
             assertThat(errorState.items).isEmpty()
-            assertThat(errorState.error).isEqualTo(error)
+            assertThat(errorState.error).isInstanceOf(UiText.DynamicString::class.java)
+            assertThat((errorState.error as UiText.DynamicString).value).isEqualTo(errorMessage)
         }
     }
 

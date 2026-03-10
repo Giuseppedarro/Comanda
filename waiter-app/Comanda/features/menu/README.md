@@ -12,27 +12,30 @@ This layer handles all network interactions for menu management.
 
 - **`remote/MenuApi.kt`**: A Ktor-based API client that defines a full set of CRUD (Create, Read, Update, Delete) operations for menu categories and items. It uses the `authClient` from `:core`.
 - **`remote/dto/`**: Contains Data Transfer Objects for all menu operations, and a `DtoExtensions.kt` file with functions to map these DTOs to and from the domain models.
-- **`repository/MenuRepositoryImpl.kt`**: The implementation of the `MenuRepository`. It uses the `MenuApi` and the mapping extensions to handle all data operations, wrapping them in a `Result` type for robust error handling.
+- **`repository/MenuRepositoryImpl.kt`**: The implementation of the `MenuRepository`. It uses the `MenuApi` and mapping extensions to handle data operations. It maps technical errors (like HTTP 409 Conflict) to domain-specific `MenuException`s for better error reporting.
 
 ### Domain Layer
 
 This layer contains the core business logic and models for the feature.
 
-- **`model/`**: Contains the rich business models `MenuCategory` and `MenuItem`.
-- **`repository/MenuRepository.kt`**: The interface (contract) defining the full suite of CRUD operations for the menu.
-- **`usecase/`**: This package contains a use case for each CRUD operation, providing a clean entry point to the domain layer.
+- **`model/`**: Contains business models `MenuCategory`, `MenuItem`, and **`MenuException`**. The latter defines specific menu errors such as `DuplicateName` or `CategoryNotEmpty`.
+- **`repository/MenuRepository.kt`**: The interface (contract) defining the suite of CRUD operations for the menu.
+- **`usecase/`**: Contains a use case for each CRUD operation, providing a clean entry point to the domain layer.
 
 ### Presentation Layer
 
-This is the UI layer, built with Jetpack Compose. It follows a stateful/stateless pattern where the "Screen" composable manages state and the "Content" composable is a stateless, previewable function. It is composed of two main screens:
+This is the UI layer, built with Jetpack Compose.
 
-- **`MenuScreen.kt` / `MenuViewModel.kt`**: This screen provides an overview of all menu categories. It displays them in a list and allows the user to navigate to a specific category's detail screen.
-- **`CategoryScreen.kt` / `CategoryViewModel.kt`**: This screen displays all the items within a single category. It provides the ability to add, edit, and delete items in that category. It uses `SavedStateHandle` to receive the category name as a navigation argument.
-- **`components/`**: This package contains reusable UI components:
-    - **`MenuItemDialog.kt`**: A generic, stateless dialog for editing the fields of a menu item.
-    - **`AddMenuItemDialog.kt`** and **`EditMenuItemDialog.kt`**: Stateful wrappers around `MenuItemDialog` for adding a new item and editing an existing one, respectively.
-- **`navigation/MenusNavGraph.kt`**: Defines the navigation for the feature with two type-safe routes: `Menu` (for the overview) and `Category` (for the detail view, which includes the `categoryName` argument).
+- **`MenuErrorMapper.kt`**: A feature-specific mapper that converts `MenuException` and standard `DomainException` into localized `UiText` objects.
+- **`MenuViewModel.kt` / `CategoryViewModel.kt`**: Manage UI state using `UiText?` for error reporting. They use the `toMenuUiText()` extension to handle exceptions from the domain layer.
+- **`MenuScreen.kt` / `CategoryScreen.kt`**: Display localized error messages. `CategoryScreen` uses a `SnackbarHost` to show transient errors during menu management actions.
+- **`components/`**: Contains reusable UI components like `MenuItemDialog`, `AddMenuItemDialog`, and `EditMenuItemDialog`.
+- **`navigation/MenusNavGraph.kt`**: Defines type-safe navigation for the feature.
 
 ## Dependency Injection
 
-- **`di/MenuModule.kt`**: Provides all dependencies for the feature using Koin, including the API, repository, all use cases, and both `MenuViewModel` and `CategoryViewModel`.
+- **`di/MenuModule.kt`**: Provides all dependencies for the feature using Koin, resolving core dependencies like `HttpClient` (`authClient`).
+
+## Localization
+
+The module is fully localized in **English**, **Italian**, and **Dutch**, including all menu-specific error messages.

@@ -31,11 +31,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.giuseppedarro.comanda.core.presentation.ComandaTopAppBar
+import dev.giuseppedarro.comanda.core.presentation.UiText
 import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
+import dev.giuseppedarro.comanda.features.menu.R
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuCategory
 import org.koin.androidx.compose.koinViewModel
 
@@ -65,7 +68,7 @@ fun MenuScreen(
 fun MenuScreenContent(
     categories: List<MenuCategory>,
     isLoading: Boolean,
-    error: String?,
+    error: UiText?,
     onNavigateToCategory: (String) -> Unit,
     onNavigateBack: () -> Unit,
     onRefresh: () -> Unit,
@@ -80,7 +83,7 @@ fun MenuScreenContent(
         modifier = modifier,
         topBar = {
             ComandaTopAppBar(
-                title = "Menu",
+                title = stringResource(dev.giuseppedarro.comanda.core.R.string.menu),
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
@@ -117,18 +120,20 @@ fun MenuScreenContent(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = error,
-                            color = MaterialTheme.colorScheme.error
+                            text = error.asString(),
+                            color = MaterialTheme.colorScheme.error,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
                         )
                     }
                 }
                 categories.isEmpty() -> {
                     Text(
-                        text = "No categories available",
+                        text = stringResource(R.string.no_categories),
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(16.dp),
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
                     )
                 }
                 else -> {
@@ -190,7 +195,7 @@ private fun CategoryCard(
             Text(
                 text = "$itemCount items",
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
             )
         }
     }
