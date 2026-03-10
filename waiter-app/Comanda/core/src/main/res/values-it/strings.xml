@@ -17,4 +17,11 @@
     <string name="printers">Stampanti</string>
     <string name="settings">Impostazioni</string>
     <string name="logout">Esci</string>
+
+    <!-- Errori Comuni -->
+    <string name="error_network">Nessuna connessione internet. Controlla la tua rete.</string>
+    <string name="error_server">Si è verificato un errore del server. Riprova più tardi.</string>
+    <string name="error_unauthorized">Sessione scaduta. Effettua nuovamente il login.</string>
+    <string name="error_not_found">La risorsa richiesta non è stata trovata.</string>
+    <string name="error_unknown">Si è verificato un errore imprevisto.</string>
 </resources>

@@ -1,5 +1,6 @@
 package dev.giuseppedarro.comanda.features.login.domain.usecase
 
+import dev.giuseppedarro.comanda.features.login.domain.model.LoginException
 import dev.giuseppedarro.comanda.features.login.domain.repository.LoginRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -21,47 +22,39 @@ class LoginUseCaseTest {
 
     @Test
     fun given_successful_login_then_return_success_result() = runBlocking {
-        // Arrange
         coEvery { repository.login(any(), any()) } returns Result.success(Unit)
 
-        // Act
         val result = loginUseCase("id", "password")
 
-        // Assert
         Assert.assertTrue(result.isSuccess)
     }
 
     @Test
     fun given_failed_login_then_return_failure_result() = runBlocking {
-        // Arrange
-        val exception = Exception("Invalid credentials")
+        val exception = LoginException.InvalidCredentials
         coEvery { repository.login(any(), any()) } returns Result.failure(exception)
 
-        // Act
         val result = loginUseCase("id", "wrong_password")
 
-        // Assert
         Assert.assertTrue(result.isFailure)
-        Assert.assertTrue(result.exceptionOrNull()?.message == exception.message)
+        Assert.assertEquals(exception, result.exceptionOrNull())
     }
 
     @Test
-    fun given_blank_employee_id_then_return_failure() = runBlocking {
-        // Act
+    fun given_blank_employee_id_then_return_failure_with_EmptyCredentials() = runBlocking {
         val result = loginUseCase("", "password")
 
-        // Assert
         Assert.assertTrue(result.isFailure)
+        Assert.assertEquals(LoginException.EmptyCredentials, result.exceptionOrNull())
         coVerify(exactly = 0) { repository.login(any(), any()) }
     }
 
     @Test
-    fun given_blank_password_then_return_failure() = runBlocking {
-        // Act
+    fun given_blank_password_then_return_failure_with_EmptyCredentials() = runBlocking {
         val result = loginUseCase("id", "")
 
-        // Assert
         Assert.assertTrue(result.isFailure)
+        Assert.assertEquals(LoginException.EmptyCredentials, result.exceptionOrNull())
         coVerify(exactly = 0) { repository.login(any(), any()) }
     }
 }

@@ -6,4 +6,8 @@
     <string name="login_welcome_back">Bentornato</string>
     <string name="login_server_configuration_title">Configurazione Server</string>
     <string name="login_base_url_label">URL Base</string>
+
+    <!-- Errori Specifici Login -->
+    <string name="error_invalid_credentials">ID dipendente o password non validi.</string>
+    <string name="error_empty_credentials">L\'ID dipendente e la password non possono essere vuoti.</string>
 </resources>

@@ -2,6 +2,7 @@ package dev.giuseppedarro.comanda.features.login.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.giuseppedarro.comanda.core.presentation.UiText
 import dev.giuseppedarro.comanda.features.login.domain.usecase.GetBaseUrlUseCase
 import dev.giuseppedarro.comanda.features.login.domain.usecase.LoginUseCase
 import dev.giuseppedarro.comanda.features.login.domain.usecase.SetBaseUrlUseCase
@@ -17,7 +18,7 @@ data class LoginUiState(
     val password: String = "",
     val isLoading: Boolean = false,
     val isLoginSuccessful: Boolean = false,
-    val errorMessage: String? = null,
+    val errorMessage: UiText? = null,
     val baseUrl: String = ""
 )
 
@@ -65,8 +66,11 @@ class LoginViewModel(
 
             result.onSuccess {
                 _uiState.update { it.copy(isLoading = false, isLoginSuccessful = true) }
-            }.onFailure { exception -> // Give the throwable an explicit name
-                _uiState.update { it.copy(isLoading = false, errorMessage = exception.message) }
+            }.onFailure { exception ->
+                _uiState.update { it.copy(
+                    isLoading = false, 
+                    errorMessage = exception.toLoginUiText()
+                ) }
             }
         }
     }
