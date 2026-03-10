@@ -184,7 +184,7 @@ fun LoginContent(
 
                     if (uiState.errorMessage != null) {
                         Text(
-                            text = uiState.errorMessage,
+                            text = uiState.errorMessage.asString(),
                             color = MaterialTheme.colorScheme.error,
                             style = MaterialTheme.typography.bodySmall,
                             textAlign = TextAlign.Center,

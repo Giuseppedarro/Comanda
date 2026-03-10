@@ -1,7 +1,9 @@
 package dev.giuseppedarro.comanda.features.login.repository
 
+import dev.giuseppedarro.comanda.core.domain.model.DomainException
 import dev.giuseppedarro.comanda.core.domain.repository.TokenRepository
 import dev.giuseppedarro.comanda.features.login.data.repository.LoginRepositoryImpl
+import dev.giuseppedarro.comanda.features.login.domain.model.LoginException
 import dev.giuseppedarro.comanda.features.login.domain.repository.LoginRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
@@ -15,6 +17,7 @@ import io.ktor.utils.io.ByteReadChannel
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.IOException
@@ -42,7 +45,7 @@ class LoginRepositoryImplTest {
     }
 
     @Test
-    fun given_server_error_response_then_return_failure() = runBlocking {
+    fun given_unauthorized_response_then_return_InvalidCredentials_exception() = runBlocking {
         // Arrange
         val mockEngine = createMockEngineFor(
             status = HttpStatusCode.Unauthorized,
@@ -56,10 +59,11 @@ class LoginRepositoryImplTest {
 
         // Assert
         assertTrue(result.isFailure)
+        assertEquals(LoginException.InvalidCredentials, result.exceptionOrNull())
     }
 
     @Test
-    fun given_network_exception_then_return_failure_with_generic_message() = runBlocking {
+    fun given_network_exception_then_return_NetworkException() = runBlocking {
         // Arrange
         val mockEngine = MockEngine { throw IOException("No internet") }
         val client = createMockClient(mockEngine)
@@ -70,7 +74,7 @@ class LoginRepositoryImplTest {
 
         // Assert
         assertTrue(result.isFailure)
-        assertTrue(result.exceptionOrNull()?.message == "A network error occurred. Please try again.")
+        assertEquals(DomainException.NetworkException, result.exceptionOrNull())
     }
 
     private fun createMockClient(engine: MockEngine): HttpClient {

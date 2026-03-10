@@ -6,4 +6,8 @@
     <string name="login_welcome_back">Welkom terug</string>
     <string name="login_server_configuration_title">Serverconfiguratie</string>
     <string name="login_base_url_label">Basis URL</string>
+
+    <!-- Login Specific Errors -->
+    <string name="error_invalid_credentials">Ongeldig werknemer ID of wachtwoord.</string>
+    <string name="error_empty_credentials">Werknemer ID en wachtwoord mogen niet leeg zijn.</string>
 </resources>

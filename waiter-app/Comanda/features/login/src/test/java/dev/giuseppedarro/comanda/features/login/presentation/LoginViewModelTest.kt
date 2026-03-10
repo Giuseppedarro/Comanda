@@ -1,5 +1,8 @@
 package dev.giuseppedarro.comanda.features.login.presentation
 
+import dev.giuseppedarro.comanda.core.presentation.UiText
+import dev.giuseppedarro.comanda.features.login.R
+import dev.giuseppedarro.comanda.features.login.domain.model.LoginException
 import dev.giuseppedarro.comanda.features.login.domain.usecase.GetBaseUrlUseCase
 import dev.giuseppedarro.comanda.features.login.domain.usecase.LoginUseCase
 import dev.giuseppedarro.comanda.features.login.domain.usecase.SetBaseUrlUseCase
@@ -50,76 +53,62 @@ class LoginViewModelTest {
 
     @Test
     fun when_onLoginClick_is_called_and_use_case_is_successful_then_uiState_should_reflect_success() = runTest {
-        // Arrange
         coEvery { loginUseCase(any(), any()) } returns Result.success(Unit)
 
-        // Act
         loginViewModel.onLoginClick()
         testDispatcher.scheduler.advanceUntilIdle()
 
-        // Assert
         val uiState = loginViewModel.uiState.value
         assertTrue(uiState.isLoginSuccessful)
     }
 
     @Test
     fun when_onLoginClick_is_called_and_use_case_fails_then_uiState_should_reflect_error() = runTest {
-        // Arrange
-        val errorMessage = "Invalid credentials"
-        coEvery { loginUseCase(any(), any()) } returns Result.failure(Exception(errorMessage))
+        val exception = LoginException.InvalidCredentials
+        coEvery { loginUseCase(any(), any()) } returns Result.failure(exception)
 
-        // Act
         loginViewModel.onLoginClick()
         testDispatcher.scheduler.advanceUntilIdle()
 
-        // Assert
         val uiState = loginViewModel.uiState.value
-        assertEquals(errorMessage, uiState.errorMessage)
+        // We assert that the error is a StringResource with the correct ID
+        assertTrue(uiState.errorMessage is UiText.StringResource)
+        assertEquals(R.string.error_invalid_credentials, (uiState.errorMessage as UiText.StringResource).resId)
     }
 
     @Test
     fun when_onEmployeeIdChange_is_called_then_uiState_should_be_updated() {
-        // Act
         loginViewModel.onEmployeeIdChange("new_id")
 
-        // Assert
         assertEquals("new_id", loginViewModel.uiState.value.employeeId)
     }
 
     @Test
     fun when_onPasswordChange_is_called_then_uiState_should_be_updated() {
-        // Act
         loginViewModel.onPasswordChange("new_password")
 
-        // Assert
         assertEquals("new_password", loginViewModel.uiState.value.password)
     }
 
     @Test
     fun when_saveBaseUrl_is_called_then_it_should_call_the_use_case_and_refresh_the_url() {
-        // Arrange
         val newUrl = "http://new.url/"
-        every { getBaseUrlUseCase() } returns newUrl // Mock the refresh call
+        every { getBaseUrlUseCase() } returns newUrl
 
-        // Act
         loginViewModel.saveBaseUrl()
 
-        // Assert
         verify { setBaseUrlUseCase(any()) }
         assertEquals(newUrl, loginViewModel.uiState.value.baseUrl)
     }
 
     @Test
     fun when_onLoginHandled_is_called_then_isLoginSuccessful_should_be_false() = runTest {
-        // Arrange
         coEvery { loginUseCase(any(), any()) } returns Result.success(Unit)
         loginViewModel.onLoginClick()
-        testDispatcher.scheduler.advanceUntilIdle() // Ensure state is success
+        testDispatcher.scheduler.advanceUntilIdle()
 
-        // Act
         loginViewModel.onLoginHandled()
 
-        // Assert
         assertFalse(loginViewModel.uiState.value.isLoginSuccessful)
     }
 }
