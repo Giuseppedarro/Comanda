@@ -19,6 +19,7 @@ import dev.giuseppedarro.comanda.core.domain.usecase.GetLanguageUseCase
 import dev.giuseppedarro.comanda.core.domain.usecase.GetThemePreferencesUseCase
 import dev.giuseppedarro.comanda.core.domain.usecase.SetLanguageUseCase
 import dev.giuseppedarro.comanda.core.domain.usecase.SaveThemePreferencesUseCase
+import dev.giuseppedarro.comanda.core.domain.usecase.SyncUserProfileUseCase
 import dev.giuseppedarro.comanda.core.network.AndroidKtorLogger
 import dev.giuseppedarro.comanda.core.network.BaseUrlProvider
 import dev.giuseppedarro.comanda.core.network.HttpClientConfig
@@ -66,6 +67,7 @@ val coreModule = module {
     single<UserRepository> { UserRepositoryImpl(get()) }
     factoryOf(::GetCurrentUserUseCase)
     factoryOf(::FetchUserProfileUseCase)
+    factoryOf(::SyncUserProfileUseCase)
 
     // Base URL provider for dynamic configuration
     single { BaseUrlProvider("http://10.0.2.2:8080/") }

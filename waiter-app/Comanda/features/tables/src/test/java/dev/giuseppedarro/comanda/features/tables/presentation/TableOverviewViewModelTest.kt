@@ -2,11 +2,9 @@ package dev.giuseppedarro.comanda.features.tables.presentation
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import dev.giuseppedarro.comanda.core.domain.repository.TokenRepository
-import dev.giuseppedarro.comanda.core.domain.usecase.FetchUserProfileUseCase
 import dev.giuseppedarro.comanda.core.domain.usecase.GetCurrentUserUseCase
 import dev.giuseppedarro.comanda.core.domain.usecase.LogoutUseCase
-import dev.giuseppedarro.comanda.core.utils.JwtDecoder
+import dev.giuseppedarro.comanda.core.domain.usecase.SyncUserProfileUseCase
 import dev.giuseppedarro.comanda.features.tables.domain.model.Table
 import dev.giuseppedarro.comanda.features.tables.domain.usecase.AddTableUseCase
 import dev.giuseppedarro.comanda.features.tables.domain.usecase.GetTablesUseCase
@@ -32,9 +30,7 @@ class TableOverviewViewModelTest {
     private val addTableUseCase: AddTableUseCase = mockk()
     private val logoutUseCase: LogoutUseCase = mockk()
     private val getCurrentUserUseCase: GetCurrentUserUseCase = mockk()
-    private val fetchUserProfileUseCase: FetchUserProfileUseCase = mockk()
-    private val tokenRepository: TokenRepository = mockk()
-    private val jwtDecoder: JwtDecoder = mockk()
+    private val syncUserProfileUseCase: SyncUserProfileUseCase = mockk()
 
     private val testDispatcher = StandardTestDispatcher()
 
@@ -43,15 +39,14 @@ class TableOverviewViewModelTest {
         Dispatchers.setMain(testDispatcher)
         every { getTablesUseCase() } returns flowOf(emptyList()) // Default mock
         every { getCurrentUserUseCase() } returns flowOf(null)
-        coEvery { tokenRepository.getAccessToken() } returns null
+        coEvery { syncUserProfileUseCase() } returns Result.success(mockk())
+        
         viewModel = TableOverviewViewModel(
             getTablesUseCase,
             addTableUseCase,
             logoutUseCase,
             getCurrentUserUseCase,
-            fetchUserProfileUseCase,
-            tokenRepository,
-            jwtDecoder
+            syncUserProfileUseCase
         )
     }
 

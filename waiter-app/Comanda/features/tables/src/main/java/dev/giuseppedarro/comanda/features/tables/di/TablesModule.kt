@@ -29,6 +29,6 @@ val tablesModule = module {
 
 
     // ViewModel
-    viewModel { TableOverviewViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    viewModel { TableOverviewViewModel(get(), get(), get(), get(), get()) }
 
 }
