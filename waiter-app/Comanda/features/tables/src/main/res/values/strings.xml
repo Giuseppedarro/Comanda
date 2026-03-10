@@ -3,10 +3,14 @@
     <string name="open_table">Open Table</string>
     <string name="how_many_people_are_sitting_at_this_table">How many people are sitting at this table?</string>
     <string name="number_of_people">Number of people</string>
-    <string name="add_table">Add table</string>
-    <string name="occupied">Occupied</string>
+    <string name="add_table">Add Table</string>
+    <string name="occupied">Occupated</string>
     <string name="all">All</string>
     <string name="table_number">Table %1$d</string>
     <string name="take_order">Take Order</string>
     <string name="modify_order">Modify Order</string>
+
+    <!-- Table Specific Errors -->
+    <string name="error_table_occupied">This table is already occupied.</string>
+    <string name="error_table_not_found">The requested table could not be found.</string>
 </resources>

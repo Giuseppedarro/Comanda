@@ -3,6 +3,7 @@ package dev.giuseppedarro.comanda.features.orders.presentation
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.giuseppedarro.comanda.core.presentation.UiText
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuItem
 import dev.giuseppedarro.comanda.features.orders.domain.model.Order
@@ -27,9 +28,9 @@ data class MenuOrderUiState(
     val selectedCategory: MenuCategory? = null,
     val isSheetVisible: Boolean = false,
     val isLoading: Boolean = false,
-    val error: String? = null,
-    val existingOrder: Order? = null,  // Hold the existing order reference
-    val displayNumberOfPeople: Int = 0  // Used for UI display and order submission
+    val error: UiText? = null,
+    val existingOrder: Order? = null,
+    val displayNumberOfPeople: Int = 0
 )
 
 class MenuOrderViewModel(
@@ -47,7 +48,6 @@ class MenuOrderViewModel(
     private val numberOfPeople: Int = savedStateHandle[ARG_NUMBER_OF_PEOPLE] ?: 0
 
     init {
-        // Initialize displayNumberOfPeople with the value from navigation
         _uiState.update { it.copy(displayNumberOfPeople = numberOfPeople) }
 
         loadMenu()
@@ -61,19 +61,19 @@ class MenuOrderViewModel(
             getMenu()
                 .onStart { _uiState.update { it.copy(isLoading = true) } }
                 .collect { result ->
-                    result.onSuccess {
+                    result.onSuccess { categories ->
                         _uiState.update {
                             it.copy(
-                                menuCategories = result.getOrThrow(),
+                                menuCategories = categories,
                                 isLoading = false,
                                 error = null
                             )
                         }
-                    }.onFailure {
+                    }.onFailure { throwable ->
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
-                                error = result.exceptionOrNull()?.message
+                                error = throwable.toOrderUiText()
                             )
                         }
                     }
@@ -86,8 +86,7 @@ class MenuOrderViewModel(
             getOrdersForTable(table)
                 .onStart { _uiState.update { it.copy(isLoading = true) } }
                 .collect { result ->
-                    result.onSuccess {
-                        val order = result.getOrNull()
+                    result.onSuccess { order ->
                         _uiState.update {
                             it.copy(
                                 orderItems = order?.items ?: emptyList(),
@@ -97,11 +96,11 @@ class MenuOrderViewModel(
                                 error = null
                             )
                         }
-                    }.onFailure {
+                    }.onFailure { throwable ->
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
-                                error = result.exceptionOrNull()?.message
+                                error = throwable.toOrderUiText()
                             )
                         }
                     }
@@ -124,7 +123,6 @@ class MenuOrderViewModel(
         } else {
             _uiState.value.orderItems + OrderItem(menuItem)
         }
-        // Hide sheet after selection
         _uiState.update {
             it.copy(
                 orderItems = newOrderItems,
@@ -145,13 +143,14 @@ class MenuOrderViewModel(
         tableNumber: Int,
         numberOfPeople: Int,
         onSuccess: () -> Unit,
-        onError: (String) -> Unit
+        onError: (UiText) -> Unit
     ) {
         val items = _uiState.value.orderItems
         val peopleCount = _uiState.value.displayNumberOfPeople
 
         if (tableNumber <= 0 || peopleCount <= 0 || items.isEmpty()) {
-            onError("Please select at least one item and enter valid table/people")
+            val error = UiText.DynamicString("Please select at least one item and enter valid table/people")
+            onError(error)
             return
         }
         viewModelScope.launch {
@@ -161,15 +160,15 @@ class MenuOrderViewModel(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            existingOrder = null  // Clear existing order after submission
+                            existingOrder = null
                         )
                     }
                     onSuccess()
                 }
-                .onFailure {
-                    val errorMessage = it.message ?: "Unknown error"
-                    _uiState.update { it.copy(isLoading = false, error = errorMessage) }
-                    onError(errorMessage)
+                .onFailure { throwable ->
+                    val errorUiText = throwable.toOrderUiText()
+                    _uiState.update { it.copy(isLoading = false, error = errorUiText) }
+                    onError(errorUiText)
                 }
         }
     }
@@ -178,13 +177,14 @@ class MenuOrderViewModel(
         tableNumber: Int,
         numberOfPeople: Int,
         onSuccess: () -> Unit,
-        onError: (String) -> Unit
+        onError: (UiText) -> Unit
     ) {
         val items = _uiState.value.orderItems
         val peopleCount = _uiState.value.displayNumberOfPeople
 
         if (tableNumber <= 0 || peopleCount <= 0 || items.isEmpty()) {
-            onError("Please select at least one item and enter valid table/people")
+            val error = UiText.DynamicString("Please select at least one item and enter valid table/people")
+            onError(error)
             return
         }
         viewModelScope.launch {
@@ -199,11 +199,15 @@ class MenuOrderViewModel(
                     }
                     onSuccess()
                 }
-                .onFailure {
-                    val errorMessage = it.message ?: "Unknown error"
-                    _uiState.update { it.copy(isLoading = false, error = errorMessage) }
-                    onError(errorMessage)
+                .onFailure { throwable ->
+                    val errorUiText = throwable.toOrderUiText()
+                    _uiState.update { it.copy(isLoading = false, error = errorUiText) }
+                    onError(errorUiText)
                 }
         }
+    }
+
+    fun onErrorConsumed() {
+        _uiState.update { it.copy(error = null) }
     }
 }

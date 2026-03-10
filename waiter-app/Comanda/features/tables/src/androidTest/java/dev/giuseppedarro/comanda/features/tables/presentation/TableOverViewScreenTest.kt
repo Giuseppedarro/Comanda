@@ -31,6 +31,7 @@ class TableOverViewScreenTest {
                 TableOverviewContent(
                     uiState = TableOverviewUiState(tables = tables),
                     userName = "John Doe",
+                    error = null,
                     onTableClick = {},
                     onNavigateToPrinters = {},
                     onNavigateToMenu = {},
@@ -38,7 +39,8 @@ class TableOverViewScreenTest {
                     onLogout = {},
                     onRefresh = {},
                     onAddTableClick = {},
-                    onFilterChanged = {}
+                    onFilterChanged = {},
+                    onErrorConsumed = {}
                 )
             }
         }
@@ -55,6 +57,7 @@ class TableOverViewScreenTest {
                 TableOverviewContent(
                     uiState = TableOverviewUiState(tables = emptyList()),
                     userName = "John Doe",
+                    error = null,
                     onTableClick = {},
                     onNavigateToPrinters = {},
                     onNavigateToMenu = {},
@@ -62,7 +65,8 @@ class TableOverViewScreenTest {
                     onLogout = {},
                     onRefresh = {},
                     onAddTableClick = {},
-                    onFilterChanged = {}
+                    onFilterChanged = {},
+                    onErrorConsumed = {}
                 )
             }
         }
@@ -83,6 +87,7 @@ class TableOverViewScreenTest {
                 TableOverviewContent(
                     uiState = TableOverviewUiState(tables = tables, filter = TableFilter.OCCUPIED),
                     userName = "John Doe",
+                    error = null,
                     onTableClick = {},
                     onNavigateToPrinters = {},
                     onNavigateToMenu = {},
@@ -90,7 +95,8 @@ class TableOverViewScreenTest {
                     onLogout = {},
                     onRefresh = {},
                     onAddTableClick = {},
-                    onFilterChanged = {}
+                    onFilterChanged = {},
+                    onErrorConsumed = {}
                 )
             }
         }

@@ -2,6 +2,7 @@ package dev.giuseppedarro.comanda.features.orders.usecase
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import dev.giuseppedarro.comanda.core.domain.model.DomainException
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.orders.domain.repository.OrderRepository
 import dev.giuseppedarro.comanda.features.orders.domain.usecase.GetMenuUseCase
@@ -45,7 +46,8 @@ class GetMenuUseCaseTest {
     fun `invoke should return error when repository returns error`() = runTest {
         // Given
         val errorMessage = "Error"
-        coEvery { orderRepository.getMenu() } returns flowOf(Result.failure(RuntimeException(errorMessage)))
+        val exception = DomainException.UnknownException(errorMessage)
+        coEvery { orderRepository.getMenu() } returns flowOf(Result.failure(exception))
 
         // When
         val result = getMenuUseCase()
@@ -54,7 +56,7 @@ class GetMenuUseCaseTest {
         result.test {
             val emission = awaitItem()
             assertThat(emission.isFailure).isTrue()
-            assertThat(emission.exceptionOrNull()?.message).isEqualTo(errorMessage)
+            assertThat(emission.exceptionOrNull()).isEqualTo(exception)
             awaitComplete()
         }
     }

@@ -9,4 +9,8 @@
     <string name="table_number">Tavolo %1$d</string>
     <string name="take_order">Prendi Ordine</string>
     <string name="modify_order">Modifica Ordine</string>
+
+    <!-- Errori Specifici Tavoli -->
+    <string name="error_table_occupied">Questo tavolo è già occupato.</string>
+    <string name="error_table_not_found">Il tavolo richiesto non è stato trovato.</string>
 </resources>

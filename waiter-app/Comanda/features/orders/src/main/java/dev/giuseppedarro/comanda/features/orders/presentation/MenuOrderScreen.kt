@@ -38,9 +38,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import android.widget.Toast
 import androidx.compose.material.icons.filled.Newspaper
+import androidx.compose.ui.res.stringResource
 import dev.giuseppedarro.comanda.core.presentation.ComandaTopAppBar
+import dev.giuseppedarro.comanda.core.presentation.UiText
 import dev.giuseppedarro.comanda.core.utils.toPriceString
 import dev.giuseppedarro.comanda.core.utils.toPriceStringUSD
+import dev.giuseppedarro.comanda.features.orders.R
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.orders.domain.model.MenuItem
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderItem
@@ -85,8 +88,8 @@ fun MenuOrderScreen(
                     Toast.makeText(context, "Order sent", Toast.LENGTH_SHORT).show()
                     onSendClick()
                 },
-                onError = { msg ->
-                    Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+                onError = { uiText ->
+                    Toast.makeText(context, uiText.asString(context), Toast.LENGTH_LONG).show()
                 }
             )
         },
@@ -98,8 +101,8 @@ fun MenuOrderScreen(
                     Toast.makeText(context, "Bill printed", Toast.LENGTH_SHORT).show()
                     onSendClick()
                 },
-                onError = { msg ->
-                    Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+                onError = { uiText ->
+                    Toast.makeText(context, uiText.asString(context), Toast.LENGTH_LONG).show()
                 }
             )
         },
@@ -140,8 +143,6 @@ fun MenuOrderContent(
         }
     }
 
-    val context = LocalContext.current
-
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -174,7 +175,7 @@ fun MenuOrderContent(
                 }
             }
 
-            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp)) // Added padding to this divider
+            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),

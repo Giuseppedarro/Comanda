@@ -8,6 +8,9 @@ import dev.giuseppedarro.comanda.core.network.dto.MenuItemDto
 import dev.giuseppedarro.comanda.features.orders.data.remote.OrderApi
 import dev.giuseppedarro.comanda.features.orders.data.remote.dto.GetOrderResponse
 import dev.giuseppedarro.comanda.features.orders.data.remote.dto.OrderResponseItem
+import dev.giuseppedarro.comanda.features.orders.domain.model.MenuItem
+import dev.giuseppedarro.comanda.features.orders.domain.model.OrderException
+import dev.giuseppedarro.comanda.features.orders.domain.model.OrderItem
 import dev.giuseppedarro.comanda.features.orders.domain.model.OrderStatus
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -129,17 +132,33 @@ class OrderRepositoryImplTest {
     }
 
     @Test
-    fun submitOrder_should_return_success() = runTest {
+    fun submitOrder_should_return_success_when_items_not_empty() = runTest {
         // Given
         val tableNumber = 1
         val numberOfPeople = 4
+        val items = listOf(OrderItem(MenuItem("1", "Pizza", 1000), 1))
         coEvery { orderApi.submitOrder(any()) } returns Unit
 
         // When
-        val result = orderRepository.submitOrder(tableNumber, numberOfPeople, emptyList())
+        val result = orderRepository.submitOrder(tableNumber, numberOfPeople, items)
 
         // Then
         assertThat(result.isSuccess).isTrue()
+    }
+
+    @Test
+    fun submitOrder_should_return_failure_when_items_empty() = runTest {
+        // Given
+        val tableNumber = 1
+        val numberOfPeople = 4
+        val items = emptyList<OrderItem>()
+
+        // When
+        val result = orderRepository.submitOrder(tableNumber, numberOfPeople, items)
+
+        // Then
+        assertThat(result.isFailure).isTrue()
+        assertThat(result.exceptionOrNull()).isEqualTo(OrderException.EmptyOrder)
     }
 
     @Test
@@ -147,10 +166,11 @@ class OrderRepositoryImplTest {
         // Given
         val tableNumber = 1
         val numberOfPeople = 4
+        val items = listOf(OrderItem(MenuItem("1", "Pizza", 1000), 1))
         coEvery { orderApi.submitOrder(any()) } throws RuntimeException("Error")
 
         // When
-        val result = orderRepository.submitOrder(tableNumber, numberOfPeople, emptyList())
+        val result = orderRepository.submitOrder(tableNumber, numberOfPeople, items)
 
         // Then
         assertThat(result.isFailure).isTrue()
