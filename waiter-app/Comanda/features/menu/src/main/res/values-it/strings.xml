@@ -1,4 +1,26 @@
 <resources>
-    <string name="edit_menu_item">Modifica Elemento Menu</string>
+    <string name="add_category">Aggiungi Categoria</string>
+    <string name="edit_category">Modifica Categoria</string>
+    <string name="delete_category">Elimina Categoria</string>
+    <string name="category_name">Nome Categoria</string>
+    <string name="add_item">Aggiungi Elemento</string>
+    <string name="edit_item">Modifica Elemento</string>
+    <string name="delete_item">Elimina Elemento</string>
+    <string name="item_name">Nome Elemento</string>
+    <string name="item_description">Descrizione</string>
+    <string name="item_price">Prezzo</string>
+    <string name="item_available">Disponibile</string>
+    <string name="delete_category_confirmation">Sei sicuro di voler eliminare questa categoria?</string>
+    <string name="delete_item_confirmation">Sei sicuro di voler eliminare questo elemento?</string>
+    <string name="no_categories">Nessuna categoria trovata</string>
+    <string name="no_items">Nessun elemento in questa categoria</string>
+
     <string name="add_menu_item">Aggiungi Elemento Menu</string>
+    <string name="edit_menu_item">Modifica Elemento Menu</string>
+
+    <!-- Errori Specifici Menu -->
+    <string name="error_category_not_empty">Impossibile eliminare una categoria che contiene elementi. Elimina o sposta prima gli elementi.</string>
+    <string name="error_duplicate_name">Un elemento o una categoria con questo nome esiste già.</string>
+    <string name="error_empty_name">Il nome non può essere vuoto.</string>
+    <string name="error_invalid_price">Il prezzo deve essere un numero positivo valido.</string>
 </resources>

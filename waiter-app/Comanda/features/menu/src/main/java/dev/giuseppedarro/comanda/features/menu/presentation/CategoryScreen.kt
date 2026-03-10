@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,17 +30,24 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.giuseppedarro.comanda.core.presentation.ComandaTopAppBar
+import dev.giuseppedarro.comanda.core.presentation.UiText
 import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
+import dev.giuseppedarro.comanda.features.menu.R
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuItem
 import dev.giuseppedarro.comanda.features.menu.presentation.components.AddMenuItemDialog
 import dev.giuseppedarro.comanda.features.menu.presentation.components.EditMenuItemDialog
@@ -90,7 +98,7 @@ fun CategoryScreenContent(
     isLoading: Boolean,
     isDialogShown: Boolean,
     selectedItem: MenuItem?,
-    error: String?,
+    error: UiText?,
     onNavigateBack: () -> Unit,
     onAddItemClick: () -> Unit,
     onEditItemClick: (MenuItem) -> Unit,
@@ -102,6 +110,16 @@ fun CategoryScreenContent(
     modifier: Modifier = Modifier
 ) {
     val pullRefreshState = rememberPullRefreshState(isLoading, onRefresh)
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // Handle Error State with Snackbar
+    error?.let { uiText ->
+        val errorMessage = uiText.asString()
+        LaunchedEffect(error) {
+            snackbarHostState.showSnackbar(errorMessage)
+            onEventConsumed()
+        }
+    }
 
     Scaffold(
         modifier = modifier,
@@ -115,6 +133,7 @@ fun CategoryScreenContent(
                 }
             )
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddItemClick,
@@ -127,6 +146,7 @@ fun CategoryScreenContent(
         Box(
             modifier = Modifier
                 .padding(innerPadding)
+                .fillMaxSize()
                 .pullRefresh(pullRefreshState)
         ) {
             when {
@@ -137,11 +157,12 @@ fun CategoryScreenContent(
                 }
                 items.isEmpty() -> {
                     Text(
-                        text = "No items in this category",
+                        text = stringResource(R.string.no_items),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
                     )
                 }
                 else -> {
@@ -154,10 +175,9 @@ fun CategoryScreenContent(
                         }
                         items(
                             items = items,
-                            key = { it.id}
-                            ) { item ->
+                            key = { it.id }
+                        ) { item ->
                             MenuItemCard(
-                                modifier = Modifier.animateItem(),
                                 item = item,
                                 onEditClick = { onEditItemClick(item) },
                                 onDeleteClick = { onDeleteItemClick(item) }
@@ -229,7 +249,7 @@ private fun MenuItemCard(
                 Text(
                     text = item.price.toPriceString(),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                 )
             }
             Row {

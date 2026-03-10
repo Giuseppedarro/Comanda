@@ -2,6 +2,7 @@ package dev.giuseppedarro.comanda.features.menu.data.repository
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import dev.giuseppedarro.comanda.core.domain.model.DomainException
 import dev.giuseppedarro.comanda.core.network.MenuApi
 import dev.giuseppedarro.comanda.core.network.dto.MenuCategoryDto
 import dev.giuseppedarro.comanda.core.network.dto.MenuItemDto
@@ -51,8 +52,8 @@ class MenuRepositoryImplTest {
     @Test
     fun `getMenu should return failure when api throws exception`() = runTest {
         // Given
-        val exception = RuntimeException("Error")
-        coEvery { menuApi.getMenu() } throws exception
+        val errorMessage = "Error"
+        coEvery { menuApi.getMenu() } throws RuntimeException(errorMessage)
 
         // When
         val result = menuRepository.getMenu()
@@ -61,7 +62,8 @@ class MenuRepositoryImplTest {
         result.test {
             val emission = awaitItem()
             assertThat(emission.isFailure).isTrue()
-            assertThat(emission.exceptionOrNull()).isEqualTo(exception)
+            assertThat(emission.exceptionOrNull()).isInstanceOf(DomainException.UnknownException::class.java)
+            assertThat((emission.exceptionOrNull() as DomainException.UnknownException).originalMessage).isEqualTo(errorMessage)
             awaitComplete()
         }
     }
@@ -83,15 +85,16 @@ class MenuRepositoryImplTest {
     fun `createCategory should return failure when api throws exception`() = runTest {
         // Given
         val category = MenuCategory("1", "Pizzas", 0, emptyList())
-        val exception = RuntimeException("Error")
-        coEvery { menuApi.createCategory(any()) } throws exception
+        val errorMessage = "Error"
+        coEvery { menuApi.createCategory(any()) } throws RuntimeException(errorMessage)
 
         // When
         val result = menuRepository.createCategory(category)
 
         // Then
         assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()).isEqualTo(exception)
+        assertThat(result.exceptionOrNull()).isInstanceOf(DomainException.UnknownException::class.java)
+        assertThat((result.exceptionOrNull() as DomainException.UnknownException).originalMessage).isEqualTo(errorMessage)
     }
 
     @Test
@@ -111,15 +114,16 @@ class MenuRepositoryImplTest {
     fun `updateCategory should return failure when api throws exception`() = runTest {
         // Given
         val category = MenuCategory("1", "Pizzas", 0, emptyList())
-        val exception = RuntimeException("Error")
-        coEvery { menuApi.updateCategory(any(), any()) } throws exception
+        val errorMessage = "Error"
+        coEvery { menuApi.updateCategory(any(), any()) } throws RuntimeException(errorMessage)
 
         // When
         val result = menuRepository.updateCategory(category)
 
         // Then
         assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()).isEqualTo(exception)
+        assertThat(result.exceptionOrNull()).isInstanceOf(DomainException.UnknownException::class.java)
+        assertThat((result.exceptionOrNull() as DomainException.UnknownException).originalMessage).isEqualTo(errorMessage)
     }
 
     @Test
@@ -139,15 +143,16 @@ class MenuRepositoryImplTest {
     fun `deleteCategory should return failure when api throws exception`() = runTest {
         // Given
         val categoryId = "1"
-        val exception = RuntimeException("Error")
-        coEvery { menuApi.deleteCategory(any()) } throws exception
+        val errorMessage = "Error"
+        coEvery { menuApi.deleteCategory(any()) } throws RuntimeException(errorMessage)
 
         // When
         val result = menuRepository.deleteCategory(categoryId)
 
         // Then
         assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()).isEqualTo(exception)
+        assertThat(result.exceptionOrNull()).isInstanceOf(DomainException.UnknownException::class.java)
+        assertThat((result.exceptionOrNull() as DomainException.UnknownException).originalMessage).isEqualTo(errorMessage)
     }
 
     @Test
@@ -169,15 +174,16 @@ class MenuRepositoryImplTest {
         // Given
         val categoryId = "1"
         val menuItem = MenuItem("1", "1", "Margherita", "Tomato and Mozzarella", 500, true, 0)
-        val exception = RuntimeException("Error")
-        coEvery { menuApi.addMenuItem(any(), any()) } throws exception
+        val errorMessage = "Error"
+        coEvery { menuApi.addMenuItem(any(), any()) } throws RuntimeException(errorMessage)
 
         // When
         val result = menuRepository.addMenuItem(categoryId, menuItem)
 
         // Then
         assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()).isEqualTo(exception)
+        assertThat(result.exceptionOrNull()).isInstanceOf(DomainException.UnknownException::class.java)
+        assertThat((result.exceptionOrNull() as DomainException.UnknownException).originalMessage).isEqualTo(errorMessage)
     }
 
     @Test
@@ -197,15 +203,16 @@ class MenuRepositoryImplTest {
     fun `updateMenuItem should return failure when api throws exception`() = runTest {
         // Given
         val menuItem = MenuItem("1", "1", "Margherita", "Tomato and Mozzarella", 500, true, 0)
-        val exception = RuntimeException("Error")
-        coEvery { menuApi.updateMenuItem(any(), any()) } throws exception
+        val errorMessage = "Error"
+        coEvery { menuApi.updateMenuItem(any(), any()) } throws RuntimeException(errorMessage)
 
         // When
         val result = menuRepository.updateMenuItem(menuItem)
 
         // Then
         assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()).isEqualTo(exception)
+        assertThat(result.exceptionOrNull()).isInstanceOf(DomainException.UnknownException::class.java)
+        assertThat((result.exceptionOrNull() as DomainException.UnknownException).originalMessage).isEqualTo(errorMessage)
     }
 
     @Test
@@ -225,14 +232,15 @@ class MenuRepositoryImplTest {
     fun `deleteMenuItem should return failure when api throws exception`() = runTest {
         // Given
         val menuItemId = "1"
-        val exception = RuntimeException("Error")
-        coEvery { menuApi.deleteMenuItem(any()) } throws exception
+        val errorMessage = "Error"
+        coEvery { menuApi.deleteMenuItem(any()) } throws RuntimeException(errorMessage)
 
         // When
         val result = menuRepository.deleteMenuItem(menuItemId)
 
         // Then
         assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()).isEqualTo(exception)
+        assertThat(result.exceptionOrNull()).isInstanceOf(DomainException.UnknownException::class.java)
+        assertThat((result.exceptionOrNull() as DomainException.UnknownException).originalMessage).isEqualTo(errorMessage)
     }
 }

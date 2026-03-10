@@ -1,4 +1,26 @@
 <resources>
-    <string name="edit_menu_item">Menukaartitem bewerken</string>
-    <string name="add_menu_item">Menukaartitem toevoegen</string>
+    <string name="add_category">Categorie Toevoegen</string>
+    <string name="edit_category">Categorie Bewerken</string>
+    <string name="delete_category">Categorie Verwijderen</string>
+    <string name="category_name">Categorienaam</string>
+    <string name="add_item">Item Toevoegen</string>
+    <string name="edit_item">Item Bewerken</string>
+    <string name="delete_item">Item Verwijderen</string>
+    <string name="item_name">Itemnaam</string>
+    <string name="item_description">Omschrijving</string>
+    <string name="item_price">Prijs</string>
+    <string name="item_available">Beschikbaar</string>
+    <string name="delete_category_confirmation">Weet je zeker dat je deze categorie wilt verwijderen?</string>
+    <string name="delete_item_confirmation">Weet je zeker dat je dit item wilt verwijderen?</string>
+    <string name="no_categories">Geen categorieën gevonden</string>
+    <string name="no_items">Geen items in deze categorie</string>
+
+    <string name="add_menu_item">Menu-item Toevoegen</string>
+    <string name="edit_menu_item">Menu-item Bewerken</string>
+
+    <!-- Menu Specifieke Fouten -->
+    <string name="error_category_not_empty">Kan een categorie met items niet verwijderen. Verwijder of verplaats de items eerst.</string>
+    <string name="error_duplicate_name">Een item of categorie met deze naam bestaat al.</string>
+    <string name="error_empty_name">Naam mag niet leeg zijn.</string>
+    <string name="error_invalid_price">Prijs moet een geldig positief getal zijn.</string>
 </resources>

@@ -3,6 +3,7 @@ package dev.giuseppedarro.comanda.features.menu.presentation
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.giuseppedarro.comanda.core.presentation.UiText
 import dev.giuseppedarro.comanda.core.utils.toPriceCents
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuItem
 import dev.giuseppedarro.comanda.features.menu.domain.usecase.AddMenuItemUseCase
@@ -22,7 +23,7 @@ data class CategoryUiState(
     val isLoading: Boolean = false,
     val isDialogShown: Boolean = false,
     val selectedItem: MenuItem? = null,
-    val error: String? = null
+    val error: UiText? = null
 )
 
 class CategoryViewModel(
@@ -58,7 +59,7 @@ class CategoryViewModel(
                     }.onFailure {
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
-                            error = it.message
+                            error = it.toMenuUiText()
                         )
                     }
             }
@@ -127,7 +128,7 @@ class CategoryViewModel(
                 loadCategory()
             }.onFailure {
                 _uiState.value = _uiState.value.copy(
-                    error = it.message
+                    error = it.toMenuUiText()
                 )
             }
         }
@@ -139,7 +140,7 @@ class CategoryViewModel(
                 .onSuccess { loadCategory() }
                 .onFailure {
                     _uiState.value = _uiState.value.copy(
-                        error = it.message
+                        error = it.toMenuUiText()
                     )
                 }
         }

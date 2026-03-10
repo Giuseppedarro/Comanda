@@ -2,6 +2,7 @@ package dev.giuseppedarro.comanda.features.menu.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.giuseppedarro.comanda.core.presentation.UiText
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.menu.domain.usecase.GetMenuUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +14,7 @@ import kotlinx.coroutines.launch
 data class MenuUiState(
     val categories: List<MenuCategory> = emptyList(),
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: UiText? = null
 )
 
 class MenuViewModel(
@@ -41,7 +42,7 @@ class MenuViewModel(
                     }.onFailure {
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
-                            error = it.message
+                            error = it.toMenuUiText()
                         )
                     }
             }
