@@ -1,3 +1,5 @@
+import com.github.triplet.gradle.androidpublisher.ReleaseStatus
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -133,4 +135,5 @@ play {
         serviceAccountCredentials.set(keyFile)
     }
     track.set("internal")
+    releaseStatus.set(ReleaseStatus.DRAFT)
 }
