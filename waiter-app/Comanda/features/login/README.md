@@ -10,7 +10,8 @@ This module follows the principles of Clean Architecture, separating the code in
 
 The presentation layer is responsible for the UI and handling user interactions. It follows a stateful/stateless pattern where the "Screen" composable manages state and the "Content" composable is a stateless, previewable function.
 
-- **`LoginViewModel.kt`**: Manages the UI state (`LoginUiState`) for the login screen. It interacts with the domain layer's use cases to perform login operations and manage the base URL.
+- **`LoginErrorMapper.kt`**: Maps `LoginException` and shared `DomainException` to localized `UiText` so the UI never consumes raw technical exceptions.
+- **`LoginViewModel.kt`**: Manages the UI state (`LoginUiState`) for the login screen, including `UiText`-based error reporting via `toLoginUiText()`.
 - **`LoginScreen.kt`**: A Jetpack Compose screen that displays the login form, handles user input for employee ID and password, shows loading states, and displays error messages. It also contains a dialog to allow the user to change the server's base URL.
 - **`navigation/LoginNavGraph.kt`**: Defines the navigation for this feature. It provides a `loginGraph` extension function for `NavGraphBuilder`, making it a self-contained navigation component that can be easily integrated into the main app's navigation. It communicates a successful login via a callback.
 
@@ -29,7 +30,7 @@ The data layer is responsible for data operations, such as making network reques
 
 - **`remote/LoginApi.kt`**: A Ktor-based API client responsible for making the login request. It uses the `basicClient` from `:core`.
 - **`dto` package**: Contains the `LoginRequest` Data Transfer Object used for serializing the network request. The `LoginResponse` is sourced from the `:core` module.
-- **`repository/LoginRepositoryImpl.kt`**: The concrete implementation of the `LoginRepository` interface. It uses the `LoginApi` to perform the network request and the `:core` module's `TokenRepository` to store the received tokens.
+- **`repository/LoginRepositoryImpl.kt`**: The concrete implementation of `LoginRepository`. It uses `LoginApi` for the request, persists tokens with `TokenRepository`, and maps network/technical exceptions to domain-level failures (`LoginException` / `DomainException`) using the shared `toDomainException()` pattern.
 
 ## Dependency Injection
 

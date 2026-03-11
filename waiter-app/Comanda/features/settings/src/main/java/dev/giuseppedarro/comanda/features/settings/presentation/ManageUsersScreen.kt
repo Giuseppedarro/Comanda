@@ -58,6 +58,7 @@ import dev.giuseppedarro.comanda.core.presentation.ComandaTopAppBar
 import dev.giuseppedarro.comanda.features.settings.domain.model.User
 import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun ManageUsersScreen(
@@ -66,12 +67,13 @@ fun ManageUsersScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.eventChannel.collect {
             when (it) {
                 is ManageUsersViewModel.UiEvent.ShowSnackbar -> {
-                    snackbarHostState.showSnackbar(it.message)
+                    snackbarHostState.showSnackbar(it.message.asString(context))
                 }
             }
         }

@@ -12,7 +12,7 @@ Responsible for all data operations.
 
 - **`remote/TableApi.kt`**: A Ktor-based client for the `/tables` API endpoint. It handles fetching all tables and posting new ones. It uses the `authClient` from the `:core` module, so all its requests are automatically authenticated.
 - **`remote/dto/TableDto.kt`**: The Data Transfer Object that maps directly to the JSON response from the API. It includes a `toDomain()` extension function to convert the network model into a business model, decoupling the data layer from the domain layer.
-- **`repository/TablesRepositoryImpl.kt`**: The concrete implementation of the `TablesRepository`. It calls the `TableApi`, handles errors by emitting an empty list to prevent UI crashes, and maps DTOs to domain models.
+- **`repository/TablesRepositoryImpl.kt`**: The concrete implementation of `TablesRepository`. It maps DTOs to domain models and converts technical/network failures to domain-level errors (`DomainException`) via `toDomainException()`, with feature-specific mapping to `TableException` where needed.
 
 ### Domain Layer
 
@@ -27,7 +27,8 @@ Contains the core business logic and models for the feature.
 
 The UI-facing layer, built with Jetpack Compose.
 
-- **`TableOverviewViewModel.kt`**: The ViewModel for the main screen. It manages the `TableOverviewUiState`, handles business logic by calling use cases, provides filtering logic for the table list, and exposes events for one-time actions like navigation. It also fetches the current user's name to be displayed in the `AppDrawer`.
+- **`TableErrorMapper.kt`**: Maps `TableException` and shared `DomainException` to localized `UiText`.
+- **`TableOverviewViewModel.kt`**: The ViewModel for the main screen. It manages `TableOverviewUiState`, maps domain failures to `UiText` via `toTableUiText()`, handles filtering, and exposes one-time events like navigation. It also fetches the current user's name for the `AppDrawer`.
 - **`TableOverviewScreen.kt`**: A sophisticated, reactive screen that serves as the app's main dashboard. It uses a `ModalNavigationDrawer` for top-level navigation, a `LazyVerticalGrid` for displaying tables, `FilterChip`s for filtering, and a `pull-to-refresh` mechanism. It is highly decoupled, delegating all navigation actions to lambda functions.
 - **`components/`**: This package contains smaller, reusable UI components that make up the main screen:
     - **`AppDrawer.kt`**: The content for the main navigation drawer, which displays the logged-in user's name and initials.

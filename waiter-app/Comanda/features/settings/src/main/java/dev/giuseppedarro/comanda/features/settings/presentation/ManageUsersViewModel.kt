@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.giuseppedarro.comanda.core.network.dto.CreateUserRequest
 import dev.giuseppedarro.comanda.core.network.dto.UpdateUserRequest
+import dev.giuseppedarro.comanda.core.presentation.UiText
+import dev.giuseppedarro.comanda.features.settings.R
 import dev.giuseppedarro.comanda.features.settings.domain.model.User
 import dev.giuseppedarro.comanda.features.settings.domain.usecase.CreateUserUseCase
 import dev.giuseppedarro.comanda.features.settings.domain.usecase.DeleteUserUseCase
@@ -57,30 +59,33 @@ class ManageUsersViewModel(
                             it.copy(
                                 isLoading = false,
                                 isRefreshing = false,
-                                users = users
+                                users = users,
+                                error = null
                             )
                         }
                     }
                     .onFailure { exception ->
+                        val errorUiText = exception.toSettingsUiText()
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
                                 isRefreshing = false,
-                                error = exception.message
+                                error = errorUiText
                             )
                         }
-                        _eventChannel.send(UiEvent.ShowSnackbar("Error: ${exception.message}"))
+                        _eventChannel.send(UiEvent.ShowSnackbar(errorUiText))
                     }
             }
             .catch { exception ->
+                val errorUiText = exception.toSettingsUiText()
                 _uiState.update {
                     it.copy(
                         isLoading = false,
                         isRefreshing = false,
-                        error = exception.message
+                        error = errorUiText
                     )
                 }
-                _eventChannel.send(UiEvent.ShowSnackbar("Error: ${exception.message}"))
+                _eventChannel.send(UiEvent.ShowSnackbar(errorUiText))
             }
             .launchIn(viewModelScope)
     }
@@ -135,15 +140,17 @@ class ManageUsersViewModel(
                         it.copy(
                             isLoading = false,
                             isUserCreated = true,
-                            showAddUserDialog = false
+                            showAddUserDialog = false,
+                            error = null
                         )
                     }
-                    _eventChannel.send(UiEvent.ShowSnackbar("User created successfully!"))
-                    getUsers() // Refresh the user list
+                    _eventChannel.send(UiEvent.ShowSnackbar(UiText.StringResource(R.string.user_created_success)))
+                    getUsers()
                 }
                 .onFailure { exception ->
-                    _uiState.update { it.copy(isLoading = false, error = exception.message) }
-                    _eventChannel.send(UiEvent.ShowSnackbar("Error: ${exception.message}"))
+                    val errorUiText = exception.toSettingsUiText()
+                    _uiState.update { it.copy(isLoading = false, error = errorUiText) }
+                    _eventChannel.send(UiEvent.ShowSnackbar(errorUiText))
                 }
         }
     }
@@ -167,15 +174,17 @@ class ManageUsersViewModel(
                             it.copy(
                                 isLoading = false,
                                 showEditUserDialog = false,
-                                selectedUser = null
+                                selectedUser = null,
+                                error = null
                             )
                         }
-                        _eventChannel.send(UiEvent.ShowSnackbar("User updated successfully!"))
-                        getUsers() // Refresh the user list
+                        _eventChannel.send(UiEvent.ShowSnackbar(UiText.StringResource(R.string.user_updated_success)))
+                        getUsers()
                     }
                     .onFailure { exception ->
-                        _uiState.update { it.copy(isLoading = false, error = exception.message) }
-                        _eventChannel.send(UiEvent.ShowSnackbar("Error: ${exception.message}"))
+                        val errorUiText = exception.toSettingsUiText()
+                        _uiState.update { it.copy(isLoading = false, error = errorUiText) }
+                        _eventChannel.send(UiEvent.ShowSnackbar(errorUiText))
                     }
             }
         }
@@ -192,15 +201,17 @@ class ManageUsersViewModel(
                             it.copy(
                                 isLoading = false,
                                 showDeleteUserDialog = false,
-                                selectedUser = null
+                                selectedUser = null,
+                                error = null
                             )
                         }
-                        _eventChannel.send(UiEvent.ShowSnackbar("User deleted successfully!"))
-                        getUsers() // Refresh the user list
+                        _eventChannel.send(UiEvent.ShowSnackbar(UiText.StringResource(R.string.user_deleted_success)))
+                        getUsers()
                     }
                     .onFailure { exception ->
-                        _uiState.update { it.copy(isLoading = false, error = exception.message) }
-                        _eventChannel.send(UiEvent.ShowSnackbar("Error: ${exception.message}"))
+                        val errorUiText = exception.toSettingsUiText()
+                        _uiState.update { it.copy(isLoading = false, error = errorUiText) }
+                        _eventChannel.send(UiEvent.ShowSnackbar(errorUiText))
                     }
             }
         }
@@ -215,6 +226,6 @@ class ManageUsersViewModel(
     }
 
     sealed class UiEvent {
-        data class ShowSnackbar(val message: String) : UiEvent()
+        data class ShowSnackbar(val message: UiText) : UiEvent()
     }
 }

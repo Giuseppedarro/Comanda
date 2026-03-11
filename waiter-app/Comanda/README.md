@@ -17,6 +17,7 @@ The application is built following modern Android development best practices, wi
 
 - **Clean Architecture**: Each module is internally organized into `data`, `domain`, and `presentation` layers.
 - **Dependency Rule**: The dependency flow is strictly one-way: `app` -> `features` -> `core`. The `:core` module knows nothing about the features, and features know nothing about each other.
+- **Error Handling Pipeline**: Technical/data/network exceptions are mapped to shared `DomainException` types in repositories, then to feature-level localized `UiText` in presentation mappers.
 - **Dependency Injection**: [Koin](https://insert-koin.io/) is used for dependency injection throughout the app to provide dependencies and manage their lifecycle.
 - **UI**: The entire UI is built with [Jetpack Compose](https://developer.android.com/jetpack/compose).
 - **Stateful/Stateless UI Pattern**: Feature screens are split into a stateful, non-previewable composable (the "Screen") that manages state and a stateless, easily previewable composable (the "Content") that purely renders the UI.
@@ -46,6 +47,7 @@ This is the foundational library module for the entire application. It contains 
 - **Domain Logic**: Defining contracts (`TokenRepository`, `ThemeRepository`, `LanguageRepository`) and shared business logic (`LogoutUseCase`, `GetThemePreferencesUseCase`, `SaveThemePreferencesUseCase`, `GetLanguageUseCase`, `SetLanguageUseCase`).
 - **Shared UI**: Providing the application's visual identity (`ComandaTheme`), shared components like `ComandaTopAppBar`, and utility functions for price formatting.
 - **String Resources**: Contains all shared string resources for the application, with translations for Italian and Dutch.
+- **Error Mapping**: Provides shared error contracts and mappers (`DomainException`, `toDomainException()`, `toUiText()`) so features can keep domain/presentation layers independent from transport-level failures.
 
 ### `:features`
 
@@ -65,3 +67,4 @@ This directory contains all the independent feature modules. Each feature is a s
     - **Theme Management**: A sub-feature allowing the user to choose between a light theme, a dark theme, or following the system's theme setting. The choice is persisted on the device.
     - **Language Management**: A sub-feature allowing the user to choose between following the system language or manually selecting a language (English, Italian, or Dutch).
     - **User Management**: A dedicated sub-feature for managing staff accounts, including full CRUD functionality and role management.
+    - **Error Mapping**: User-management data/network errors are mapped to domain exceptions and then to localized `UiText` for presentation.

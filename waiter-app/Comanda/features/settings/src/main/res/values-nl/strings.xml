@@ -17,6 +17,13 @@
     <string name="update">Bijwerken</string>
     <string name="delete_user_confirmation">Weet u zeker dat u deze gebruiker wilt verwijderen?</string>
     <string name="delete">Verwijderen</string>
+    <string name="user_created_success">Gebruiker succesvol aangemaakt.</string>
+    <string name="user_updated_success">Gebruiker succesvol bijgewerkt.</string>
+    <string name="user_deleted_success">Gebruiker succesvol verwijderd.</string>
+    <string name="error_user_duplicate_employee_id">Er bestaat al een gebruiker met dit werknemers-ID.</string>
+    <string name="error_user_not_found">De gevraagde gebruiker is niet gevonden.</string>
+    <string name="error_user_invalid_data">De opgegeven gebruikersgegevens zijn ongeldig.</string>
+    <string name="error_user_invalid_id">Het geselecteerde gebruikers-ID is ongeldig.</string>
 
     <!-- Settings Screen -->
     <string name="appearance">Uiterlijk</string>

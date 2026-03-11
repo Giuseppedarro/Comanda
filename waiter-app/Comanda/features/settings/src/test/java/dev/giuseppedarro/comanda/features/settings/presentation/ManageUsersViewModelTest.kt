@@ -2,7 +2,10 @@ package dev.giuseppedarro.comanda.features.settings.presentation
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import dev.giuseppedarro.comanda.core.presentation.UiText
+import dev.giuseppedarro.comanda.features.settings.R
 import dev.giuseppedarro.comanda.features.settings.domain.model.User
+import dev.giuseppedarro.comanda.features.settings.domain.model.UserException
 import dev.giuseppedarro.comanda.features.settings.domain.usecase.CreateUserUseCase
 import dev.giuseppedarro.comanda.features.settings.domain.usecase.DeleteUserUseCase
 import dev.giuseppedarro.comanda.features.settings.domain.usecase.GetUsersUseCase
@@ -76,20 +79,18 @@ class ManageUsersViewModelTest {
 
     @Test
     fun `state is updated with error when use case returns failure`() = runTest {
-        // Given
         val error = "Error"
         coEvery { getUsersUseCase() } returns flowOf(Result.failure(RuntimeException(error)))
 
-        // When
         viewModel.onRefresh()
         testDispatcher.scheduler.advanceUntilIdle()
 
-        // Then
         viewModel.uiState.test {
             val errorState = awaitItem()
             assertThat(errorState.isRefreshing).isFalse()
             assertThat(errorState.users).isEmpty()
-            assertThat(errorState.error).isEqualTo(error)
+            assertThat(errorState.error).isInstanceOf(UiText.DynamicString::class.java)
+            assertThat((errorState.error as UiText.DynamicString).value).isEqualTo(error)
         }
     }
 
@@ -216,5 +217,38 @@ class ManageUsersViewModelTest {
 
         // Then
         coVerify { deleteUserUseCase(user.id) }
+    }
+
+    @Test
+    fun `onRefresh emits snackbar event with mapped user exception`() = runTest {
+        coEvery { getUsersUseCase() } returns flowOf(Result.failure(UserException.UserNotFound))
+
+        viewModel.onRefresh()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.eventChannel.test {
+            val event = awaitItem()
+            assertThat(event).isInstanceOf(ManageUsersViewModel.UiEvent.ShowSnackbar::class.java)
+            val message = (event as ManageUsersViewModel.UiEvent.ShowSnackbar).message
+            assertThat(message).isInstanceOf(UiText.StringResource::class.java)
+            assertThat((message as UiText.StringResource).resId).isEqualTo(R.string.error_user_not_found)
+        }
+    }
+
+    @Test
+    fun `createUser success emits success snackbar`() = runTest {
+        coEvery { createUserUseCase(any()) } returns Result.success(User("1", "001", "Mario", "WAITER"))
+        coEvery { getUsersUseCase() } returns flowOf(Result.success(emptyList()))
+
+        viewModel.createUser()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.eventChannel.test {
+            val event = awaitItem()
+            assertThat(event).isInstanceOf(ManageUsersViewModel.UiEvent.ShowSnackbar::class.java)
+            val message = (event as ManageUsersViewModel.UiEvent.ShowSnackbar).message
+            assertThat(message).isInstanceOf(UiText.StringResource::class.java)
+            assertThat((message as UiText.StringResource).resId).isEqualTo(R.string.user_created_success)
+        }
     }
 }

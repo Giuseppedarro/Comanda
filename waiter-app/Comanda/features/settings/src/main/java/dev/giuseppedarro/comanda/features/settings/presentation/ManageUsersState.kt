@@ -1,12 +1,13 @@
 package dev.giuseppedarro.comanda.features.settings.presentation
 
+import dev.giuseppedarro.comanda.core.presentation.UiText
 import dev.giuseppedarro.comanda.features.settings.domain.model.User
 
 data class ManageUsersState(
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val users: List<User> = emptyList(),
-    val error: String? = null,
+    val error: UiText? = null,
     val isUserCreated: Boolean = false,
     val showAddUserDialog: Boolean = false,
     val showEditUserDialog: Boolean = false,

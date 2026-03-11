@@ -13,6 +13,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
+import androidx.compose.ui.platform.testTag
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -80,21 +81,21 @@ fun LanguageSettingsContent(
                 )
                 Divider()
                 SettingItem(
-                    icon = { RadioButton(selected = currentLanguage == "en", onClick = { onLanguageChange("en") }, enabled = !useSystemLanguage) },
+                    icon = { RadioButton(selected = currentLanguage == "en", onClick = { onLanguageChange("en") }, enabled = !useSystemLanguage, modifier = Modifier.testTag("radio_en")) },
                     title = stringResource(SettingsR.string.language_english),
                     subtitle = stringResource(SettingsR.string.language_english),
                     onClick = { if (!useSystemLanguage) onLanguageChange("en") }
                 )
                 Divider()
                 SettingItem(
-                    icon = { RadioButton(selected = currentLanguage == "it", onClick = { onLanguageChange("it") }, enabled = !useSystemLanguage) },
+                    icon = { RadioButton(selected = currentLanguage == "it", onClick = { onLanguageChange("it") }, enabled = !useSystemLanguage, modifier = Modifier.testTag("radio_it")) },
                     title = stringResource(SettingsR.string.language_italian),
                     subtitle = stringResource(SettingsR.string.language_italian),
                     onClick = { if (!useSystemLanguage) onLanguageChange("it") }
                 )
                 Divider()
                 SettingItem(
-                    icon = { RadioButton(selected = currentLanguage == "nl", onClick = { onLanguageChange("nl") }, enabled = !useSystemLanguage) },
+                    icon = { RadioButton(selected = currentLanguage == "nl", onClick = { onLanguageChange("nl") }, enabled = !useSystemLanguage, modifier = Modifier.testTag("radio_nl")) },
                     title = stringResource(SettingsR.string.language_dutch),
                     subtitle = stringResource(SettingsR.string.language_dutch),
                     onClick = { if (!useSystemLanguage) onLanguageChange("nl") }
