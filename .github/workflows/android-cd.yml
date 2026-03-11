@@ -21,6 +21,10 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Grant execute permission to gradlew
+        working-directory: ./waiter-app/Comanda
+        run: chmod +x ./gradlew
+
       - name: Run unit tests
         working-directory: ./waiter-app/Comanda
         run: ./gradlew testDebugUnitTest
