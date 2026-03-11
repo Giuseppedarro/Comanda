@@ -52,7 +52,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # DEPLOY A GOOGLE PLAY STORE
       - name: Deploy to Google Play Store
         working-directory: ./waiter-app/Comanda
         run: ./gradlew bundleRelease publishBundle
