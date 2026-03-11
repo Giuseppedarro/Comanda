@@ -5,6 +5,20 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
+val appVersionCode = providers.gradleProperty("VERSION_CODE").orElse("1").get().toInt()
+val appVersionName = providers.gradleProperty("VERSION_NAME").orElse("1.0.0").get()
+
+val releaseStoreFile = providers.environmentVariable("KEYSTORE_PATH")
+    .orElse(providers.environmentVariable("KEYSTORE_FILE"))
+    .orNull
+val releaseStorePassword = providers.environmentVariable("STORE_PASSWORD").orNull
+val releaseKeyAlias = providers.environmentVariable("KEY_ALIAS").orNull
+val releaseKeyPassword = providers.environmentVariable("KEY_PASSWORD").orNull
+val hasReleaseSigning = !releaseStoreFile.isNullOrBlank() &&
+    !releaseStorePassword.isNullOrBlank() &&
+    !releaseKeyAlias.isNullOrBlank() &&
+    !releaseKeyPassword.isNullOrBlank()
+
 android {
     namespace = "dev.giuseppedarro.comanda"
     compileSdk {
@@ -15,8 +29,8 @@ android {
         applicationId = "dev.giuseppedarro.comanda"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = appVersionCode
+        versionName = appVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["mockk.agent.android.factory"] = "io.mockk.proxy.android.AndroidMockKAgentFactory"
@@ -27,9 +41,23 @@ android {
         generateLocaleConfig = true
     }
 
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = file(releaseStoreFile!!)
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
