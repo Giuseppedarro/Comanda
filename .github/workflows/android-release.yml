@@ -1,0 +1,76 @@
+name: Android Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: waiter-app/Comanda
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_FILE }}" | base64 --decode > keystore.jks
+
+      - name: Build signed AAB (production release)
+        env:
+          KEYSTORE_PATH: ${{ github.workspace }}/waiter-app/Comanda/keystore.jks
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: ./gradlew bundleProductionRelease --no-daemon -Dorg.gradle.jvmargs="-Xmx4096m -XX:MaxMetaspaceSize=512m"
+
+      - name: Build signed APK (production release)
+        env:
+          KEYSTORE_PATH: ${{ github.workspace }}/waiter-app/Comanda/keystore.jks
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: ./gradlew assembleProductionRelease --no-daemon -Dorg.gradle.jvmargs="-Xmx4096m -XX:MaxMetaspaceSize=512m"
+
+      - name: Upload to Google Play (internal testing)
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonRaw: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+          packageName: dev.giuseppedarro.comanda
+          releaseFiles: waiter-app/Comanda/app/build/outputs/bundle/productionRelease/app-production-release.aab
+          track: internal
+          status: completed
+
+      - name: Get version from tag
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Comanda ${{ github.ref_name }}"
+          tag_name: ${{ github.ref_name }}
+          generate_release_notes: true
+          files: |
+            waiter-app/Comanda/app/build/outputs/bundle/productionRelease/app-production-release.aab
+            waiter-app/Comanda/app/build/outputs/apk/production/release/app-production-release.apk
