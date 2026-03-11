@@ -16,6 +16,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
+import androidx.compose.ui.platform.testTag
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -88,7 +89,7 @@ fun ThemeSettingsContent(
                     title = stringResource(SettingsR.string.dark_mode),
                     subtitle = stringResource(SettingsR.string.enable_dark_mode),
                     onClick = { onDarkModeChange(!isDarkMode) },
-                    control = { Switch(checked = isDarkMode, onCheckedChange = onDarkModeChange, enabled = !useSystemTheme) }
+                    control = { Switch(checked = isDarkMode, onCheckedChange = onDarkModeChange, enabled = !useSystemTheme, modifier = Modifier.testTag("switch_dark_mode")) }
                 )
             }
         }

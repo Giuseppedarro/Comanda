@@ -17,6 +17,13 @@
     <string name="update">Aggiorna</string>
     <string name="delete_user_confirmation">Sei sicuro di voler eliminare questo utente?</string>
     <string name="delete">Elimina</string>
+    <string name="user_created_success">Utente creato con successo.</string>
+    <string name="user_updated_success">Utente aggiornato con successo.</string>
+    <string name="user_deleted_success">Utente eliminato con successo.</string>
+    <string name="error_user_duplicate_employee_id">Esiste gia un utente con questo ID dipendente.</string>
+    <string name="error_user_not_found">L\'utente richiesto non e stato trovato.</string>
+    <string name="error_user_invalid_data">I dati utente forniti non sono validi.</string>
+    <string name="error_user_invalid_id">L\'ID utente selezionato non e valido.</string>
 
     <!-- Settings Screen -->
     <string name="appearance">Aspetto</string>

@@ -24,6 +24,7 @@ This package is responsible for the secure persistence of shared data.
 - **`ThemeRepositoryImpl.kt`**: The concrete implementation of `ThemeRepository`. It uses a separate, named Jetpack `DataStore` to persist the user's chosen theme preferences.
 - **`LanguageRepositoryImpl.kt`**: The concrete implementation of `LanguageRepository`. It uses `AppCompatDelegate` to set the app's language.
 - **`CryptoManager.kt`**: A robust encryption utility that uses `AES/GCM` backed by the `AndroidKeyStore`. It ensures that authentication tokens are always stored securely on the device, never in plain text.
+- **`RepositoryExtensions.kt`**: Shared error-handling utilities for repositories, including `toDomainException()` and `safeApiCall()`, used to convert technical/network exceptions into domain-level errors.
 
 ### `domain` Package
 
@@ -35,6 +36,7 @@ This layer defines the contracts and business logic for shared data.
 - **`use_case/LogoutUseCase.kt`**: A simple, reusable use case that encapsulates the logic for logging out a user by clearing their stored tokens.
 - **`use_case/GetThemePreferencesUseCase.kt` & `SaveThemePreferencesUseCase.kt`**: Use cases for retrieving and saving the app theme preferences.
 - **`use_case/GetLanguageUseCase.kt` & `SetLanguageUseCase.kt`**: Use cases for retrieving and saving the app language.
+- **`model/DomainException.kt`**: Defines the shared domain error hierarchy (`NetworkException`, `UnauthorizedException`, `ServerException`, `NotFoundException`, `UnknownException`) used across features.
 
 ### `ui` & `presentation` Packages
 
@@ -42,6 +44,8 @@ These packages contain the shared visual elements of the application.
 
 - **`ui/theme`**: Contains the Material 3 themes for the app. `ComandaTheme` provides the standard look and feel, while `BrandedTheme` provides a more stylized theme for specific screens like the login page.
 - **`presentation/AppBar.kt`**: Provides reusable UI components like `ComandaTopAppBar` and `ComandaBottomBar` to ensure a consistent user experience across different features.
+- **`presentation/UiText.kt`**: A shared text abstraction (`StringResource` / `DynamicString`) used to keep ViewModels and mappers UI-framework friendly and localizable.
+- **`presentation/ErrorMapper.kt`**: Maps `DomainException` to localized `UiText`, providing a consistent fallback error strategy for all feature modules.
 
 ### `utils` Package
 
