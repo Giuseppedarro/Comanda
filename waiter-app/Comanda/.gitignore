@@ -15,3 +15,5 @@
 .cxx
 local.properties
 agents.md
+play-key.json
+play-service-account.json
