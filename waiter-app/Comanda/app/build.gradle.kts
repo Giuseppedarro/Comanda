@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.gradle.play.publisher)
 }
 
 val appVersionCode = providers.gradleProperty("VERSION_CODE").orElse("1").get().toInt()
@@ -121,4 +122,15 @@ dependencies {
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+}
+
+play {
+    val jsonKeyContent = providers.environmentVariable("PLAY_STORE_JSON_KEY").orNull
+    if (jsonKeyContent != null) {
+        val keyFile = layout.buildDirectory.file("play-key.json").get().asFile
+        keyFile.parentFile.mkdirs()
+        keyFile.writeText(jsonKeyContent)
+        serviceAccountCredentials.set(keyFile)
+    }
+    track.set("internal")
 }
