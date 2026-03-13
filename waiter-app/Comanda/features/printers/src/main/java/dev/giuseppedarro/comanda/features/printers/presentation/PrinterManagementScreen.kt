@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.giuseppedarro.comanda.core.presentation.ComandaTopAppBar
+import dev.giuseppedarro.comanda.core.presentation.UiText
 import dev.giuseppedarro.comanda.features.printers.domain.model.Printer
 import dev.giuseppedarro.comanda.features.printers.presentation.components.AddPrinterDialog
 import dev.giuseppedarro.comanda.features.printers.presentation.components.EditPrinterDialog
@@ -77,7 +78,7 @@ fun PrinterManagementScreen(
 fun PrinterManagementContent(
     printers: List<Printer>,
     isLoading: Boolean,
-    error: String?,
+    error: UiText?,
     onNavigateBack: () -> Unit,
     onRefresh: () -> Unit,
     onAddClick: () -> Unit,
@@ -171,7 +172,7 @@ fun PrinterManagementContent(
             )
 
             // Error Snackbar
-            error?.let { errorMessage ->
+            error?.let { uiText ->
                 Snackbar(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
@@ -182,7 +183,7 @@ fun PrinterManagementContent(
                         }
                     }
                 ) {
-                    Text(errorMessage)
+                    Text(uiText.asString())
                 }
             }
         }
@@ -275,7 +276,7 @@ fun PrinterManagementScreenErrorPreview() {
         PrinterManagementContent(
             printers = emptyList(),
             isLoading = false,
-            error = "Failed to load printers. Please check your connection.",
+            error = UiText.DynamicString("Failed to load printers. Please check your connection."),
             onNavigateBack = {},
             onRefresh = {},
             onAddClick = {},

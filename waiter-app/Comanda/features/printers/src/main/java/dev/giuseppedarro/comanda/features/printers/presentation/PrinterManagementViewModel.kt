@@ -2,6 +2,7 @@ package dev.giuseppedarro.comanda.features.printers.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.giuseppedarro.comanda.core.presentation.UiText
 import dev.giuseppedarro.comanda.features.printers.domain.model.Printer
 import dev.giuseppedarro.comanda.features.printers.domain.usecase.CreatePrinterUseCase
 import dev.giuseppedarro.comanda.features.printers.domain.usecase.DeletePrinterUseCase
@@ -15,7 +16,7 @@ import kotlinx.coroutines.launch
 data class PrinterManagementUiState(
     val printers: List<Printer> = emptyList(),
     val isLoading: Boolean = false,
-    val error: String? = null,
+    val error: UiText? = null,
     val isAddDialogOpen: Boolean = false,
     val isEditDialogOpen: Boolean = false,
     val editingPrinter: Printer? = null
@@ -51,7 +52,7 @@ class PrinterManagementViewModel(
             }.onFailure {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    error = it.message
+                    error = it.toPrinterUiText()
                 )
             }
         }
@@ -102,7 +103,7 @@ class PrinterManagementViewModel(
             }.onFailure {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    error = it.message
+                    error = it.toPrinterUiText()
                 )
             }
         }
@@ -126,7 +127,7 @@ class PrinterManagementViewModel(
             }.onFailure {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    error = it.message
+                    error = it.toPrinterUiText()
                 )
             }
         }
@@ -148,7 +149,7 @@ class PrinterManagementViewModel(
             }.onFailure {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    error = it.message
+                    error = it.toPrinterUiText()
                 )
             }
         }

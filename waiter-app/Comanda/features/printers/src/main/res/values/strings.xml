@@ -14,4 +14,6 @@
     <string name="navigate_back">Navigate back</string>
     <string name="no_printers_configured">No printers configured</string>
     <string name="add_printer_prompt">Tap the + button to add a new printer</string>
+    <string name="error_printer_not_found">The requested printer was not found.</string>
+    <string name="error_duplicate_printer">A printer with this name or address already exists.</string>
 </resources>
