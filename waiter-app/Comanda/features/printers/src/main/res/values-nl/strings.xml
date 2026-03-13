@@ -14,4 +14,6 @@
     <string name="navigate_back">Navigeer terug</string>
     <string name="no_printers_configured">Geen printers geconfigureerd</string>
     <string name="add_printer_prompt">Tik op de +-knop om een nieuwe printer toe te voegen</string>
+    <string name="error_printer_not_found">De gevraagde printer is niet gevonden.</string>
+    <string name="error_duplicate_printer">Er bestaat al een printer met deze naam of dit adres.</string>
 </resources>

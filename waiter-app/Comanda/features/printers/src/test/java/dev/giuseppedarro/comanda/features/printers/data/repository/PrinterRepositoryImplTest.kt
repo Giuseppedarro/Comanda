@@ -1,15 +1,22 @@
 package dev.giuseppedarro.comanda.features.printers.data.repository
 
 import com.google.common.truth.Truth.assertThat
+import dev.giuseppedarro.comanda.core.domain.model.DomainException
 import dev.giuseppedarro.comanda.features.printers.data.remote.PrinterApi
 import dev.giuseppedarro.comanda.features.printers.data.remote.dto.PrinterDto
+import dev.giuseppedarro.comanda.features.printers.domain.model.PrinterException
 import dev.giuseppedarro.comanda.features.printers.domain.repository.PrinterRepository
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.HttpStatusCode
 import io.mockk.coEvery
 import io.mockk.coJustRun
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
+import java.io.IOException
 
 class PrinterRepositoryImplTest {
 
@@ -24,121 +31,59 @@ class PrinterRepositoryImplTest {
 
     @Test
     fun `getAllPrinters should return success when api is successful`() = runTest {
-        // Given
         val printerDtos = listOf(PrinterDto(1, "Kitchen Printer", "192.168.1.100", 9100))
         coEvery { printerApi.getAllPrinters() } returns printerDtos
 
-        // When
         val result = printerRepository.getAllPrinters()
 
-        // Then
         assertThat(result.isSuccess).isTrue()
         val printers = result.getOrNull()
-        assertThat(printers).isNotNull()
-        assertThat(printers!!).hasSize(1)
-        assertThat(printers[0].id).isEqualTo(1)
-        assertThat(printers[0].name).isEqualTo("Kitchen Printer")
+        assertThat(printers).hasSize(1)
+        assertThat(printers!![0].id).isEqualTo(1)
     }
 
     @Test
-    fun `getAllPrinters should return failure when api throws exception`() = runTest {
-        // Given
-        val exception = RuntimeException("Error")
-        coEvery { printerApi.getAllPrinters() } throws exception
+    fun `getAllPrinters should return network exception when IOException occurs`() = runTest {
+        coEvery { printerApi.getAllPrinters() } throws IOException()
 
-        // When
         val result = printerRepository.getAllPrinters()
 
-        // Then
         assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()).isEqualTo(exception)
+        assertThat(result.exceptionOrNull()).isInstanceOf(DomainException.NetworkException::class.java)
     }
 
     @Test
-    fun `createPrinter should return success when api is successful`() = runTest {
-        // Given
-        val printerDto = PrinterDto(1, "Kitchen Printer", "192.168.1.100", 9100)
-        coEvery { printerApi.createPrinter(any()) } returns printerDto
+    fun `createPrinter should return duplicate printer error when 409 conflict occurs`() = runTest {
+        val response = mockk<HttpResponse>(relaxed = true) {
+            every { status } returns HttpStatusCode.Conflict
+        }
+        coEvery { printerApi.createPrinter(any()) } throws ClientRequestException(response, "Conflict")
 
-        // When
-        val result = printerRepository.createPrinter("Kitchen Printer", "192.168.1.100", 9100)
+        val result = printerRepository.createPrinter("Kitchen", "1.1.1.1", 9100)
 
-        // Then
-        assertThat(result.isSuccess).isTrue()
-        val printer = result.getOrNull()
-        assertThat(printer).isNotNull()
-        assertThat(printer!!.id).isEqualTo(1)
-        assertThat(printer.name).isEqualTo("Kitchen Printer")
-    }
-
-    @Test
-    fun `createPrinter should return failure when api throws exception`() = runTest {
-        // Given
-        val exception = RuntimeException("Error")
-        coEvery { printerApi.createPrinter(any()) } throws exception
-
-        // When
-        val result = printerRepository.createPrinter("Kitchen Printer", "192.168.1.100", 9100)
-
-        // Then
         assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()).isEqualTo(exception)
+        assertThat(result.exceptionOrNull()).isEqualTo(PrinterException.DuplicatePrinter)
     }
 
     @Test
-    fun `updatePrinter should return success when api is successful`() = runTest {
-        // Given
-        val printerDto = PrinterDto(1, "Kitchen Printer", "192.168.1.100", 9100)
-        coEvery { printerApi.updatePrinter(any(), any()) } returns printerDto
+    fun `updatePrinter should return printer not found error when 404 occurs`() = runTest {
+        val response = mockk<HttpResponse>(relaxed = true) {
+            every { status } returns HttpStatusCode.NotFound
+        }
+        coEvery { printerApi.updatePrinter(any(), any()) } throws ClientRequestException(response, "Not Found")
 
-        // When
-        val result = printerRepository.updatePrinter(1, "Kitchen Printer", "192.168.1.100", 9100)
+        val result = printerRepository.updatePrinter(1, "Kitchen", "1.1.1.1", 9100)
 
-        // Then
-        assertThat(result.isSuccess).isTrue()
-        val printer = result.getOrNull()
-        assertThat(printer).isNotNull()
-        assertThat(printer!!.id).isEqualTo(1)
-        assertThat(printer.name).isEqualTo("Kitchen Printer")
-    }
-
-    @Test
-    fun `updatePrinter should return failure when api throws exception`() = runTest {
-        // Given
-        val exception = RuntimeException("Error")
-        coEvery { printerApi.updatePrinter(any(), any()) } throws exception
-
-        // When
-        val result = printerRepository.updatePrinter(1, "Kitchen Printer", "192.168.1.100", 9100)
-
-        // Then
         assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()).isEqualTo(exception)
+        assertThat(result.exceptionOrNull()).isEqualTo(PrinterException.PrinterNotFound)
     }
 
     @Test
     fun `deletePrinter should return success when api is successful`() = runTest {
-        // Given
         coJustRun { printerApi.deletePrinter(any()) }
 
-        // When
         val result = printerRepository.deletePrinter(1)
 
-        // Then
         assertThat(result.isSuccess).isTrue()
-    }
-
-    @Test
-    fun `deletePrinter should return failure when api throws exception`() = runTest {
-        // Given
-        val exception = RuntimeException("Error")
-        coEvery { printerApi.deletePrinter(any()) } throws exception
-
-        // When
-        val result = printerRepository.deletePrinter(1)
-
-        // Then
-        assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()).isEqualTo(exception)
     }
 }

@@ -14,4 +14,6 @@
     <string name="navigate_back">Torna indietro</string>
     <string name="no_printers_configured">Nessuna stampante configurata</string>
     <string name="add_printer_prompt">Tocca il pulsante + per aggiungere una nuova stampante</string>
+    <string name="error_printer_not_found">La stampante richiesta non è stata trovata.</string>
+    <string name="error_duplicate_printer">Esiste già una stampante con questo nome o indirizzo.</string>
 </resources>
