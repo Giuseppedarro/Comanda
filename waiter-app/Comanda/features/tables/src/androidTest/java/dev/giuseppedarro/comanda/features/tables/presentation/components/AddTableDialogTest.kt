@@ -11,9 +11,7 @@ import androidx.compose.ui.test.performTextInput
 import androidx.test.core.app.ApplicationProvider
 import dev.giuseppedarro.comanda.features.tables.R
 import dev.giuseppedarro.comanda.core.ui.theme.ComandaTheme
-import io.mockk.confirmVerified
-import io.mockk.mockk
-import io.mockk.verify
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 
@@ -36,46 +34,54 @@ class AddTableDialogTest {
         }
 
         composeTestRule.onNodeWithText(context.getString(R.string.add_new_table)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(context.getString(R.string.incremental_add)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(context.getString(R.string.custom_add)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.next_available)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.specific_number)).assertIsDisplayed()
     }
 
     @Test
     fun whenIncrementalSelected_confirmIsAlwaysEnabledAndReturnsNull() {
-        val onConfirmClick: (Int?) -> Unit = mockk(relaxed = true)
+        var callCount = 0
+        var capturedValue: Int? = -1 // Start with non-null value
         
         composeTestRule.setContent {
             ComandaTheme {
                 AddTableDialog(
                     onDismissRequest = {},
-                    onConfirmClick = onConfirmClick
+                    onConfirmClick = {
+                        callCount++
+                        capturedValue = it
+                    }
                 )
             }
         }
 
-        // Incremental is default
+        // Incremental (Next Available) is default
         composeTestRule.onNodeWithText(context.getString(R.string.add)).assertIsEnabled()
         composeTestRule.onNodeWithText(context.getString(R.string.add)).performClick()
 
-        verify { onConfirmClick(null) }
-        confirmVerified(onConfirmClick)
+        assertEquals(1, callCount)
+        assertEquals(null, capturedValue)
     }
 
     @Test
     fun whenCustomSelected_confirmIsDisabledUntilValidNumberEntered() {
-        val onConfirmClick: (Int?) -> Unit = mockk(relaxed = true)
+        var callCount = 0
+        var capturedValue: Int? = null
 
         composeTestRule.setContent {
             ComandaTheme {
                 AddTableDialog(
                     onDismissRequest = {},
-                    onConfirmClick = onConfirmClick
+                    onConfirmClick = {
+                        callCount++
+                        capturedValue = it
+                    }
                 )
             }
         }
 
-        // Select custom
-        composeTestRule.onNodeWithText(context.getString(R.string.custom_add)).performClick()
+        // Select custom (Specific Number)
+        composeTestRule.onNodeWithText(context.getString(R.string.specific_number)).performClick()
         
         // Add button should be disabled as text field is empty
         composeTestRule.onNodeWithText(context.getString(R.string.add)).assertIsNotEnabled()
@@ -87,6 +93,7 @@ class AddTableDialogTest {
         composeTestRule.onNodeWithText(context.getString(R.string.add)).assertIsEnabled()
         composeTestRule.onNodeWithText(context.getString(R.string.add)).performClick()
 
-        verify { onConfirmClick(15) }
+        assertEquals(1, callCount)
+        assertEquals(15, capturedValue)
     }
 }

@@ -9,6 +9,7 @@ import dev.giuseppedarro.comanda.features.tables.domain.model.Table
 import dev.giuseppedarro.comanda.features.tables.domain.usecase.AddTableUseCase
 import dev.giuseppedarro.comanda.features.tables.domain.usecase.GetTablesUseCase
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -37,7 +38,7 @@ class TableOverviewViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        every { getTablesUseCase() } returns flowOf(Result.success(emptyList())) // Updated mock
+        every { getTablesUseCase() } returns flowOf(Result.success(emptyList()))
         every { getCurrentUserUseCase() } returns flowOf(null)
         coEvery { syncUserProfileUseCase() } returns Result.success(mockk())
         
@@ -56,12 +57,42 @@ class TableOverviewViewModelTest {
     }
 
     @Test
+    fun `when onAddTableClicked is called, show add table dialog`() = runTest {
+        viewModel.onAddTableClicked()
+        
+        assertThat(viewModel.uiState.value.isAddTableDialogShown).isTrue()
+    }
+
+    @Test
+    fun `when onConfirmAddTable is called without number, call use case with null`() = runTest {
+        coEvery { addTableUseCase(null) } returns Result.success(Unit)
+        
+        viewModel.onConfirmAddTable(null)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        coVerify { addTableUseCase(null) }
+        assertThat(viewModel.uiState.value.isAddTableDialogShown).isFalse()
+    }
+
+    @Test
+    fun `when onConfirmAddTable is called with number, call use case with number`() = runTest {
+        val number = 42
+        coEvery { addTableUseCase(number) } returns Result.success(Unit)
+        
+        viewModel.onConfirmAddTable(number)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        coVerify { addTableUseCase(number) }
+        assertThat(viewModel.uiState.value.isAddTableDialogShown).isFalse()
+    }
+
+    @Test
     fun `when filter is ALL, all tables are shown`() = runTest {
         val tables = listOf(
             Table(1, true),
             Table(2, false)
         )
-        every { getTablesUseCase() } returns flowOf(Result.success(tables)) // Updated mock
+        every { getTablesUseCase() } returns flowOf(Result.success(tables))
 
         viewModel.loadTables()
         testDispatcher.scheduler.advanceUntilIdle()
@@ -80,7 +111,7 @@ class TableOverviewViewModelTest {
             Table(1, true),
             Table(2, false)
         )
-        every { getTablesUseCase() } returns flowOf(Result.success(tables)) // Updated mock
+        every { getTablesUseCase() } returns flowOf(Result.success(tables))
 
         viewModel.loadTables()
         testDispatcher.scheduler.advanceUntilIdle()
@@ -100,7 +131,7 @@ class TableOverviewViewModelTest {
             Table(1, true),
             Table(2, false)
         )
-        every { getTablesUseCase() } returns flowOf(Result.success(tables)) // Updated mock
+        every { getTablesUseCase() } returns flowOf(Result.success(tables))
 
         viewModel.loadTables()
         testDispatcher.scheduler.advanceUntilIdle()

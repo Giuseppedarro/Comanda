@@ -5,5 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface TablesRepository {
     fun getTables(): Flow<Result<List<Table>>>
-    suspend fun addTable(): Result<Unit>
+    suspend fun addTable(number: Int? = null): Result<Unit>
 }

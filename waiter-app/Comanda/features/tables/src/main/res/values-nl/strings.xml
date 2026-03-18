@@ -9,8 +9,16 @@
     <string name="table_number">Tafel %1$d</string>
     <string name="take_order">Bestelling opnemen</string>
     <string name="modify_order">Bestelling wijzigen</string>
+    <string name="add_new_table">Nieuwe tafel toevoegen</string>
+    <string name="incremental_add">Volgende tafel toevoegen</string>
+    <string name="custom_add">Specifiek tafelnummer toevoegen</string>
+    <string name="table_number_hint">Tafelnummer</string>
+    <string name="add">Toevoegen</string>
+    <string name="cancel">Annuleren</string>
 
     <!-- Tafel Specifieke Fouten -->
     <string name="error_table_occupied">Deze tafel is al bezet.</string>
     <string name="error_table_not_found">De gevraagde tafel kon niet worden gevonden.</string>
+    <string name="error_table_already_exists">Dit tafelnummer bestaat al.</string>
+    <string name="error_invalid_table_number">Het tafelnummer moet een positief getal zijn.</string>
 </resources>

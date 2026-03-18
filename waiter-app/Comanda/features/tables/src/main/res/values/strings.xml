@@ -9,8 +9,16 @@
     <string name="table_number">Table %1$d</string>
     <string name="take_order">Take Order</string>
     <string name="modify_order">Modify Order</string>
+    <string name="add_new_table">Add New Table</string>
+    <string name="next_available">Next Available</string>
+    <string name="specific_number">Specific Number</string>
+    <string name="table_number_hint">Table Number</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
 
     <!-- Table Specific Errors -->
     <string name="error_table_occupied">This table is already occupied.</string>
     <string name="error_table_not_found">The requested table could not be found.</string>
+    <string name="error_table_already_exists">This table number already exists.</string>
+    <string name="error_invalid_table_number">Table number must be a positive integer.</string>
 </resources>

@@ -30,6 +30,7 @@ enum class TableFilter {
 data class TableOverviewUiState(
     val tables: List<Table> = emptyList(),
     val isDialogShown: Boolean = false,
+    val isAddTableDialogShown: Boolean = false,
     val selectedTable: Table? = null,
     val isRefreshing: Boolean = false,
     val filter: TableFilter = TableFilter.ALL,
@@ -103,14 +104,19 @@ class TableOverviewViewModel(
         _uiState.update { it.copy(isDialogShown = false, selectedTable = null) }
     }
 
-    fun onDialogConfirm(numberOfPeople: Int) {
-        onDialogDismiss()
+    fun onAddTableClicked() {
+        _uiState.update { it.copy(isAddTableDialogShown = true) }
     }
 
-    fun onAddTableClicked() {
+    fun onAddTableDismiss() {
+        _uiState.update { it.copy(isAddTableDialogShown = false) }
+    }
+
+    fun onConfirmAddTable(number: Int? = null) {
+        onAddTableDismiss()
         viewModelScope.launch {
             _uiState.update { it.copy(error = null) }
-            addTableUseCase().onSuccess { loadTables() }
+            addTableUseCase(number).onSuccess { loadTables() }
                 .onFailure { error ->
                     _uiState.update { it.copy(error = error.toTableUiText()) }
                 }
