@@ -10,8 +10,8 @@
     <string name="take_order">Bestelling opnemen</string>
     <string name="modify_order">Bestelling wijzigen</string>
     <string name="add_new_table">Nieuwe tafel toevoegen</string>
-    <string name="incremental_add">Volgende tafel toevoegen</string>
-    <string name="custom_add">Specifiek tafelnummer toevoegen</string>
+    <string name="next_available">Volgende Beschikbaar</string>
+    <string name="specific_number">Specifiek Nummer</string>
     <string name="table_number_hint">Tafelnummer</string>
     <string name="add">Toevoegen</string>
     <string name="cancel">Annuleren</string>
