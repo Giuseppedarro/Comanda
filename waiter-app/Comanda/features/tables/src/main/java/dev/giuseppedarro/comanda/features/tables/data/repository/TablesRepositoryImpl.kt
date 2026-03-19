@@ -22,16 +22,16 @@ class TablesRepositoryImpl(
         emit(Result.failure(e.toDomainException()))
     }
 
-    override suspend fun addTable(): Result<Unit> {
+    override suspend fun addTable(number: Int?): Result<Unit> {
         return try {
-            tableApi.addTable()
-            Result.success(Unit)
-        } catch (e: ClientRequestException) {
-            val domainError = when (e.response.status) {
-                HttpStatusCode.NotFound -> TableException.TableNotFound
-                else -> e.toDomainException()
+            val response = tableApi.addTable(number)
+            when (response.status) {
+                HttpStatusCode.Created -> Result.success(Unit)
+                HttpStatusCode.Conflict -> Result.failure(TableException.TableAlreadyExists)
+                HttpStatusCode.BadRequest -> Result.failure(TableException.InvalidTableNumber)
+                HttpStatusCode.NotFound -> Result.failure(TableException.TableNotFound)
+                else -> Result.failure(response.status.toDomainException())
             }
-            Result.failure(domainError)
         } catch (e: Exception) {
             Result.failure(e.toDomainException())
         }

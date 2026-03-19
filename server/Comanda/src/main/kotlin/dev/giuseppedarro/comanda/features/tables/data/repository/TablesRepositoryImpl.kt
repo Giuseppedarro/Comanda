@@ -39,17 +39,28 @@ class TablesRepositoryImpl : TablesRepository {
         }
     }
 
-    override suspend fun addTable(): Table {
-        return transaction {
-            val maxNumber = Tables.selectAll().maxOfOrNull { it[Tables.number] } ?: 0
-            val newNumber = maxNumber + 1
-            
-            Tables.insert {
-                it[number] = newNumber
-                it[isOccupied] = false
+    override suspend fun addTable(number: Int?): Result<Table> {
+        return try {
+            val table = transaction {
+                val newNumber = if (number != null) {
+                    val exists = Tables.selectAll().any { it[Tables.number] == number }
+                    if (exists) throw IllegalArgumentException("Table with number $number already exists")
+                    number
+                } else {
+                    val maxNumber = Tables.selectAll().maxOfOrNull { it[Tables.number] } ?: 0
+                    maxNumber + 1
+                }
+
+                Tables.insert {
+                    it[Tables.number] = newNumber
+                    it[isOccupied] = false
+                }
+
+                Table(number = newNumber, isOccupied = false)
             }
-            
-            Table(number = newNumber, isOccupied = false)
+            Result.success(table)
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 }

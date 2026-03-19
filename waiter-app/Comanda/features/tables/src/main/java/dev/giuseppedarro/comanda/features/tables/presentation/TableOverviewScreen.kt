@@ -53,6 +53,7 @@ import dev.giuseppedarro.comanda.features.tables.R as TablesR
 import dev.giuseppedarro.comanda.core.presentation.ComandaTopAppBar
 import dev.giuseppedarro.comanda.core.presentation.UiText
 import dev.giuseppedarro.comanda.features.tables.domain.model.Table
+import dev.giuseppedarro.comanda.features.tables.presentation.components.AddTableDialog
 import dev.giuseppedarro.comanda.features.tables.presentation.components.AppDrawer
 import dev.giuseppedarro.comanda.features.tables.presentation.components.TableCard
 import dev.giuseppedarro.comanda.features.tables.presentation.components.TableDialog
@@ -101,6 +102,13 @@ fun TableOverviewScreen(
                 }
                 viewModel.onDialogDismiss()
             }
+        )
+    }
+
+    if (uiState.isAddTableDialogShown) {
+        AddTableDialog(
+            onDismissRequest = viewModel::onAddTableDismiss,
+            onConfirmClick = viewModel::onConfirmAddTable
         )
     }
 
