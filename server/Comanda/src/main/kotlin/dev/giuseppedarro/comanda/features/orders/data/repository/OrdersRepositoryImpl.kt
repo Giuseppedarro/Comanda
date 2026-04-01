@@ -21,47 +21,12 @@ class OrdersRepositoryImpl(
     private val printersRepository: PrintersRepository
 ) : OrdersRepository {
 
-    companion object {
-        private val menuItemNames = mapOf(
-            // Appetizers
-            "app_bruschetta" to "Bruschetta",
-            "app_garlic_bread" to "Garlic Bread",
-            "app_mushrooms" to "Stuffed Mushrooms",
-            "app_spring_rolls" to "Spring Rolls",
-            "app_onion_rings" to "Onion Rings",
-            "app_calamari" to "Calamari",
-            // Main Courses
-            "main_burger" to "Gourmet Burger",
-            "main_caesar_salad" to "Caesar Salad",
-            // Desserts
-            "dess_tiramisu" to "Tiramisu",
-            "dess_cheesecake" to "Cheesecake",
-            // Drinks
-            "drink_cola" to "Cola",
-            "drink_cappuccino" to "Cappuccino",
-            "drink_iced_tea" to "Iced Tea",
-            "drink_orange_juice" to "Orange Juice",
-            "drink_latte" to "Latte",
-            "drink_water" to "Water",
-            "drink_espresso" to "Espresso",
-            "drink_lemonade" to "Lemonade",
-            "drink_apple_juice" to "Apple Juice",
-            "drink_sparkling_water" to "Sparkling Water",
-            "drink_green_tea" to "Green Tea",
-            "drink_beer" to "Beer"
-        )
-
-        private fun getMenuItemName(itemId: String): String {
-            return menuItemNames[itemId] ?: itemId
-        }
-    }
-
     override suspend fun submitOrder(request: SubmitOrderRequest): Result<Order> {
         val creationTime = DateTimeFormatter.ISO_INSTANT.format(Instant.now())
 
         return try {
             // 1) Compute deltas and group by printer
-            val (addedByPrinter, removedByPrinter) = transaction {
+            val (addedByPrinter, removedByPrinter, itemNames) = transaction {
                 // Find previous order for this table (if any)
                 val existingOrder = Orders
                     .select { Orders.tableNumber eq request.tableNumber }
@@ -79,16 +44,21 @@ class OrdersRepositoryImpl(
                     .groupBy { it.menuItemId }
                     .mapValues { entry -> entry.value.sumOf { it.quantity } }
 
-                // Get all item IDs to fetch their descriptions
+                // Get all item IDs to fetch their descriptions and names
                 val allItemIds = (previousQtyByItem.keys + currentQtyByItem.keys).distinct()
                 
-                val itemPrinters = if (allItemIds.isNotEmpty()) {
+                val itemPrinters = mutableMapOf<String, String>()
+                val fetchedItemNames = mutableMapOf<String, String>()
+
+                if (allItemIds.isNotEmpty()) {
                     MenuItems
-                        .slice(MenuItems.id, MenuItems.description)
+                        .slice(MenuItems.id, MenuItems.description, MenuItems.name)
                         .select { MenuItems.id inList allItemIds }
-                        .associate { it[MenuItems.id] to (it[MenuItems.description] ?: "Kitchen") } // Default to Kitchen
-                } else {
-                    emptyMap()
+                        .forEach {
+                            val id = it[MenuItems.id]
+                            itemPrinters[id] = it[MenuItems.description] ?: "Kitchen"
+                            fetchedItemNames[id] = it[MenuItems.name]
+                        }
                 }
 
                 // Compute positive deltas (newly added items) and group by printer
@@ -105,7 +75,11 @@ class OrdersRepositoryImpl(
                     if (diff > 0) Triple(itemId, diff, itemPrinters[itemId] ?: "Kitchen") else null
                 }.groupBy({ it.third }, { it.first to it.second })
 
-                Pair(added, removed)
+                Triple(added, removed, fetchedItemNames)
+            }
+
+            fun getMenuItemName(itemId: String): String {
+                return itemNames[itemId] ?: itemId
             }
 
             // 2) Process and print tickets for each printer

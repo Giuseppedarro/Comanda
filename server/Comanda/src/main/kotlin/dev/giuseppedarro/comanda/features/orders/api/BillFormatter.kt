@@ -26,15 +26,10 @@ object BillFormatter {
             calculatedSubtotal += lineTotal
 
             val formattedPrice = formatPrice(lineTotal)
-            // Format: "Burger x2      €10,00"
-            // Name takes 20 chars, Quantity takes 4 chars
             val line = "${name.take(20).padEnd(20)} x${item.quantity.toString().padEnd(3)} $formattedPrice"
             sb.appendLine(line)
         }
 
-        // Calculate totals
-        // Assuming service charge is 0 for now as it's not in the DB logic yet, 
-        // but we can easily add a percentage here if needed.
         val serviceCharge = 0 
         val total = calculatedSubtotal + serviceCharge
 
