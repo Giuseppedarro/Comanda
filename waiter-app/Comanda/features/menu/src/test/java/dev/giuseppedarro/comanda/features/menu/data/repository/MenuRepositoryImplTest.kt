@@ -4,14 +4,17 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import dev.giuseppedarro.comanda.core.domain.model.DomainException
 import dev.giuseppedarro.comanda.core.network.MenuApi
+import dev.giuseppedarro.comanda.core.network.dto.CreateMenuItemRequest
 import dev.giuseppedarro.comanda.core.network.dto.MenuCategoryDto
 import dev.giuseppedarro.comanda.core.network.dto.MenuItemDto
+import dev.giuseppedarro.comanda.core.network.dto.UpdateMenuItemRequest
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuCategory
 import dev.giuseppedarro.comanda.features.menu.domain.model.MenuItem
 import dev.giuseppedarro.comanda.features.menu.domain.repository.MenuRepository
 import io.mockk.coEvery
 import io.mockk.coJustRun
 import io.mockk.mockk
+import io.mockk.slot
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -156,17 +159,23 @@ class MenuRepositoryImplTest {
     }
 
     @Test
-    fun `addMenuItem should return success when api is successful`() = runTest {
+    fun `addMenuItem should send correct DTO to api`() = runTest {
         // Given
         val categoryId = "1"
-        val menuItem = MenuItem("1", "1", "Margherita", "Tomato and Mozzarella", 500, true, 0)
-        coJustRun { menuApi.addMenuItem(any(), any()) }
+        val menuItem = MenuItem("id_123", "cat_1", "Margherita", "Tomato and Mozzarella", 500, true, 0)
+        val requestSlot = slot<CreateMenuItemRequest>()
+        coEvery { menuApi.addMenuItem(categoryId, capture(requestSlot)) } returns Unit
 
         // When
         val result = menuRepository.addMenuItem(categoryId, menuItem)
 
         // Then
         assertThat(result.isSuccess).isTrue()
+        assertThat(requestSlot.captured.name).isEqualTo("Margherita")
+        assertThat(requestSlot.captured.price).isEqualTo(500)
+        assertThat(requestSlot.captured.description).isEqualTo("Tomato and Mozzarella")
+        assertThat(requestSlot.captured.isAvailable).isTrue()
+        assertThat(requestSlot.captured.displayOrder).isEqualTo(0)
     }
 
     @Test
@@ -187,16 +196,22 @@ class MenuRepositoryImplTest {
     }
 
     @Test
-    fun `updateMenuItem should return success when api is successful`() = runTest {
+    fun `updateMenuItem should send correct DTO to api`() = runTest {
         // Given
-        val menuItem = MenuItem("1", "1", "Margherita", "Tomato and Mozzarella", 500, true, 0)
-        coJustRun { menuApi.updateMenuItem(any(), any()) }
+        val menuItem = MenuItem("id_123", "cat_1", "Margherita", "Tomato and Mozzarella", 500, true, 0)
+        val requestSlot = slot<UpdateMenuItemRequest>()
+        coEvery { menuApi.updateMenuItem(menuItem.id, capture(requestSlot)) } returns Unit
 
         // When
         val result = menuRepository.updateMenuItem(menuItem)
 
         // Then
         assertThat(result.isSuccess).isTrue()
+        assertThat(requestSlot.captured.name).isEqualTo("Margherita")
+        assertThat(requestSlot.captured.price).isEqualTo(500)
+        assertThat(requestSlot.captured.description).isEqualTo("Tomato and Mozzarella")
+        assertThat(requestSlot.captured.isAvailable).isTrue()
+        assertThat(requestSlot.captured.displayOrder).isEqualTo(0)
     }
 
     @Test
