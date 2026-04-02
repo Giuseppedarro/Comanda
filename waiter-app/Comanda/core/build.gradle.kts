@@ -80,6 +80,9 @@ dependencies {
     api(libs.ktor.client.content.negotiation)
     api(libs.ktor.serialization.kotlinx.json)
 
+    // Tink Security
+    implementation(libs.tink.android)
+
     // --- Testing --- 
     // Unit Tests (JUnit 5)
     testImplementation(libs.junit)

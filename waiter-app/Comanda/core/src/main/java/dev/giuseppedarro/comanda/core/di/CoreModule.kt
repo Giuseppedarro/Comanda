@@ -4,7 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStoreFile
-import dev.giuseppedarro.comanda.core.data.CryptoManager
+import dev.giuseppedarro.comanda.core.data.TinkManager
 import dev.giuseppedarro.comanda.core.data.repository.TokenRepositoryImpl
 import dev.giuseppedarro.comanda.core.data.repository.LanguageRepositoryImpl
 import dev.giuseppedarro.comanda.core.data.repository.ThemeRepositoryImpl
@@ -38,7 +38,7 @@ import org.koin.dsl.module
 
 val coreModule = module {
     // Encrypted token storage
-    single<CryptoManager> { CryptoManager() }
+    single { TinkManager(androidContext()) }
     single<DataStore<Preferences>>(named("tokenDataStore")) {
         val context = androidContext()
         PreferenceDataStoreFactory.create(
