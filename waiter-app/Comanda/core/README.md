@@ -23,7 +23,7 @@ This package is responsible for the secure persistence of shared data.
 - **`TokenRepositoryImpl.kt`**: The concrete implementation of `TokenRepository`. It uses a named Jetpack `DataStore` to save tokens to disk.
 - **`ThemeRepositoryImpl.kt`**: The concrete implementation of `ThemeRepository`. It uses a separate, named Jetpack `DataStore` to persist the user's chosen theme preferences.
 - **`LanguageRepositoryImpl.kt`**: The concrete implementation of `LanguageRepository`. It uses `AppCompatDelegate` to set the app's language.
-- **`CryptoManager.kt`**: A robust encryption utility that uses `AES/GCM` backed by the `AndroidKeyStore`. It ensures that authentication tokens are always stored securely on the device, never in plain text.
+- **`TinkManager.kt`**: A modern encryption utility using **Google Tink**. It uses `AES-GCM` with keys managed by the `AndroidKeyStore`. It ensures that authentication tokens are always stored securely on the device, never in plain text, and handles the low-level cryptographic details (IV management, Aead) safely.
 - **`RepositoryExtensions.kt`**: Shared error-handling utilities for repositories, including `toDomainException()` and `safeApiCall()`, used to convert technical/network exceptions into domain-level errors.
 
 ### `domain` Package
